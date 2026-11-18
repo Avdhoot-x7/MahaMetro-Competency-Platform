@@ -1,0 +1,6 @@
+<div class="grid g4">
+  <div class="kpi"><div class="l">{{ t("Staff") }}</div><div class="v">{{ summary.people }}</div><div class="l">{{ t("assessed") }}: {{ summary.assessed }} ({{ summary.coverage|num }}%)</div></div>
+  <div class="kpi"><div class="l">{{ t("Records meeting requirement") }}</div><div class="v">{{ summary.meets_pct|num }}{% if summary.meets_pct is not none %}%{% endif %}</div><div class="l">{{ t("target 80% in year 1") }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Open safety gates") }}</div><div class="v" style="color:{{ 'var(--gate)' if summary.safety_gates else 'inherit' }}">{{ summary.safety_gates }}</div><div class="l">{{ t("target: none older than 30 days") }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Readiness") }}</div><div class="v small"><span class="badge gate">{{ t("Red") }} {{ summary.rag.Red }}</span> <span class="badge pri">{{ t("Amber") }} {{ summary.rag.Amber }}</span> <span class="badge ok">{{ t("Green") }} {{ summary.rag.Green }}</span></div><div class="l">{{ t("Gap closure") }}: {{ summary.gap_closure|num }}{% if summary.gap_closure is not none %}%{% endif %}</div></div>
+</div>

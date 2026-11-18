@@ -1,0 +1,38 @@
+# Systemd service unit for Apache Tomcat 11
+# File location: /etc/systemd/system/tomcat11.service
+
+[Unit]
+Description=Apache Tomcat 11 Web Application Container
+After=network.target mysql.service redis-server.service
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+Environment="JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64"
+Environment="CATALINA_PID=/opt/tomcat11/temp/tomcat.pid"
+Environment="CATALINA_HOME=/opt/tomcat11"
+Environment="CATALINA_BASE=/opt/tomcat11"
+Environment="CATALINA_OPTS=-Xms4g -Xmx8g -XX:+UseG1GC"
+
+ExecStart=/opt/tomcat11/bin/catalina.sh start
+ExecStop=/opt/tomcat11/bin/catalina.sh stop 15 -force
+
+Restart=on-failure
+RestartSec=10
+
+# Security Sandboxing & Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/tomcat11/webapps /opt/tomcat11/logs /opt/tomcat11/work /opt/tomcat11/temp /var/mahametro/competency
+
+# File descriptor and thread limits for high concurrent load
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

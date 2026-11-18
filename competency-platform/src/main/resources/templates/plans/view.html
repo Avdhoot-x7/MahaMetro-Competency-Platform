@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Individual Development Plan - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p>
+    <a th:href="@{/}">Home</a> &middot;
+    <a th:href="@{/plans}">Back to all plans</a> &middot;
+    <a th:href="@{/results/{id}(id=${employee.id})}">View full competency profile</a>
+  </p>
+
+  <p th:if="${msg != null}" class="msg" th:text="${msg}"></p>
+
+  <h1>Individual Development Plan: <span th:text="${employee.nameEn}">Name</span> (<span th:text="${employee.empId}">ID</span>)</h1>
+  <p>
+    <span th:text="${employee.designation}"></span> &middot;
+    <span th:text="${employee.department}"></span> &middot;
+    Role family <b th:text="${employee.roleFamilyCode}"></b> &middot;
+    Cycle <b th:text="${plan.cycle}">baseline</b>
+  </p>
+
+  <p class="row">
+    <span>Readiness: <b class="badge" th:classappend="${#strings.toLowerCase(plan.readiness)}" th:text="${plan.readiness}">Red</b></span>
+    <span>Competency Index: <b th:text="${plan.competencyIndex != null} ? ${plan.competencyIndex} + '%' : '-'">0%</b></span>
+    <span>Plan Status: <b class="badge" th:classappend="${plan.status == 'confirmed' ? 'green' : 'amber'}" th:text="${#strings.toUpperCase(plan.status)}">PROPOSED</b></span>
+  </p>
+
+  <div th:if="${plan.status == 'confirmed'}" class="msg" style="margin-bottom: 16px;">
+    Confirmed by <b th:text="${plan.confirmedBy}"></b> on <span th:text="${#temporals.format(plan.confirmedAt, 'yyyy-MM-dd HH:mm')}"></span>
+  </div>
+
+  <h2>Prescribed Interventions</h2>
+  <p th:if="${#lists.isEmpty(items)}">No gap items found in this plan. All assessed competencies meet or exceed required levels.</p>
+
+  <div th:each="it : ${items}" class="plan-item" th:classappend="${#strings.toLowerCase(it.gapType)}">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+      <div>
+        <b th:text="${it.competencyCode}">CODE</b>:
+        <span th:if="${competencies.containsKey(it.competencyCode)}" th:text="${competencies.get(it.competencyCode).nameEn}">Name</span>
+        <span class="badge" th:classappend="${it.gapType == 'safety' ? 'safety-gate' : (it.gapType == 'major' ? 'priority' : (it.gapType == 'minor' ? 'developing' : (it.gapType == 'strength' ? 'green' : '')))}"
+              th:text="${it.gapType == 'safety' ? 'Safety gate (30-day target)' : (it.gapType == 'major' ? 'Major gap 2+ levels (60-day target)' : (it.gapType == 'minor' ? 'Minor gap 1 level (90-day target)' : (it.gapType == 'behavioural' ? 'Behavioural gap (90-day target)' : 'Strength (Mentorship / SME Author)')))}">
+        </span>
+      </div>
+
+      <div>
+        <span class="badge" th:classappend="${it.status == 'done' ? 'green' : (it.status == 'scheduled' ? 'amber' : '')}" th:text="${'Status: ' + #strings.toUpperCase(it.status)}">Status: OPEN</span>
+      </div>
+    </div>
+
+    <div class="meta" style="font-size: 13px; color: #555; margin: 6px 0;">
+      Required Level: <b th:text="${it.requiredLevel}"></b> &middot;
+      Attained Level: <b th:text="${it.attainedLevel}"></b> &middot;
+      Score: <b th:text="${it.score}"></b> &middot;
+      Gap: <b th:text="${it.gap}"></b>
+      <span th:if="${it.targetDate != null}"> &middot; Target Completion: <b th:text="${#temporals.format(it.targetDate, 'yyyy-MM-dd')}"></b></span>
+    </div>
+
+    <div th:if="${interventions.containsKey(it.interventionId)}" style="margin-top: 6px;">
+      <b>Training: </b><span th:text="${interventions.get(it.interventionId).titleEn}">Training Course</span>
+      <span style="font-size: 13px; color: #666;">
+        (<span th:text="${interventions.get(it.interventionId).provider}">CoE</span>,
+         <span th:text="${interventions.get(it.interventionId).mode}">Classroom</span>,
+         <span th:text="${interventions.get(it.interventionId).durationHours}">4.0</span> hours)
+      </span>
+      <span th:if="${interventions.get(it.interventionId).link != null and !interventions.get(it.interventionId).link.isEmpty()}">
+        &middot; <a th:href="${interventions.get(it.interventionId).link}" target="_blank">Course details</a>
+      </span>
+    </div>
+
+    <div th:if="${it.gapType != 'strength'}" style="font-size: 12px; color: #777; margin-top: 4px;">
+      Re-test (T1) within 2 weeks after training; on-the-job check (T2) after approx 3 months.
+    </div>
+
+    <div th:if="${canUpdateItems}" style="margin-top: 8px;">
+      <form th:action="@{/plans/{id}/items/{itemId}/status(id=${plan.id}, itemId=${it.id})}" method="post" style="display:inline-flex; gap:6px; align-items:center;">
+        <label style="margin:0; font-size:12px;">Update item status:</label>
+        <select name="status" style="width:auto; padding:3px 6px; font-size:12px;">
+          <option value="open" th:selected="${it.status == 'open'}">Open</option>
+          <option value="scheduled" th:selected="${it.status == 'scheduled'}">Scheduled</option>
+          <option value="done" th:selected="${it.status == 'done'}">Done</option>
+        </select>
+        <button type="submit" class="small">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <div th:if="${canConfirm}" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e3e8ef;">
+    <h2>Supervisor / Cell Plan Confirmation</h2>
+    <p>By confirming this plan, the employee and supervisor agree to the 30/60/90-day intervention milestones.</p>
+    <form th:action="@{/plans/{id}/confirm(id=${plan.id})}" method="post">
+      <label>Confirmation note (optional):</label>
+      <input type="text" name="note" placeholder="e.g. Approved during quarterly review; simulator booked for next week">
+      <button type="submit">Confirm Individual Development Plan</button>
+    </form>
+  </div>
+</main>
+</body>
+</html>

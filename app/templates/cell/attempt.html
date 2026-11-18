@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Attempt") }} {{ att.id }}{% endblock %}
+{% block content %}
+<h1>{{ t("Attempt") }} {{ att.id }} · {{ att.employee.name(lang) }}</h1>{% include "cell/_nav.html" %}
+<div class="card"><div>{{ att.test.code }} · {{ t(att.status) }} · {{ att.percent|num }}% · {{ t("seed") }} {{ att.seed }} · {{ t("tab switches") }} {{ att.tab_switches }}</div>
+<div class="small muted">{{ att.started_at|dt }} → {{ att.submitted_at|dt }} · {{ att.client_info }}</div>
+{% if att.flag_reason %}<div class="flash info" style="margin-top:8px">{{ att.flag_reason }}</div>{% endif %}
+{% if att.status in ("flagged","scored","pending_manual") %}
+<form method="post" action="/cell/attempts/{{ att.id }}/decision" class="row" style="align-items:flex-end"><input type="hidden" name="csrf" value="{{ csrf }}">
+<div style="flex:3"><label>{{ t("Review note") }}</label><input type="text" name="note"></div>
+<div style="flex:0" class="nowrap">{% if att.status=="flagged" %}<button class="btn" name="decision" value="accept">{{ t("Accept result") }}</button> {% endif %}<button class="btn danger" name="decision" value="void">{{ t("Declare void") }}</button></div></form>{% endif %}</div>
+<div class="grid g4">
+  <div class="kpi"><div class="l">{{ t("Total answering time") }}</div><div class="v">{{ (timing.total_s // 60)|int }} {{ t("min") }} {{ timing.total_s % 60 }} s</div><div class="l">{{ t("allowed") }}: {{ att.test.duration_min }} {{ t("min") }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Median time per question") }}</div><div class="v">{{ timing.median_s|num(0) }} s</div></div>
+  <div class="kpi"><div class="l">{{ t("Rapid answers") }}</div><div class="v" style="color:{{ 'var(--gate)' if timing.low_effort else 'inherit' }}">{{ timing.rapid }} / {{ timing.answered }}</div><div class="l">{{ t("answered faster than the question can be read") }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Response-time effort") }}</div><div class="v"><span class="badge {{ 'gate' if timing.low_effort else 'ok' }}">{{ timing.rte|num }}%</span></div><div class="l">{{ t("below 90% = not taken seriously; sent for review") }}</div></div>
+</div>
+<div class="card table-scroll" style="margin-top:16px"><h2>{{ t("Events") }}</h2><table>{% for e in events %}<tr><td class="small nowrap">{{ e.at|dt }}</td><td>{{ e.kind }}</td><td class="small">{{ e.detail }}</td><td>{% if e.media_id %}<a href="/media/{{ e.media_id }}" target="_blank"><img src="/media/{{ e.media_id }}" alt="snapshot" style="height:60px;border-radius:4px"></a>{% endif %}</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>{{ t("Responses") }}</h2>{% set show_rubric = True %}{% set per_time = timing.per %}{% for ai in att.items %}{% include "partials/answer_review.html" %}{% endfor %}</div>
+{% endblock %}

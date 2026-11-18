@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Assessment Cell") }}{% endblock %}
+{% block content %}
+<h1>{{ t("CoE Assessment Cell") }}</h1>
+{% include "cell/_nav.html" %}
+<div class="grid g4">
+  <div class="kpi"><div class="l">{{ t("Active staff") }}</div><div class="v">{{ n_emp }}</div>{% if unmapped %}<div class="l"><a href="/cell/employees?unmapped=1">{{ unmapped }} {{ t("without role family or grade") }}</a></div>{% endif %}</div>
+  <div class="kpi"><div class="l">{{ t("Assessed (official)") }}</div><div class="v">{{ assessed }}</div><div class="l">{{ t("practised") }}: {{ practiced }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Awaiting manual scoring") }}</div><div class="v"><a href="/cell/scoring">{{ manual_n }}</a></div><div class="l">{{ t("tests in progress") }}: {{ in_progress }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Flagged attempts") }}</div><div class="v"><a href="/cell/flags">{{ flag_n }}</a></div></div>
+</div>
+<div class="grid g2" style="margin-top:16px">
+<div class="card table-scroll"><h2>{{ t("Question bank coverage") }}</h2>
+  <p class="small muted">{{ t("Approved questions per competency by pool. Plan at least three live questions for every question position in a blueprint.") }} {% for s, n in item_counts.items() %}{{ t(s|capitalize) }}: {{ n }} · {% endfor %}</p>
+  <table><thead><tr><th>{{ t("Competency") }}</th><th class="right">{{ t("exam") }}</th><th class="right">{{ t("practice") }}</th><th class="right">{{ t("both") }}</th><th class="right">{{ t("In review") }}</th><th class="right">{{ t("Draft") }}</th></tr></thead><tbody>
+  {% for c in coverage %}<tr><td><b>{{ c.code }}</b> {{ L(comps[c.code],"name")|truncate(42) if c.code in comps else "" }}</td><td class="right">{{ c.get("exam",0) }}</td><td class="right">{{ c.get("practice",0) }}</td><td class="right">{{ c.get("both",0) }}</td><td class="right">{{ c.get("review",0) }}</td><td class="right">{{ c.get("draft",0) }}</td></tr>{% endfor %}
+  </tbody></table></div>
+<div class="card table-scroll"><h2>{{ t("Recent tests") }}</h2><p><a class="btn sm" href="/cell/tests/new">{{ t("New test") }}</a></p>
+  <table>{% for x in tests %}<tr><td><a href="/cell/tests/{{ x.id }}">{{ x.code }}</a><div class="small muted">{{ x.title(lang) }}</div></td><td>{{ x.kind }}</td><td><span class="badge {{ {'published':'ok','draft':'na','closed':'na'}[x.status] }}">{{ t(x.status|capitalize) }}</span></td></tr>{% endfor %}</table></div>
+</div>
+{% endblock %}

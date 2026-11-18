@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Department") }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ t("Department dashboard") }}</h1><div class="muted">{{ dept }}</div></div>
+  <form method="get" class="row noprint" style="flex:0 1 640px">
+    {% if user.has("cell","management") %}<div><select name="dept" onchange="this.form.submit()">{% for d in depts %}<option {{ 'selected' if d==dept else '' }}>{{ d }}</option>{% endfor %}</select></div>{% endif %}
+    <div><select name="family" onchange="this.form.submit()"><option value="">{{ t("All role families") }}</option>{% for code, f in families.items() %}<option value="{{ code }}" {{ 'selected' if code==family else '' }}>{{ code }} {{ L(f,"name") }}</option>{% endfor %}</select></div>
+    <div><select name="location" onchange="this.form.submit()"><option value="">{{ t("All locations") }}</option>{% for l in locations %}<option {{ 'selected' if l==location else '' }}>{{ l }}</option>{% endfor %}</select></div>
+  </form></div>
+{% include "partials/summary_kpis.html" %}
+<div class="grid g2" style="margin-top:16px">
+  <div class="card"><h2>{{ t("Top 5 gaps") }}</h2>
+    {% if summary.top_gaps %}<div class="chart-box" style="height:220px"><canvas id="gapChart"></canvas></div>
+    <script type="application/json" data-chart="gapChart">{{ {"type":"bar","data":{"labels": summary.top_gaps|map(attribute="code")|list,"datasets":[{"label": t("Staff with a gap"),"data": summary.top_gaps|map(attribute="count")|list,"backgroundColor":"pri","borderRadius":4}]},"options":{"indexAxis":"y","plugins":{"legend":{"display":false}}}}|tojson_safe }}</script>
+    {% else %}<p class="muted">{{ t("No gaps recorded yet.") }}</p>{% endif %}</div>
+  <div class="card"><h2>{{ t("Distribution of average scores") }}</h2>
+    <div class="chart-box" style="height:220px"><canvas id="distChart"></canvas></div>
+    <script type="application/json" data-chart="distChart">{{ {"type":"bar","data":{"labels":["0–9","10–19","20–29","30–39","40–49","50–59","60–69","70–79","80–89","90–100"],"datasets":[{"label": t("Staff"),"data": dist,"backgroundColor":"brand","borderRadius":4}]},"options":{"plugins":{"legend":{"display":false}},"scales":{"y":{"ticks":{"precision":0}}}}}|tojson_safe }}</script></div>
+</div>
+{% set rows = by_family %}{% set title = t("By role family") %}{% set label = "Role family" %}{% set names = families %}{% include "partials/breakdown.html" %}
+{% include "partials/bench_table.html" %}
+<p class="noprint"><a class="btn ghost" href="/cell/export/results.xlsx">{{ t("Download results (Excel)") }}</a></p>
+{% endblock %}
+{% block scripts %}<script src="/static/vendor/chart.umd.min.js"></script><script src="/static/js/charts.js"></script>{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Item analysis") }}{% endblock %}
+{% block content %}
+<h1>{{ t("Item analysis") }}</h1>{% include "cell/_nav.html" %}
+<div class="card"><p>{{ t("Classical test theory on scored official attempts. Keep items with difficulty (p) between 0.30 and 0.85 and discrimination (point-biserial) of at least 0.20; revise or retire the rest. Flags appear once an item has 20 or more responses.") }}</p>
+<form method="post" action="/cell/analysis"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn">{{ t("Run item analysis now") }}</button></form></div>
+<div class="card table-scroll"><table><thead><tr><th>{{ t("Item") }}</th><th>{{ t("Question") }}</th><th class="right">n</th><th class="right">p</th><th class="right">r<sub>pb</sub></th><th class="right">{{ t("Exposure") }}</th><th>{{ t("Flag") }}</th></tr></thead><tbody>
+{% for i in items %}<tr><td><a href="/items/{{ i.id }}/preview">{{ i.code }}</a></td><td class="small">{{ L(i,"stem")|truncate(90) }}</td><td class="right">{{ i.stats_n }}</td><td class="right">{{ i.p_value|num(2) }}</td><td class="right">{{ i.point_biserial|num(2) }}</td><td class="right">{{ i.exposure_count }}</td><td>{% if flag(i) %}<span class="badge pri">{{ t(flag(i)) }}</span>{% endif %}</td></tr>
+{% else %}<tr><td colspan="7" class="muted">{{ t("No statistics yet. Run the analysis after a test window.") }}</td></tr>{% endfor %}</tbody></table>
+<p><a class="btn ghost" href="/cell/export/results.xlsx">{{ t("Download results and training needs (Excel)") }}</a></p></div>
+{% endblock %}

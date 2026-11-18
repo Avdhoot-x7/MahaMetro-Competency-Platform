@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Python virtual environment & database
+.venv/
+venv/
+ENV/
+*.db
+*.sqlite3
+demo.db
+
+# Maven build outputs
+target/
+**/target/
+competency-platform/target/
+build-log.txt
+*.log
+
+# IDE and Editor files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+*.sublime-project
+*.sublime-workspace
+
+# Operating System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# LLM temporary logs
+Claude outputs/
+scratch/*.tmp

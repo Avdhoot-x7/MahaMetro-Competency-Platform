@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Edit question") }}{% endblock %}
+{% block content %}
+{% set it = item %}
+<div class="page-head"><div><h1>{{ t("Edit question") if it else t("New question") }}</h1>
+  {% if it %}<div class="muted small">{{ it.code }} · v{{ it.version }} · <span class="badge {{ {'approved':'ok','review':'dev','draft':'na','retired':'na'}[it.status] }}">{{ t(it.status|capitalize) }}</span>{% if it.review_comment %} · {{ t("Reviewer") }}: {{ it.review_comment }}{% endif %}</div>{% endif %}</div>
+  {% if it %}<a class="btn ghost" href="/items/{{ it.id }}/preview">{{ t("Preview") }}</a>{% endif %}</div>
+{% for e in errors %}<div class="flash error">{{ e }}</div>{% endfor %}
+{% include "partials/quality.html" %}
+<form method="post" action="/items/save" enctype="multipart/form-data" id="itemForm">
+<input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="id" value="{{ it.id if it else '' }}">
+<div class="card">
+  <div class="row">
+    <div><label>{{ t("Item ID") }}</label><input type="text" name="code" value="{{ it.code if it else '' }}" placeholder="{{ t('auto, e.g. D05-0007') }}"></div>
+    <div style="flex:2"><label>{{ t("Competency") }}</label><select name="competency_code" required>{% for c in comps %}<option value="{{ c.code }}" {{ 'selected' if it and it.competency_code==c.code else '' }}>{{ c.code }} {{ L(c,"name") }}{{ " (S)" if c.safety_critical else "" }}</option>{% endfor %}</select></div>
+    <div><label>{{ t("Question type") }}</label><select name="qtype" id="qtype">{% for q in qtypes %}<option value="{{ q }}" {{ 'selected' if it and it.qtype==q else '' }}>{{ t(q) }}</option>{% endfor %}</select></div>
+  </div>
+  <div class="row">
+    <div><label>{{ t("Target level") }}</label><select name="target_level">{% for l in range(1,6) %}<option {{ 'selected' if (it.target_level if it else 3)==l else '' }}>{{ l }}</option>{% endfor %}</select></div>
+    <div><label>{{ t("Bloom level") }}</label><select name="bloom">{% for b in bloom %}<option value="{{ b }}" {{ 'selected' if it and it.bloom==b else '' }}>{{ t(b) }}</option>{% endfor %}</select></div>
+    <div><label>{{ t("Pool") }}</label><select name="pool">{% for p in ["exam","practice","both"] %}<option value="{{ p }}" {{ 'selected' if it and it.pool==p else '' }}>{{ t(p) }}</option>{% endfor %}</select></div>
+    <div><label>{{ t("Marks") }}</label><input type="number" step="0.25" name="marks" value="{{ it.marks if it else 1 }}"></div>
+    <div><label>{{ t("Negative marks") }}</label><input type="number" step="0.25" name="negative_marks" value="{{ it.negative_marks if it else 0 }}"></div>
+  </div>
+  <label>{{ t("Role families") }}</label>
+  <div class="row small">{% set rfs = it.role_families if it else ["ALL"] %}<label class="check" style="flex:0 0 auto"><input type="checkbox" name="role_families" value="ALL" {{ 'checked' if 'ALL' in rfs else '' }}>{{ t("All") }}</label>
+  {% for f in families %}<label class="check" style="flex:0 0 auto"><input type="checkbox" name="role_families" value="{{ f.code }}" {{ 'checked' if f.code in rfs else '' }}>{{ f.code }}</label>{% endfor %}</div>
+</div>
+<div class="card">
+  <div class="row">
+    <div><label>{{ t("Question (English)") }}</label><textarea name="stem_en" required>{{ it.stem_en if it else '' }}</textarea></div>
+    <div><label>{{ t("Question (Marathi)") }}</label><textarea name="stem_mr" lang="mr">{{ it.stem_mr if it else '' }}</textarea></div>
+  </div>
+  <div class="row">
+    <div><label>{{ t("Audio / video / image with the question") }}</label><select name="media_id"><option value="">{{ t("None") }}</option>{% for m in media %}<option value="{{ m.id }}" {{ 'selected' if it and it.media_id==m.id else '' }}>{{ m.kind }} · {{ m.filename }}</option>{% endfor %}</select>
+      <input type="file" name="media_file" accept="audio/*,video/*,image/*" style="margin-top:6px"></div>
+    <div><label>{{ t("Reading passage (paragraph-based set)") }}</label><select name="passage_id"><option value="">{{ t("None") }}</option>{% for p in passages %}<option value="{{ p.id }}" {{ 'selected' if it and it.passage_id==p.id else '' }}>{{ p.code }} · {{ L(p,"title") }}</option>{% endfor %}</select></div>
+    <div style="flex:0 0 140px"><label>{{ t("Order in set") }}</label><input type="number" name="passage_order" value="{{ it.passage_order if it else 0 }}"></div>
+  </div>
+</div>
+<div class="card opt-editor" id="optCard">
+  <h2>{{ t("Answer options") }}</h2>
+  <p class="small muted" id="optHelp"></p>
+  <div id="optRows"></div>
+  <div id="liveChecks" class="small" style="color:var(--pri);margin:.4rem 0"></div>
+  <button type="button" class="btn ghost sm" id="addOpt">+ {{ t("Add option") }}</button>
+  <div class="row">
+    <label class="check"><input type="checkbox" name="shuffle_options" value="1" {{ 'checked' if (it.shuffle_options if it else True) else '' }}>{{ t("Shuffle option order for each candidate") }}</label>
+    <label class="check"><input type="checkbox" name="partial_credit" value="1" {{ 'checked' if it and it.partial_credit else '' }}>{{ t("Partial credit (multiple correct, sequence, match)") }}</label>
+  </div>
+</div>
+<div class="card" id="numCard"><div class="row">
+  <div><label>{{ t("Correct numeric answer") }}</label><input type="number" step="any" name="answer_numeric" value="{{ it.answer_numeric if it and it.answer_numeric is not none else '' }}"></div>
+  <div><label>{{ t("Tolerance (±)") }}</label><input type="number" step="any" name="numeric_tolerance" value="{{ it.numeric_tolerance if it else 0 }}"></div></div></div>
+<div class="card" id="fillCard"><label>{{ t("Accepted answers (one per line, English and Marathi)") }}</label><textarea name="accepted_answers">{{ (it.accepted_answers if it else [])|join("\n") }}</textarea></div>
+<div class="card" id="rubricCard"><div class="row">
+  <div><label>{{ t("Scoring rubric (English)") }}</label><textarea name="rubric_en">{{ it.rubric_en if it else '' }}</textarea></div>
+  <div><label>{{ t("Scoring rubric (Marathi)") }}</label><textarea name="rubric_mr">{{ it.rubric_mr if it else '' }}</textarea></div></div></div>
+<div class="card">
+  <div class="row">
+    <div><label>{{ t("Explanation shown after practice (English)") }}</label><textarea name="rationale_en">{{ it.rationale_en if it else '' }}</textarea></div>
+    <div><label>{{ t("Explanation (Marathi)") }}</label><textarea name="rationale_mr">{{ it.rationale_mr if it else '' }}</textarea></div>
+  </div>
+  <label>{{ t("Source reference (SOP / SR clause / manual section)") }}</label><input type="text" name="source_ref" value="{{ it.source_ref if it else '' }}">
+  <label class="check"><input type="checkbox" name="needs_sme_validation" value="1" {{ 'checked' if it and it.needs_sme_validation else '' }}>{{ t("Key must be validated against Maha Metro SR/SOP") }}</label>
+</div>
+<p><button class="btn ghost" name="action" value="save" type="submit">{{ t("Save draft") }}</button> <button class="btn" name="action" value="submit" type="submit">{{ t("Submit for review") }}</button></p>
+</form>
+{% endblock %}
+{% block scripts %}
+<script type="application/json" id="optInit">[{% if it %}{% for o in it.options %}{{ {"en": o.text_en, "mr": o.text_mr, "c": o.is_correct, "w": o.weight, "s": o.seq_position, "men": o.match_en, "mmr": o.match_mr}|tojson_safe }}{{ "," if not loop.last else "" }}{% endfor %}{% endif %}]</script>
+<script type="application/json" id="optI18n">{{ {"en": t("Option (English)"), "mr": t("Option (Marathi)"), "len": t("Left (English)"), "lmr": t("Left (Marathi)"), "ren": t("Right (English)"), "rmr": t("Right (Marathi)"),
+ "help": {"single": t("Tick the one correct option."), "truefalse": t("Two options: True and False. Tick the correct one."), "multi": t("Tick every correct option."), "sjt": t("Give each option a credit between 0 and 1 (best response = 1)."), "sequence": t("Enter the steps; write each step's correct position (1, 2, 3 …). Candidates see them shuffled."), "match": t("Enter each matching pair. Candidates see the right-hand column shuffled.")},
+ "chk": {"longest": t("The correct option is clearly the longest – candidates can guess it by length"), "allnone": t("Avoid 'all of the above' / 'none of the above' – write a real option instead"),
+ "few": t("Fewer than four options – add believable wrong options"), "mr": t("Marathi text is missing for one or more options"), "stem_mr": t("Marathi question text is missing")}}|tojson_safe }}</script>
+<script src="/static/js/item_edit.js"></script>
+{% endblock %}

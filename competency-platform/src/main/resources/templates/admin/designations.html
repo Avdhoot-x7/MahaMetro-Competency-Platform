@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Designation Mappings - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &gt; <a th:href="@{/admin/employees}">Staff</a> &gt; <span>Designation Mappings</span></p>
+
+  <h1>Designation Mappings</h1>
+  <p class="meta" style="color: #555;">
+    Map SAP HR job titles to standard Competency Role Families and Grade Bands. When importing personnel, designations without an explicit role family or grade use these rules.
+  </p>
+
+  <div th:if="${successMessage}" class="msg" style="background: #e6f4ea; color: #137333; margin-bottom: 16px;">
+    <span th:text="${successMessage}"></span>
+  </div>
+  <div th:if="${errorMessage}" class="msg error" style="margin-bottom: 16px;">
+    <span th:text="${errorMessage}"></span>
+  </div>
+
+  <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 18px; margin-bottom: 24px;">
+    <h2>Add or Update Designation Mapping</h2>
+    <form th:action="@{/admin/designations}" method="post">
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+        <div>
+          <label for="desig">Designation Title (from SAP HR):</label>
+          <input id="desig" name="designation" type="text" placeholder="e.g. Station Controller" required>
+        </div>
+        <div>
+          <label for="rf">Role Family:</label>
+          <select id="rf" name="roleFamilyCode">
+            <option value="">-- None --</option>
+            <option th:each="f : ${families}" th:value="${f.code}" th:text="${f.code + ' - ' + f.nameEn}">SC</option>
+          </select>
+        </div>
+        <div>
+          <label for="gr">Grade Band:</label>
+          <select id="gr" name="gradeCode">
+            <option value="">-- None --</option>
+            <option th:each="g : ${grades}" th:value="${g.code}" th:text="${g.code + ' (' + g.bandEn + ')'}">G1</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom: 14px;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" name="applyToExisting" value="true" checked style="width: auto; margin: 0;">
+          Apply to existing unmapped staff with this designation
+        </label>
+      </div>
+      <button type="submit">Save Mapping</button>
+      <a th:href="@{/admin/employees/import}" style="margin-left: 16px; font-size: 14px;">Back to Employee Import</a>
+    </form>
+  </div>
+
+  <h2>Existing Mappings (<span th:text="${mappings.size()}">0</span>)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Designation Title</th>
+        <th>Role Family</th>
+        <th>Grade Band</th>
+        <th style="width: 80px;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:if="${mappings.isEmpty()}">
+        <td colspan="4" style="text-align: center; color: #777; padding: 24px;">No designation mappings configured yet. Add one above.</td>
+      </tr>
+      <tr th:each="m : ${mappings}">
+        <td><b th:text="${m.designation}">Designation</b></td>
+        <td>
+          <span th:if="${m.roleFamilyCode != null}" class="badge" th:text="${m.roleFamilyCode}">SC</span>
+          <span th:if="${m.roleFamilyCode == null}" class="muted">—</span>
+        </td>
+        <td>
+          <span th:if="${m.gradeCode != null}" class="badge" th:text="${m.gradeCode}">G1</span>
+          <span th:if="${m.gradeCode == null}" class="muted">—</span>
+        </td>
+        <td>
+          <form th:action="@{/admin/designations/{id}/delete(id=${m.id})}" method="post" style="display:inline;"
+                onsubmit="return confirm('Remove this designation mapping?');">
+            <button type="submit" class="small danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

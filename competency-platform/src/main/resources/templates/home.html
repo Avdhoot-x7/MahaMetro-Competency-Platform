@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card">
+  <h1>Maha Metro Competency Assessment</h1>
+  <p th:if="${employee != null}">Signed in as <b th:text="${employee.nameEn}">Name</b> (<span th:text="${employee.empId}">ID</span>).</p>
+  <p>The dashboards will appear here as the modules are built.</p>
+  <p><a th:href="@{/delivery}">Take a test</a> (active assessment tests)</p>
+  <p><a th:href="@{/me}">My competency results</a></p>
+  <p><a th:href="@{/results}">Staff results</a> (search, filter, and export results for 25,000 staff)</p>
+  <p><a th:href="@{/team}">Team dashboard</a> (supervisors)</p>
+  <p><a th:href="@{/dashboards/department}">Department dashboard</a> (Heads of Department)</p>
+  <p><a th:href="@{/dashboards/org}">Organisation scorecard</a> (Management and Assessment Cell)</p>
+  <p><a th:href="@{/plans}">Individual Development Plans (IDP)</a> (supervisors, HoDs, Assessment Cell)</p>
+  <p><a th:href="@{/admin/employees}">Staff and roles</a> (needs the right permission)</p>
+  <p><a th:href="@{/admin/employees/import}">Employee master import</a> (Assessment Cell)</p>
+  <p><a th:href="@{/questions}">Question bank</a> (programmers and subject experts)</p>
+  <p><a th:href="@{/admin/tests}">Assessment tests &amp; scheduling</a> (Assessment Cell)</p>
+  <p><a th:href="@{/admin/interventions}">Training Catalogue</a> (Assessment Cell)</p>
+  <p><a th:href="@{/proctor/flags}">Proctoring &amp; Flagged Attempts</a> (Proctors and Assessment Cell)</p>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit">Sign out</button>
+  </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Apache Tomcat 11 optimized configuration for Maha Metro Competency Platform -->
+<Server port="8005" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <Service name="Catalina">
+    <!-- Optimized NIO2 HTTP/1.1 Connector -->
+    <Connector port="8080"
+               protocol="org.apache.coyote.http11.Http11Nio2Protocol"
+               connectionTimeout="20000"
+               maxThreads="500"
+               minSpareThreads="50"
+               acceptCount="200"
+               maxConnections="10000"
+               maxKeepAliveRequests="100"
+               keepAliveTimeout="30000"
+               compression="on"
+               compressionMinSize="1024"
+               compressibleMimeType="text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
+               URIEncoding="UTF-8"
+               redirectPort="8443" />
+
+    <Engine name="Catalina" defaultHost="localhost">
+      <Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="false">
+
+        <!-- Unpack real client IP from Nginx reverse proxy -->
+        <Valve className="org.apache.catalina.valves.RemoteIpValve"
+               remoteIpHeader="x-forwarded-for"
+               protocolHeader="x-forwarded-proto"
+               internalProxies="127\.0\.0\.1|::1|10\..*|172\.(1[6-9]|2[0-9]|3[0-1])\..*|192\.168\..*" />
+
+        <!-- Access log with response time logging (%D microseconds) -->
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="competency_access_log" suffix=".txt"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b %D" />
+      </Host>
+    </Engine>
+  </Service>
+</Server>

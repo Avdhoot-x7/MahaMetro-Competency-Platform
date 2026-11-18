@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Training catalogue") }}{% endblock %}
+{% block content %}
+<h1>{{ t("Training catalogue") }}</h1>{% include "cell/_nav.html" %}
+<p class="muted">{{ t("Prescriptions pick the intervention for the competency and gap type first, then a generic one for the category.") }}</p>
+<div class="card"><form method="post" action="/cell/interventions"><input type="hidden" name="csrf" value="{{ csrf }}"><div class="row">
+<div><label>{{ t("Competency") }}</label><select name="competency_code"><option value="">{{ t("Generic (by category)") }}</option>{% for c in comps %}<option value="{{ c.code }}">{{ c.code }} {{ L(c,"name")|truncate(40) }}</option>{% endfor %}</select></div>
+<div><label>{{ t("Category (generic only)") }}</label><select name="category"><option value="">–</option><option>Core</option><option>Behavioural</option><option>Domain</option></select></div>
+<div><label>{{ t("Gap type") }}</label><select name="gap_type">{% for g in ["safety","major","minor","behavioural","strength"] %}<option value="{{ g }}">{{ t(g) }}</option>{% endfor %}</select></div>
+<div><label>{{ t("Provider") }}</label><select name="provider">{% for p in ["CoE","CoE Lab","Simulator","OEM","iGOT Karmayogi","OJT","External"] %}<option>{{ p }}</option>{% endfor %}</select></div>
+<div><label>{{ t("Mode") }}</label><select name="mode">{% for p in ["Classroom","Simulator","Lab practical","E-learning","OJT with checklist","Workshop","Coaching","Mentoring"] %}<option>{{ p }}</option>{% endfor %}</select></div>
+<div style="flex:0 0 110px"><label>{{ t("Hours") }}</label><input type="number" step="0.5" name="duration_hours" value="4"></div></div>
+<div class="row"><div><label>{{ t("Title (English)") }}</label><input type="text" name="title_en" required></div><div><label>{{ t("Title (Marathi)") }}</label><input type="text" name="title_mr"></div><div><label>{{ t("Link (LMS / iGOT)") }}</label><input type="text" name="link"></div></div>
+<p><button class="btn">{{ t("Add") }}</button></p></form></div>
+<div class="card table-scroll"><table><thead><tr><th>{{ t("Competency") }}</th><th>{{ t("Gap type") }}</th><th>{{ t("Intervention") }}</th><th>{{ t("Provider") }}</th><th>{{ t("Mode") }}</th><th class="right">h</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.competency_code or ("* " ~ (r.category or t("any"))) }}</td><td>{{ t(r.gap_type) }}</td><td>{{ L(r,"title") }}{% if r.link %} <a href="{{ r.link }}" target="_blank" rel="noopener">↗</a>{% endif %}</td><td>{{ r.provider }}</td><td>{{ t(r.mode) }}</td><td class="right">{{ r.duration_hours|num }}</td>
+<td><form method="post" action="/cell/interventions/{{ r.id }}/delete" class="inline"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn ghost sm">✕</button></form></td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

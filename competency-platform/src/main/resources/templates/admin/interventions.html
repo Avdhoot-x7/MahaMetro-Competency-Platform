@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Training Catalogue - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &middot; <a th:href="@{/admin/tests}">Tests &amp; Scheduling</a></p>
+  <h1>Training Catalogue (Interventions)</h1>
+  <p>Standard training courses, simulator sessions, lab practicals and e-learning modules used by the automated IDP prescription engine.</p>
+
+  <p th:if="${msg != null}" class="msg" th:text="${msg}"></p>
+
+  <h2>Add New Intervention</h2>
+  <form th:action="@{/admin/interventions}" method="post" style="margin-bottom: 24px; padding: 16px; background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px;">
+    <div class="row">
+      <div>
+        <label>Competency (or blank for generic):</label>
+        <select name="competencyCode">
+          <option value="">-- Generic Fallback (No specific competency) --</option>
+          <option th:each="c : ${competencies}" th:value="${c.code}" th:text="${c.code + ' - ' + c.nameEn}"></option>
+        </select>
+      </div>
+
+      <div>
+        <label>Category (if generic):</label>
+        <select name="category">
+          <option value="">-- Any Category --</option>
+          <option value="Core">Core</option>
+          <option value="Domain">Domain</option>
+          <option value="Behavioural">Behavioural</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Gap Type:</label>
+        <select name="gapType" required>
+          <option value="safety">safety (30-day target)</option>
+          <option value="major">major (60-day target)</option>
+          <option value="minor">minor (90-day target)</option>
+          <option value="behavioural">behavioural (90-day target)</option>
+          <option value="strength">strength (180-day target)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <label>Title (English):</label>
+      <input type="text" name="titleEn" placeholder="e.g. Traction Power Safety Refresher" required>
+    </div>
+
+    <div class="row" style="margin-top: 10px;">
+      <div>
+        <label>Provider:</label>
+        <select name="provider">
+          <option value="CoE">CoE (Centre of Excellence)</option>
+          <option value="Simulator">Simulator</option>
+          <option value="CoE Lab">CoE Lab</option>
+          <option value="iGOT Karmayogi">iGOT Karmayogi</option>
+          <option value="OEM">OEM</option>
+          <option value="OJT">OJT</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Mode:</label>
+        <select name="mode">
+          <option value="Classroom">Classroom</option>
+          <option value="Simulator">Simulator</option>
+          <option value="Lab practical">Lab practical</option>
+          <option value="Workshop">Workshop</option>
+          <option value="E-learning">E-learning</option>
+          <option value="Mentoring">Mentoring</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Duration (Hours):</label>
+        <input type="number" step="0.5" name="durationHours" value="4.0" required>
+      </div>
+
+      <div>
+        <label>Course Link / Reference:</label>
+        <input type="text" name="link" placeholder="https://igot.gov.in/...">
+      </div>
+    </div>
+
+    <button type="submit" style="margin-top: 14px;">Add Intervention to Catalogue</button>
+  </form>
+
+  <h2>Current Catalogue (<span th:text="${#lists.size(interventions)}">0</span>)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Competency / Category</th>
+        <th>Gap Type</th>
+        <th>Course Title</th>
+        <th>Provider</th>
+        <th>Mode</th>
+        <th>Hours</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="iv : ${interventions}">
+        <td>
+          <b th:if="${iv.competencyCode != null}" th:text="${iv.competencyCode}"></b>
+          <span th:if="${iv.competencyCode == null}" style="color: #666;">
+            Generic (<span th:text="${iv.category != null ? iv.category : 'All'}"></span>)
+          </span>
+        </td>
+        <td>
+          <span class="badge" th:classappend="${iv.gapType == 'safety' ? 'safety-gate' : (iv.gapType == 'major' ? 'priority' : (iv.gapType == 'minor' ? 'developing' : (iv.gapType == 'strength' ? 'green' : '')))}"
+                th:text="${iv.gapType}">safety</span>
+        </td>
+        <td>
+          <b th:text="${iv.titleEn}">Course Title</b>
+          <div th:if="${iv.link != null and !iv.link.isEmpty()}">
+            <a th:href="${iv.link}" target="_blank" style="font-size:12px;">Link</a>
+          </div>
+        </td>
+        <td th:text="${iv.provider}">CoE</td>
+        <td th:text="${iv.mode}">Classroom</td>
+        <td th:text="${iv.durationHours}">4.0</td>
+        <td>
+          <form th:action="@{/admin/interventions/{id}/delete(id=${iv.id})}" method="post" onsubmit="return confirm('Remove this intervention from catalogue?');">
+            <button type="submit" class="small danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

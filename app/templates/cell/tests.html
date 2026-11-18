@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Tests & schedules") }}{% endblock %}
+{% block content %}
+<h1>{{ t("Tests & schedules") }}</h1>{% include "cell/_nav.html" %}
+<p><a class="btn" href="/cell/tests/new">{{ t("New test") }}</a></p>
+<div class="card table-scroll"><table><thead><tr><th>{{ t("Code") }}</th><th>{{ t("Title") }}</th><th>{{ t("Type") }}</th><th>{{ t("Window") }}</th><th>{{ t("Status") }}</th><th class="right">{{ t("Attempts") }}</th></tr></thead><tbody>
+{% for x in tests %}<tr><td><a href="/cell/tests/{{ x.id }}">{{ x.code }}</a></td><td>{{ x.title(lang) }}</td><td>{{ x.kind }}</td><td class="small">{{ x.start_at|dt }} – {{ x.end_at|dt }}</td>
+<td><span class="badge {{ {'published':'ok','draft':'na','closed':'na'}[x.status] }}">{{ t(x.status|capitalize) }}</span></td><td class="right small">{% for s, n in stats[x.id].items() %}{{ t(s) }} {{ n }}<br>{% endfor %}</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

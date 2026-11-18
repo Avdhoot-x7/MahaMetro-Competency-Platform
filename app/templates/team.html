@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ t("My team") }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ t("My team") }}</h1><div class="muted">{{ t("Staff reporting to you") }}: {{ members|length }}</div></div></div>
+{% include "partials/summary_kpis.html" %}
+<div class="card table-scroll heat" style="margin-top:16px">
+  <h2>{{ t("Team heat map") }}</h2>
+  {% if not members %}<p class="muted">{{ t("No staff are mapped to you as reporting officer yet.") }}</p>{% else %}
+  <table>
+    <thead><tr><th>{{ t("Employee") }}</th><th>{{ t("Readiness") }}</th>{% for c in codes %}<th class="rot" title="{{ L(comps[c], 'name') }}">{{ c }} {{ L(comps[c], "name")|truncate(26) }}</th>{% endfor %}<th>{{ t("Plan") }}</th></tr></thead>
+    <tbody>
+    {% for m in members %}{% set p = profiles[m.id] %}{% set rows = {} %}{% for r in p.rows %}{% set _ = rows.update({r.code: r}) %}{% endfor %}
+      <tr><td class="nowrap"><a href="/employee/{{ m.emp_id }}">{{ m.name(lang) }}</a><div class="small muted">{{ m.designation }}</div></td>
+        <td><span class="badge {{ status_class[p.readiness] }}">{{ t({"Red":"Red","Amber":"Amber","Green":"Green","None":"Not assessed"}[p.readiness]) }}</span></td>
+        {% for c in codes %}{% set r = rows.get(c) %}
+          {% if not r %}<td class="cell"></td>
+          {% else %}<td class="cell {{ status_class[r.status] }}" title="{{ c }}: {{ t(r.status) }} · {{ t('req.') }} {{ r.required }} · {{ r.latest|num }}">{{ r.level if r.latest is not none else "·" }}</td>{% endif %}
+        {% endfor %}
+        <td>{% set pl = plans.get(m.id) %}{% if pl %}<span class="badge {{ 'ok' if pl.status=='confirmed' else 'na' }}">{{ t(pl.status|capitalize) }}</span>{% else %}–{% endif %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p class="small muted">{{ t("Cell number = attained level. Colours: green meets, yellow 1-level gap, orange 2+ level gap, red safety gate, grey not assessed.") }}</p>
+  {% endif %}
+</div>
+{% if summary.top_gaps %}
+<div class="card"><h2>{{ t("Most common gaps in the team") }}</h2>
+<table>{% for g in summary.top_gaps %}<tr><td><b>{{ g.code }}</b> {{ g["name_" ~ lang] or g.name_en }}</td><td class="right">{{ g.count }}</td></tr>{% endfor %}</table></div>
+{% endif %}
+{% endblock %}

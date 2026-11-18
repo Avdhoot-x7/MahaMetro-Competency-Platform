@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Organisation") }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ t("Organisation scorecard") }}</h1><div class="muted">{{ t("Aggregated results – no individual data") }}</div></div>
+<button class="btn ghost noprint" onclick="window.print()">{{ t("Print") }}</button></div>
+{% include "partials/summary_kpis.html" %}
+<div class="grid g2" style="margin-top:16px">
+  <div class="card"><h2>{{ t("% of competency records meeting requirement, by role family") }}</h2>
+    <div class="chart-box"><canvas id="famChart"></canvas></div>
+    <script type="application/json" data-chart="famChart">{{ {"type":"bar","data":{"labels": by_family|map(attribute="key")|list,"datasets":[{"label": t("% meeting"),"data": by_family|map(attribute="meets_pct")|list,"backgroundColor":"brand","borderRadius":4}]},"options":{"plugins":{"legend":{"display":false}},"scales":{"y":{"min":0,"max":100}}}}|tojson_safe }}</script></div>
+  <div class="card"><h2>{{ t("Readiness by role family") }}</h2>
+    <div class="chart-box"><canvas id="ragChart"></canvas></div>
+    <script type="application/json" data-chart="ragChart">{{ {"type":"bar","data":{"labels": by_family|map(attribute="key")|list,"datasets":[
+      {"label": t("Red"),"data": by_family|map(attribute="rag")|map(attribute="Red")|list,"backgroundColor":"gate"},
+      {"label": t("Amber"),"data": by_family|map(attribute="rag")|map(attribute="Amber")|list,"backgroundColor":"pri"},
+      {"label": t("Green"),"data": by_family|map(attribute="rag")|map(attribute="Green")|list,"backgroundColor":"ok"},
+      {"label": t("Not assessed"),"data": by_family|map(attribute="rag")|map(attribute="None")|list,"backgroundColor":"na"}]},
+      "options":{"scales":{"x":{"stacked":true},"y":{"stacked":true,"ticks":{"precision":0}}}}}|tojson_safe }}</script></div>
+</div>
+{% set rows = by_family %}{% set title = t("By role family") %}{% set label = "Role family" %}{% set names = families %}{% include "partials/breakdown.html" %}
+{% set rows = by_location %}{% set title = t("By location") %}{% set label = "Location" %}{% set names = none %}{% include "partials/breakdown.html" %}
+{% set rows = by_grade %}{% set title = t("By grade band") %}{% set label = "Grade" %}{% set names = none %}{% include "partials/breakdown.html" %}
+{% include "partials/bench_table.html" %}
+{% endblock %}
+{% block scripts %}<script src="/static/vendor/chart.umd.min.js"></script><script src="/static/js/charts.js"></script>{% endblock %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Staff - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a></p>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <h1 style="margin: 0;">Staff (<span th:text="${result.totalElements}">0</span>)</h1>
+    <div style="display: flex; gap: 10px;">
+      <a th:href="@{/admin/employees/import}" style="display: inline-block; padding: 6px 12px; background: #1f3a5f; color: #fff; border-radius: 4px; text-decoration: none; font-size: 14px;">Import Staff</a>
+      <a th:href="@{/admin/designations}" style="display: inline-block; padding: 6px 12px; background: #e3e8ef; color: #1f3a5f; border-radius: 4px; text-decoration: none; font-size: 14px;">Designation Mappings</a>
+    </div>
+  </div>
+  <form th:action="@{/admin/employees}" method="get" class="row">
+    <input name="q" type="text" th:value="${q}" placeholder="Employee ID or name">
+    <button type="submit">Search</button>
+  </form>
+  <table>
+    <thead><tr><th>Employee ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Role family</th><th>Grade</th><th>Active</th></tr></thead>
+    <tbody>
+    <tr th:each="e : ${result.content}">
+      <td><a th:href="@{/admin/employees/{id}(id=${e.id})}" th:text="${e.empId}">ID</a></td>
+      <td th:text="${e.nameEn}">Name</td>
+      <td th:text="${e.designation}"></td>
+      <td th:text="${e.department}"></td>
+      <td th:text="${e.roleFamilyCode}"></td>
+      <td th:text="${e.gradeCode}"></td>
+      <td th:text="${e.active} ? 'Yes' : 'No'"></td>
+    </tr>
+    </tbody>
+  </table>
+  <p class="row">
+    <a th:if="${result.hasPrevious()}" th:href="@{/admin/employees(q=${q},page=${result.number - 1})}">Previous</a>
+    <span>Page <span th:text="${result.number + 1}">1</span> of <span th:text="${result.totalPages}">1</span></span>
+    <a th:if="${result.hasNext()}" th:href="@{/admin/employees(q=${q},page=${result.number + 1})}">Next</a>
+  </p>
+</main>
+</body>
+</html>

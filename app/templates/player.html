@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ test.title(lang) }}{% endblock %}
+{% block content %}
+<div class="warn-bar" id="warnBar"></div>
+<div class="player">
+  <div>
+    <div class="card" id="qCard">
+      <div class="page-head" style="margin-bottom:4px">
+        <div class="muted small" id="qMeta"></div>
+        <div style="display:flex;gap:6px">
+          {% for code, name in languages.items() %}<button type="button" class="btn ghost sm langbtn" data-lang="{{ code }}">{{ name }}</button>{% endfor %}
+        </div>
+      </div>
+      <div id="passage"></div>
+      <div id="media" class="media-stem"></div>
+      <div class="q-stem" id="stem"></div>
+      <div id="answer"></div>
+      <div class="qnav">
+        <div><button type="button" class="btn ghost" id="prevBtn">{{ t("Previous") }}</button>
+          <button type="button" class="btn ghost" id="flagBtn">{{ t("Mark for review") }}</button>
+          <button type="button" class="btn ghost" id="clearBtn">{{ t("Clear answer") }}</button></div>
+        <button type="button" class="btn" id="nextBtn">{{ t("Save and next") }}</button>
+      </div>
+      <div id="feedback"></div>
+    </div>
+  </div>
+  <aside class="palette-card">
+    <div class="card">
+      <div class="muted small">{{ t("Time left") }}</div>
+      <div class="timer" id="timer">--:--</div>
+      <div class="save-state" id="saveState"></div>
+    </div>
+    <div class="card">
+      <h3>{{ t("Questions") }}</h3>
+      <div class="palette" id="palette"></div>
+      <div class="legend small" style="margin-top:8px"><span><i style="background:var(--ok-bg)"></i>{{ t("Answered") }}</span><span><i style="background:var(--dev-bg)"></i>{{ t("For review") }}</span></div>
+      <p class="small muted" id="counts"></p>
+      <form method="post" action="/attempt/{{ att.id }}/submit" id="submitForm"><input type="hidden" name="csrf" value="{{ csrf }}">
+        <button class="btn danger" type="submit" style="width:100%;justify-content:center">{{ t("Submit test") }}</button></form>
+    </div>
+    {% if test.proctoring.get("webcam") and not test.is_practice %}<div class="card"><video id="cam" autoplay muted playsinline style="width:100%;border-radius:8px"></video><canvas id="camCanvas" width="320" height="240" hidden></canvas></div>{% endif %}
+  </aside>
+</div>
+<script type="application/json" id="attemptData">{{ data|tojson_safe }}</script>
+<script type="application/json" id="i18n">{{ {
+  "q": t("Question"), "of": t("of"), "marks": t("marks"), "selectOne": t("Select one answer"),
+  "selectAll": t("Select all answers that apply"), "order": t("Put the steps in the correct order (use the arrows)"),
+  "match": t("Match each item on the left with one on the right"), "num": t("Enter a number"),
+  "typeAns": t("Type your answer"), "write": t("Write your answer"), "record": t("Record answer"),
+  "stop": t("Stop"), "recorded": t("Answer recorded"), "rerecord": t("Record again"), "choose": t("Choose…"),
+  "saved": t("All answers saved"), "saving": t("Saving…"), "offline": t("Not saved – check network. Retrying…"),
+  "answered": t("Answered"), "review": t("For review"), "unanswered": t("Unanswered"),
+  "confirm": t("Submit the test? Unanswered questions: {n}. You cannot change answers after submitting."),
+  "tabWarn": t("Leaving the test window is recorded. Switches so far: {n}"),
+  "fsWarn": t("Please return to full screen to continue the test."), "fsBtn": t("Return to full screen"),
+  "timeUp": t("Time is up. Submitting your answers…"), "noMic": t("Microphone not available. Allow microphone access and try again."),
+  "playOnce": t("Listen carefully. You can replay the clip."), "true": t("True"), "false": t("False"),
+  "unmark": t("Remove review mark"), "mark": t("Mark for review"), "passage": t("Read the passage")
+}|tojson_safe }}</script>
+{% endblock %}
+{% block scripts %}<script src="/static/js/player.js"></script>{% endblock %}

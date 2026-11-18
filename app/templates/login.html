@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Sign in") }}{% endblock %}
+{% block content %}
+<div class="login">
+  <div class="card">
+    <h1>{{ t("Sign in") }}</h1>
+    <p class="muted">{{ t("Use your Maha Metro account. Your tests and results are linked to your employee ID.") }}</p>
+    {% if "oidc" in modes %}
+      {% if oidc_ready %}<a class="btn sso-btn" href="/auth/oidc?next={{ next }}">{{ t("Sign in with Maha Metro single sign-on") }}</a>
+      {% else %}<div class="flash info">{{ t("Single sign-on is not configured yet.") }}</div>{% endif %}
+    {% endif %}
+    {% if "local" in modes %}
+      {% if "oidc" in modes %}<div class="divider">{{ t("or administrator sign-in") }}</div>{% endif %}
+      <form method="post" action="/login">
+        <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="next" value="{{ next }}">
+        <label for="emp_id">{{ t("Employee ID") }}</label><input id="emp_id" name="emp_id" type="text" autocomplete="username" required>
+        <label for="pw">{{ t("Password") }}</label><input id="pw" name="password" type="password" autocomplete="current-password" required>
+        <p><button class="btn" type="submit">{{ t("Sign in") }}</button></p>
+      </form>
+    {% endif %}
+  </div>
+  {% if demo_users %}
+  <div class="card">
+    <h2>{{ t("Demo: sign in as") }}</h2>
+    <p class="muted small">{{ t("Demo mode is on. Each account shows a different role-based dashboard. Turn DEMO_MODE off in production.") }}</p>
+    {% for u in demo_users %}
+    <form method="post" action="/login/demo" style="margin:.35rem 0">
+      <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="emp_id" value="{{ u.emp_id }}">
+      <button class="btn ghost" style="width:100%;justify-content:space-between" type="submit"><span>{{ u.name(lang) }}</span><span class="muted small">{{ u.designation }} · {{ u.roles|reject("equalto","employee")|join(", ") or "employee" }}</span></button>
+    </form>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

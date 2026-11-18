@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Complete - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card">
+  <div style="text-align:center; padding:20px 0;">
+    <h1 style="color:#2e7d32; margin-bottom:8px;">Test Submitted Successfully!</h1>
+    <p style="font-size:16px;">Thank you, <b th:text="${employee.nameEn}">Employee</b>.</p>
+
+    <div style="background:#f4fbf4; border:1px solid #c8e6c9; border-radius:8px; padding:20px; margin:20px 0; display:inline-block; min-width:300px;">
+      <p style="margin:6px 0;"><b>Test:</b> <span th:text="${test != null ? test.titleEn : 'Assessment Test'}">Test</span></p>
+      <p style="margin:6px 0;"><b>Status:</b> <span th:text="${attempt.status}" style="font-weight:bold;">SCORED</span></p>
+      <p style="margin:6px 0; font-size:20px;">
+        <b>Score:</b> <span th:text="${attempt.score}">0</span> / <span th:text="${attempt.maxScore}">0</span>
+        (<b th:text="${attempt.percent} + '%'">0%</b>)
+      </p>
+    </div>
+
+    <p style="margin-top:20px;">
+      Your competency ratings have been updated in your profile.
+    </p>
+
+    <div style="margin-top:24px; display:flex; justify-content:center; gap:16px;">
+      <a th:href="@{/me}" style="background:#1976d2; color:#fff; padding:10px 22px; text-decoration:none; border-radius:4px; font-weight:bold;">View My Competency Results &rarr;</a>
+      <a th:href="@{/}" style="background:#757575; color:#fff; padding:10px 22px; text-decoration:none; border-radius:4px; font-weight:bold;">Home</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

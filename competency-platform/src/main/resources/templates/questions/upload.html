@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upload questions - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/questions}">Back to the question bank</a></p>
+  <h1>Upload questions from Excel</h1>
+  <p>Fill in the <a th:href="@{/questions/template.xlsx}">Excel template</a>, one question per row, then upload it here.
+     To show a drawing, type the SVG code inside the question text at the place where it should appear.</p>
+  <div th:if="${report != null}">
+    <p class="msg"><b th:text="${report.created}">0</b> question(s) added. They are now waiting for a subject expert.</p>
+    <div class="msg error" th:if="${!#lists.isEmpty(report.errors)}">
+      <b>Not added:</b>
+      <ul><li th:each="e : ${report.errors}" th:text="${e}">error</li></ul>
+    </div>
+  </div>
+  <form th:action="@{/questions/upload}" method="post" enctype="multipart/form-data">
+    <label for="competencyCode">These questions belong to competency</label>
+    <select id="competencyCode" name="competencyCode" required>
+      <option value="">Choose...</option>
+      <option th:each="c : ${competencies}" th:value="${c.code}" th:selected="${c.code == chosen}"
+              th:text="${c.code + ' - ' + c.nameEn}">C01 - Name</option>
+    </select>
+    <label for="file">Excel file (.xlsx)</label>
+    <input id="file" name="file" type="file" accept=".xlsx" required>
+    <button type="submit">Upload</button>
+  </form>
+</main>
+</body>
+</html>

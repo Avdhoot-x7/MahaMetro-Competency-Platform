@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employee - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/admin/employees}">Back to staff</a></p>
+  <h1><span th:text="${employee.nameEn}">Name</span> (<span th:text="${employee.empId}">ID</span>)</h1>
+  <p>
+    <span th:text="${employee.designation}"></span> &middot; <span th:text="${employee.department}"></span> &middot;
+    Role family <b th:text="${employee.roleFamilyCode}"></b> &middot; Grade <b th:text="${employee.gradeCode}"></b>
+  </p>
+  <h2>Roles</h2>
+  <table>
+    <thead><tr><th>Role</th><th>Scope</th><th>Value</th><th>Given by</th><th></th></tr></thead>
+    <tbody>
+    <tr th:each="g : ${grants}">
+      <td th:text="${g.roleCode}"></td>
+      <td th:text="${g.scopeType}"></td>
+      <td th:text="${g.scopeValue}"></td>
+      <td th:text="${g.grantedBy}"></td>
+      <td>
+        <form th:action="@{/admin/employees/{id}/roles/{gid}/delete(id=${employee.id},gid=${g.id})}" method="post">
+          <button type="submit" class="small">Remove</button>
+        </form>
+      </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(grants)}"><td colspan="5">No extra roles. Every employee can take tests.</td></tr>
+    </tbody>
+  </table>
+  <h2>Give a role</h2>
+  <form th:action="@{/admin/employees/{id}/roles(id=${employee.id})}" method="post" class="row">
+    <select name="roleCode">
+      <option th:each="r : ${roles}" th:value="${r.code}" th:text="${r.nameEn}">Role</option>
+    </select>
+    <select name="scopeType">
+      <option value="ALL">Everywhere</option>
+      <option value="DEPARTMENT">One department</option>
+      <option value="ROLE_FAMILY">One role family</option>
+      <option value="COMPETENCY">One competency</option>
+      <option value="LOCATION">One location</option>
+      <option value="TEST">One test</option>
+    </select>
+    <input name="scopeValue" type="text" placeholder="Code or name (leave empty for Everywhere)">
+    <button type="submit">Give role</button>
+  </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Question-writing guide") }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ t("Question-writing guide") }}</h1>
+<div class="muted small">{{ t("For SME panels and reviewers. The quality checks in the question editor follow these rules.") }}</div></div>
+<div><a class="btn ghost" href="/items">{{ t("Question bank") }}</a> <button class="btn ghost" onclick="window.print()">{{ t("Print") }}</button></div></div>
+<div class="card guide" lang="en">{{ guide }}</div>
+<style>.guide h2{font-size:1.25rem;margin-top:.2rem}.guide h3{margin-top:1.2rem}.guide li{margin:.25rem 0}.guide p{line-height:1.55}
+@media print{header,nav,.page-head .btn,footer{display:none!important}.guide{border:0;box-shadow:none}}</style>
+{% endblock %}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employee Master Import - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &gt; <a th:href="@{/admin/employees}">Staff</a> &gt; <span>Employee Import</span></p>
+
+  <h1>Employee Master Import (CSV / Excel)</h1>
+  <p class="meta" style="color: #555;">
+    Upload personnel records from SAP HR or a spreadsheet. You can run a dry-run first to check for formatting or designation errors before applying changes to the database.
+  </p>
+
+  <div th:if="${successMessage}" class="msg" style="background: #e6f4ea; color: #137333; margin-bottom: 16px;">
+    <span th:text="${successMessage}"></span>
+  </div>
+  <div th:if="${errorMessage}" class="msg error" style="margin-bottom: 16px;">
+    <span th:text="${errorMessage}"></span>
+  </div>
+
+  <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 18px; margin-bottom: 24px;">
+    <h2>Upload File</h2>
+    <form th:action="@{/admin/employees/import}" method="post" enctype="multipart/form-data">
+      <div style="margin-bottom: 14px;">
+        <label for="file">Choose CSV or Excel file (.csv, .xlsx, .xlsm):</label>
+        <input id="file" type="file" name="file" accept=".csv,.xlsx,.xlsm,.xls" required style="padding: 6px;">
+      </div>
+      <div style="margin-bottom: 14px;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" name="dryRun" value="true" checked style="width: auto; margin: 0;">
+          <b>Dry run mode</b> (Validate data and show report without saving changes to database)
+        </label>
+      </div>
+      <button type="submit">Process File</button>
+      <a th:href="@{/admin/employees/template}" style="margin-left: 16px; font-size: 14px;">Download template (.xlsx)</a>
+      <a th:href="@{/admin/designations}" style="margin-left: 16px; font-size: 14px;">Manage Designation Mappings</a>
+    </form>
+  </div>
+
+  <div th:if="${report != null}" style="border: 1px solid #c9d2de; border-radius: 6px; padding: 20px; margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 style="margin: 0;">Import Report Summary</h2>
+      <span class="badge" th:classappend="${report.dryRun} ? 'amber' : 'green'"
+            th:text="${report.dryRun} ? 'DRY RUN VALIDATION' : 'LIVE IMPORT COMPLETED'">Status</span>
+    </div>
+
+    <div style="display: flex; gap: 24px; margin: 16px 0; font-size: 15px;">
+      <div>Created (New): <b th:text="${report.created}" style="color: #17603a;">0</b></div>
+      <div>Updated (Existing): <b th:text="${report.updated}" style="color: #1f3a5f;">0</b></div>
+      <div>Skipped (Invalid): <b th:text="${report.skipped}" style="color: #c0392b;">0</b></div>
+    </div>
+
+    <div th:if="${!report.errors.isEmpty()}" style="margin-top: 18px;">
+      <h3 style="font-size: 15px; color: #8a1c1c; margin-bottom: 8px;">
+        Errors (<span th:text="${report.errors.size()}">0</span>)
+      </h3>
+      <div class="msg error" style="max-height: 200px; overflow-y: auto;">
+        <ul>
+          <li th:each="err : ${report.errors}" th:text="${err}">Error</li>
+        </ul>
+      </div>
+    </div>
+
+    <div th:if="${!report.warnings.isEmpty()}" style="margin-top: 18px;">
+      <h3 style="font-size: 15px; color: #b06000; margin-bottom: 8px;">
+        Warnings (<span th:text="${report.warnings.size()}">0</span>)
+      </h3>
+      <div class="msg" style="background: #fff8e1; color: #6d4c00; max-height: 200px; overflow-y: auto;">
+        <ul>
+          <li th:each="warn : ${report.warnings}" th:text="${warn}">Warning</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <details style="margin-top: 20px;">
+    <summary style="cursor: pointer; font-weight: bold; color: #1f3a5f;">Supported Column Headers &amp; Aliases</summary>
+    <div style="padding: 12px; font-size: 13px; line-height: 1.6; color: #444;">
+      <table style="font-size: 13px;">
+        <thead><tr><th>Field</th><th>Required</th><th>Recognised Column Names</th></tr></thead>
+        <tbody>
+          <tr><td><b>Employee ID</b></td><td>Yes</td><td>Employee ID, Personnel Number, Pers.No., PERNR, Employee No, Emp Code</td></tr>
+          <tr><td><b>Name (English)</b></td><td>Yes</td><td>Name, Employee Name, Name (English), Full Name</td></tr>
+          <tr><td><b>Name (Marathi)</b></td><td>No</td><td>Name (Marathi), Marathi Name, name_mr</td></tr>
+          <tr><td><b>Designation</b></td><td>No</td><td>Designation, Position, Position Text, Job</td></tr>
+          <tr><td><b>Department</b></td><td>No</td><td>Department, Org Unit, Organizational Unit, Dept</td></tr>
+          <tr><td><b>Location</b></td><td>No</td><td>Location, Personnel Area, Personnel Subarea, Work Location</td></tr>
+          <tr><td><b>Grade</b></td><td>No</td><td>Grade, Grade Band, Pay Level, Employee Subgroup (G1-G5)</td></tr>
+          <tr><td><b>Role Family</b></td><td>No</td><td>Role family, Role Family Code (e.g. SC, TO, OCC, RS, TPS, EM, etc.)</td></tr>
+          <tr><td><b>Reporting Officer</b></td><td>No</td><td>Reporting Officer, Reporting Officer ID, Supervisor ID, Manager ID, RO</td></tr>
+          <tr><td><b>Email</b></td><td>No</td><td>Email, E-mail, Email ID, Official Email</td></tr>
+          <tr><td><b>Mobile</b></td><td>No</td><td>Mobile, Mobile No, Phone</td></tr>
+          <tr><td><b>Extra Time %</b></td><td>No</td><td>Extra time %, Extra Time (e.g. 20)</td></tr>
+          <tr><td><b>Active</b></td><td>No</td><td>Active, Status, Employment Status (Y/N, 1/0)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+</main>
+</body>
+</html>

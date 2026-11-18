@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Staff Results - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a></p>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <h1 style="margin: 0;">Staff Competency Results (<span th:text="${total}">0</span>)</h1>
+    <div style="display: flex; gap: 10px;">
+      <a th:href="@{/results/export(q=${filter.q},department=${filter.department},roleFamilyCode=${filter.roleFamilyCode},readiness=${filter.readiness})}"
+         style="display: inline-block; padding: 6px 12px; background: #1f3a5f; color: #fff; border-radius: 4px; text-decoration: none; font-size: 14px;">
+        Export to Excel (.xlsx)
+      </a>
+    </div>
+  </div>
+
+  <div class="row" style="margin-bottom: 16px;">
+    <a th:href="@{/results(q=${filter.q},department=${filter.department},roleFamilyCode=${filter.roleFamilyCode},readiness='Red')}" style="text-decoration: none;">
+      <span class="badge red" th:text="${red}">0</span> <b>Red</b>
+    </a>
+    <a th:href="@{/results(q=${filter.q},department=${filter.department},roleFamilyCode=${filter.roleFamilyCode},readiness='Amber')}" style="text-decoration: none; margin-left: 12px;">
+      <span class="badge amber" th:text="${amber}">0</span> <b>Amber</b>
+    </a>
+    <a th:href="@{/results(q=${filter.q},department=${filter.department},roleFamilyCode=${filter.roleFamilyCode},readiness='Green')}" style="text-decoration: none; margin-left: 12px;">
+      <span class="badge green" th:text="${green}">0</span> <b>Green</b>
+    </a>
+    <a th:href="@{/results(q=${filter.q},department=${filter.department},roleFamilyCode=${filter.roleFamilyCode},readiness='Not assessed')}" style="text-decoration: none; margin-left: 12px;">
+      <span class="badge" th:text="${notAssessed}">0</span> <b>Not assessed</b>
+    </a>
+    <a th:if="${!filter.readiness.isEmpty()}" th:href="@{/results(q=${filter.q},department=${filter.department},roleFamilyCode=${filter.roleFamilyCode})}" style="margin-left: 16px; font-size: 13px;">Clear filter</a>
+  </div>
+
+  <form th:action="@{/results}" method="get" class="row" style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #c9d2de; margin-bottom: 16px;">
+    <input name="q" type="text" th:value="${filter.q}" placeholder="Search ID, name, designation" style="flex: 2;">
+    <select name="department" style="flex: 1.5;">
+      <option value="">All Departments</option>
+      <option th:each="d : ${departments}" th:value="${d}" th:text="${d}" th:selected="${d.equalsIgnoreCase(filter.department)}">Operations</option>
+    </select>
+    <select name="roleFamilyCode" style="flex: 1.5;">
+      <option value="">All Role Families</option>
+      <option th:each="f : ${families}" th:value="${f.code}" th:text="${f.code + ' - ' + f.nameEn}" th:selected="${f.code.equalsIgnoreCase(filter.roleFamilyCode)}">SC</option>
+    </select>
+    <select name="readiness" style="flex: 1;">
+      <option value="">All Readiness</option>
+      <option value="Red" th:selected="${'Red'.equalsIgnoreCase(filter.readiness)}">Red</option>
+      <option value="Amber" th:selected="${'Amber'.equalsIgnoreCase(filter.readiness)}">Amber</option>
+      <option value="Green" th:selected="${'Green'.equalsIgnoreCase(filter.readiness)}">Green</option>
+      <option value="Not assessed" th:selected="${'Not assessed'.equalsIgnoreCase(filter.readiness)}">Not assessed</option>
+    </select>
+    <button type="submit" class="small">Filter</button>
+    <a th:href="@{/results}" style="font-size: 13px; margin-left: 6px;">Reset</a>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Role Family</th>
+        <th>Grade</th>
+        <th>Readiness</th>
+        <th>Met %</th>
+        <th>Gaps</th>
+        <th>Safety Gates</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="r : ${staffRows}">
+        <td><a th:href="@{/results/{id}(id=${r.id})}" th:text="${r.empId}">ID</a></td>
+        <td th:text="${r.nameEn}">Name</td>
+        <td th:text="${r.department}">Department</td>
+        <td th:text="${r.roleFamilyCode}">Role family</td>
+        <td th:text="${r.gradeCode}">Grade</td>
+        <td>
+          <span class="badge" th:classappend="${#strings.toLowerCase(r.readiness)}" th:text="${r.readiness}">Green</span>
+        </td>
+        <td th:text="${r.indexPct != null} ? ${r.indexPct} + '%' : '-'"></td>
+        <td th:text="${r.gapsCount}">0</td>
+        <td>
+          <span th:if="${r.safetyGates > 0}" class="badge red" th:text="${r.safetyGates}">0</span>
+          <span th:if="${r.safetyGates == 0}" th:text="${r.safetyGates}">0</span>
+        </td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(staffRows)}">
+        <td colspan="9" style="text-align: center; color: #777; padding: 24px;">No matching staff found for the selected criteria.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="row" th:if="${pageResult.totalPages > 1}" style="margin-top: 18px;">
+    <a th:if="${pageResult.hasPrevious()}"
+       th:href="@{/results(q=${filter.q},department=${filter.department},roleFamilyCode=${filter.roleFamilyCode},readiness=${filter.readiness},page=${pageResult.number - 1})}">
+      Previous
+    </a>
+    <span>Page <span th:text="${pageResult.number + 1}">1</span> of <span th:text="${pageResult.totalPages}">1</span></span>
+    <a th:if="${pageResult.hasNext()}"
+       th:href="@{/results(q=${filter.q},department=${filter.department},roleFamilyCode=${filter.roleFamilyCode},readiness=${filter.readiness},page=${pageResult.number + 1})}">
+      Next
+    </a>
+  </p>
+</main>
+</body>
+</html>

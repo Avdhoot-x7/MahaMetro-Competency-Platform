@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Audit log") }}{% endblock %}
+{% block content %}
+<h1>{{ t("Audit log") }}</h1>{% include "cell/_nav.html" %}
+<form class="card row" method="get"><div><input type="search" name="q" value="{{ q }}" placeholder="{{ t('actor, action or ID') }}"></div><div style="flex:0"><button class="btn ghost">{{ t("Search") }}</button></div></form>
+<div class="card table-scroll"><table><thead><tr><th>{{ t("Time") }}</th><th>{{ t("Actor") }}</th><th>{{ t("Action") }}</th><th>{{ t("Entity") }}</th><th>{{ t("Detail") }}</th><th>IP</th></tr></thead><tbody>
+{% for r in rows %}<tr><td class="small nowrap">{{ r.at|dt }}</td><td>{{ r.actor }}</td><td>{{ r.action }}</td><td class="small">{{ r.entity }} {{ r.entity_id }}</td><td class="small">{{ r.detail|tojson_safe|truncate(140) }}</td><td class="small">{{ r.ip }}</td></tr>{% endfor %}</tbody></table>
+<p>{% if page>1 %}<a href="?page={{ page-1 }}&q={{ q }}">‹</a>{% endif %} <a href="?page={{ page+1 }}&q={{ q }}">›</a></p></div>
+{% endblock %}

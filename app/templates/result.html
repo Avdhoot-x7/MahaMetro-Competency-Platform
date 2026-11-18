@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Result") }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>{{ test.title(lang) }}</h1><div class="muted">{{ att.employee.name(lang) }} · {{ t("submitted") }} {{ att.submitted_at|dt }}</div></div>
+  <a class="btn ghost" href="/me">{{ t("Back to my dashboard") }}</a>
+</div>
+{% set practice = att.kind == "PRACTICE" %}
+{% if att.status == "pending_manual" %}
+  <div class="flash info">{{ t("Your answers are saved. Written and spoken answers are being evaluated by the CoE Assessment Cell; your result will appear on your dashboard after evaluation.") }}</div>
+{% elif att.status == "flagged" %}
+  <div class="flash info">{{ t("Your attempt is under routine review by the CoE Assessment Cell. Your result will appear after the review.") }}</div>
+{% elif att.status == "void" %}
+  <div class="flash error">{{ t("This attempt was declared void by the CoE Assessment Cell.") }}</div>
+{% endif %}
+{% if practice or att.status == "scored" %}
+<div class="grid g3">
+  <div class="kpi"><div class="l">{{ t("Overall score") }}</div><div class="v">{{ att.percent|num }}%</div><div class="l">{{ att.score|num(2) }} / {{ att.max_score|num }} {{ t("marks") }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Questions") }}</div><div class="v">{{ att.items|length }}</div><div class="l">{{ t("correct") }}: {{ att.items|selectattr("is_correct")|list|length }}</div></div>
+  {% if profile %}<div class="kpi"><div class="l">{{ t("Estimated readiness") }}</div><div class="v"><span class="badge rag {{ status_class[profile.readiness] }}">{{ t({"Red":"Red","Amber":"Amber","Green":"Green","None":"Not assessed"}[profile.readiness]) }}</span></div><div class="l">{{ t("practice estimate, not an official result") }}</div></div>
+  {% else %}<div class="kpi"><div class="l">{{ t("Your profile") }}</div><div class="v small"><a href="/me">{{ t("See updated competency profile and development plan") }}</a></div></div>{% endif %}
+</div>
+<div class="card table-scroll" style="margin-top:16px">
+  <h2>{{ t("Result by competency") }}</h2>
+  <table><thead><tr><th>{{ t("Competency") }}</th><th class="right">{{ t("Questions") }}</th><th class="right">{{ t("Correct") }}</th><th class="right">{{ t("Score %") }}</th>
+  {% if profile %}<th class="center">{{ t("Required") }}</th><th class="center">{{ t("Estimated level") }}</th><th>{{ t("Status") }}</th>{% endif %}</tr></thead><tbody>
+  {% set prow = {} %}{% if profile %}{% for r in profile.rows %}{% set _ = prow.update({r.code: r}) %}{% endfor %}{% endif %}
+  {% for code, s in att.summary.items()|sort %}
+    <tr><td><b>{{ code }}</b> {{ L(comps[code], "name") if code in comps else "" }}</td><td class="right">{{ s.n }}</td><td class="right">{{ s.correct }}</td>
+      <td class="right"><div class="row" style="align-items:center;gap:6px;justify-content:flex-end"><span>{{ s.percent|num }}</span><div class="bar" style="max-width:90px"><span style="width:{{ s.percent }}%"></span></div></div></td>
+      {% if profile %}{% set pr = prow.get(code) %}<td class="center">{{ pr.required if pr else "–" }}</td><td class="center">{{ pr.level if pr else "–" }}</td>
+      <td>{% if pr %}<span class="badge {{ status_class[pr.status] }}">{{ t(pr.status) }}</span>{% endif %}</td>{% endif %}</tr>
+  {% endfor %}</tbody></table>
+</div>
+{% endif %}
+{% if recs %}
+<div class="card">
+  <h2>{{ t("Your preparation prescription") }}</h2>
+  <p class="muted small">{{ t("Based on this practice test. Focus first on safety-critical gaps, then on larger gaps.") }}</p>
+  {% for rec in recs %}{% set r = rec.row %}
+  <div class="plan-item {{ rec.gap_type }}"><b>{{ r.code }} {{ r.name(lang) }}</b>
+    <span class="badge {{ {'safety':'gate','major':'pri','minor':'dev','behavioural':'na','strength':'ok'}[rec.gap_type] }}">{{ t({"safety":"Safety gate","major":"Gap of 2+ levels","minor":"Gap of 1 level","behavioural":"Behavioural gap","strength":"Strength"}[rec.gap_type]) }}</span>
+    <div class="small muted">{{ t("Required") }} {{ r.required }} · {{ t("Estimated") }} {{ r.level }}</div>
+    {% if rec.intervention %}<div>{{ L(rec.intervention, "title") }} <span class="muted small">({{ rec.intervention.provider }}, {{ t(rec.intervention.mode) }})</span></div>{% endif %}
+  </div>{% endfor %}
+</div>
+{% endif %}
+{% if practice and test.show_feedback %}
+<div class="card">
+  <h2>{{ t("Answers and explanations") }}</h2>
+  {% set show_rubric = True %}{% for ai in att.items %}{% include "partials/answer_review.html" %}{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Available Tests - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &middot; <a th:href="@{/me}">My competency results</a></p>
+  <h1>Available Assessment Tests</h1>
+
+  <p class="msg error" th:if="${error != null}" th:text="${error}"></p>
+
+  <p th:if="${#lists.isEmpty(tests)}">No tests are currently scheduled for your profile or department. Check back later.</p>
+
+  <div th:each="t : ${tests}" class="card" style="margin-bottom: 16px; border: 1px solid #ddd; padding: 16px; border-radius: 6px;">
+    <h3 style="margin-top:0;"><span th:text="${t.titleEn}">Test Title</span> <span class="meta" th:text="'(' + ${t.code} + ')'"></span></h3>
+    <p class="meta" th:if="${!#strings.isEmpty(t.titleMr)}" th:text="${t.titleMr}"></p>
+    <p>
+      <b>Kind:</b> <span th:text="${t.kind}"></span> &middot;
+      <b>Duration:</b> <span th:text="${t.durationMinutes}"></span> minutes &middot;
+      <b>Questions:</b> up to <span th:text="${t.maxItems}"></span>
+    </p>
+    <form th:action="@{/delivery/tests/{id}/start(id=${t.id})}" method="post">
+      <button type="submit" style="background:#1976d2; color:#fff; padding:10px 20px; font-weight:bold; cursor:pointer; border-radius:4px;">Start / Resume Test</button>
+    </form>
+  </div>
+</main>
+</body>
+</html>

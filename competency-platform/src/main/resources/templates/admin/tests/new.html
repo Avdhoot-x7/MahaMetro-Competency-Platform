@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create Test - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/admin/tests}">Back to assessment tests</a></p>
+  <h1>Create New Assessment Test</h1>
+
+  <p class="msg error" th:if="${error != null}" th:text="${error}"></p>
+
+  <form th:action="@{/admin/tests/new}" method="post">
+    <div style="display:flex; gap:16px;">
+      <div style="flex:1;">
+        <label for="code">Test Code</label>
+        <input id="code" name="code" type="text" placeholder="e.g. T0-OPS-2027" required autofocus>
+      </div>
+      <div style="flex:1;">
+        <label for="kind">Test Kind</label>
+        <select id="kind" name="kind">
+          <option value="T0">T0 (Baseline Assessment)</option>
+          <option value="PRACTICE">PRACTICE (Practice test)</option>
+          <option value="T1">T1 (First Re-test)</option>
+          <option value="T2">T2 (Second Re-test)</option>
+          <option value="T3">T3 (Third Re-test)</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="titleEn">Title (English)</label>
+    <input id="titleEn" name="titleEn" type="text" placeholder="e.g. Operations Baseline Competency Test 2027" required>
+
+    <label for="titleMr">Title (Marathi)</label>
+    <input id="titleMr" name="titleMr" type="text" placeholder="उदा. संचालन पायाभूत सक्षमता चाचणी २०२७">
+
+    <div style="display:flex; gap:16px;">
+      <div style="flex:1;">
+        <label for="durationMinutes">Duration (Minutes)</label>
+        <input id="durationMinutes" name="durationMinutes" type="number" value="90" min="5" max="360" required>
+      </div>
+      <div style="flex:1;">
+        <label for="maxAttempts">Max Attempts (0 = unlimited)</label>
+        <input id="maxAttempts" name="maxAttempts" type="number" value="1" min="0" max="10" required>
+      </div>
+      <div style="flex:1;">
+        <label for="itemsPerCompetency">Items per Competency</label>
+        <input id="itemsPerCompetency" name="itemsPerCompetency" type="number" value="3" min="1" max="20" required>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:16px;">
+      <div style="flex:1;">
+        <label for="targetType">Target Group</label>
+        <select id="targetType" name="targetType">
+          <option value="ALL">All Employees</option>
+          <option value="ROLE_FAMILY">Role Family (e.g. SC, TO)</option>
+          <option value="GRADE">Grade (e.g. G1, G2)</option>
+          <option value="DEPARTMENT">Department (e.g. Operations, Finance)</option>
+          <option value="EMPLOYEE">Specific Employee ID</option>
+        </select>
+      </div>
+      <div style="flex:2;">
+        <label for="targetValue">Target Value(s) (comma-separated if multiple, blank for ALL)</label>
+        <input id="targetValue" name="targetValue" type="text" placeholder="e.g. SC, TO or Operations or DEMO-EMP1">
+      </div>
+    </div>
+
+    <div style="display:flex; gap:16px;">
+      <div style="flex:1;">
+        <label for="startAt">Start Window (optional)</label>
+        <input id="startAt" name="startAt" type="datetime-local">
+      </div>
+      <div style="flex:1;">
+        <label for="endAt">End Window (optional)</label>
+        <input id="endAt" name="endAt" type="datetime-local">
+      </div>
+    </div>
+
+    <div style="margin: 16px 0;">
+      <label><input type="checkbox" name="shuffleQuestions" value="true" checked> Shuffle questions for each candidate</label><br>
+      <label><input type="checkbox" name="shuffleOptions" value="true" checked> Shuffle option choices for each question</label><br>
+      <label><input type="checkbox" name="allowBack" value="true" checked> Allow navigating back to previous questions</label>
+    </div>
+
+    <button type="submit" style="padding:10px 20px; font-size:16px;">Create Test</button>
+  </form>
+</main>
+</body>
+</html>

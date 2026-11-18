@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proctoring & Flagged Attempts - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &middot; <a th:href="@{/admin/tests}">Tests Management</a></p>
+  <h1>Proctoring & Flagged Attempts</h1>
+
+  <p class="msg ok" th:if="${message != null}" th:text="${message}"></p>
+  <p class="msg error" th:if="${error != null}" th:text="${error}"></p>
+
+  <h2>Flagged Attempts Requiring Review (<span th:text="${#lists.size(flagged)}">0</span>)</h2>
+  <p th:if="${#lists.isEmpty(flagged)}" class="muted">No flagged attempts currently awaiting review.</p>
+
+  <table th:if="${!#lists.isEmpty(flagged)}" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
+    <thead>
+      <tr style="background:#f5f5f5; text-align:left; border-bottom:2px solid #ddd;">
+        <th style="padding:10px;">Attempt #</th>
+        <th style="padding:10px;">Candidate</th>
+        <th style="padding:10px;">Test</th>
+        <th style="padding:10px;">Tab Switches</th>
+        <th style="padding:10px;">Flag Reason</th>
+        <th style="padding:10px;">Submitted</th>
+        <th style="padding:10px;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="a : ${flagged}" style="border-bottom:1px solid #eee; background:#fff8e1;">
+        <td style="padding:10px;"><b th:text="'#' + ${a.id}"></b></td>
+        <td style="padding:10px;">
+          <span th:text="${candidates[a.employeeId] != null ? candidates[a.employeeId].nameEn : ('Emp #' + a.employeeId)}"></span>
+          <br><small class="meta" th:text="${candidates[a.employeeId] != null ? candidates[a.employeeId].empId : ''}"></small>
+        </td>
+        <td style="padding:10px;" th:text="${tests[a.testId] != null ? tests[a.testId].titleEn : ('Test #' + a.testId)}"></td>
+        <td style="padding:10px;">
+          <span style="color:#d32f2f; font-weight:bold;" th:text="${a.tabSwitches}"></span>
+        </td>
+        <td style="padding:10px; color:#c62828;" th:text="${a.flagReason}"></td>
+        <td style="padding:10px;" th:text="${#temporals.format(a.submittedAt, 'dd MMM yyyy HH:mm')}"></td>
+        <td style="padding:10px;">
+          <a th:href="@{/proctor/attempts/{id}(id=${a.id})}" style="background:#1976d2; color:#fff; padding:6px 14px; text-decoration:none; border-radius:4px; font-weight:bold;">Review &rarr;</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Recent Test Submissions</h2>
+  <table style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr style="background:#f5f5f5; text-align:left; border-bottom:2px solid #ddd;">
+        <th style="padding:10px;">Attempt #</th>
+        <th style="padding:10px;">Candidate</th>
+        <th style="padding:10px;">Test</th>
+        <th style="padding:10px;">Status</th>
+        <th style="padding:10px;">Score</th>
+        <th style="padding:10px;">Submitted</th>
+        <th style="padding:10px;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="a : ${allRecent}" style="border-bottom:1px solid #eee;">
+        <td style="padding:10px;" th:text="'#' + ${a.id}"></td>
+        <td style="padding:10px;">
+          <span th:text="${candidates[a.employeeId] != null ? candidates[a.employeeId].nameEn : ('Emp #' + a.employeeId)}"></span>
+        </td>
+        <td style="padding:10px;" th:text="${tests[a.testId] != null ? tests[a.testId].titleEn : ('Test #' + a.testId)}"></td>
+        <td style="padding:10px;">
+          <span th:text="${a.status}" th:style="${a.status == 'FLAGGED' ? 'color:#d32f2f; font-weight:bold;' : (a.status == 'VOID' ? 'color:#757575;' : 'color:#2e7d32; font-weight:bold;')}"></span>
+        </td>
+        <td style="padding:10px;" th:text="${a.score} + ' / ' + ${a.maxScore} + ' (' + ${a.percent} + '%)'"></td>
+        <td style="padding:10px;" th:text="${a.submittedAt != null ? #temporals.format(a.submittedAt, 'dd MMM HH:mm') : '-'}"></td>
+        <td style="padding:10px;">
+          <a th:href="@{/proctor/attempts/{id}(id=${a.id})}" style="color:#1976d2; text-decoration:none;">View Details</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

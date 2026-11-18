@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assessment Tests - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &middot; <a th:href="@{/admin/employees}">Staff and roles</a> &middot; <a th:href="@{/questions}">Question bank</a></p>
+  <h1>Assessment Tests &amp; Scheduling</h1>
+
+  <div class="actions" style="margin-bottom: 16px;">
+    <a th:href="@{/admin/tests/new}" class="btn" style="display:inline-block; padding:8px 16px; background:#1976d2; color:#fff; text-decoration:none; border-radius:4px; font-weight:bold;">+ Create new test</a>
+  </div>
+
+  <p class="filter">
+    <b>Status:</b>
+    <a th:href="@{/admin/tests}" th:classappend="${#strings.isEmpty(status)} ? 'active'">All (<span th:text="${result.totalElements}"></span>)</a> &middot;
+    <a th:href="@{/admin/tests(status='DRAFT')}" th:classappend="${status == 'DRAFT'} ? 'active'">Draft (<span th:text="${draftCount}"></span>)</a> &middot;
+    <a th:href="@{/admin/tests(status='PUBLISHED')}" th:classappend="${status == 'PUBLISHED'} ? 'active'">Published (<span th:text="${publishedCount}"></span>)</a> &middot;
+    <a th:href="@{/admin/tests(status='CLOSED')}" th:classappend="${status == 'CLOSED'} ? 'active'">Closed (<span th:text="${closedCount}"></span>)</a>
+  </p>
+
+  <p class="msg" th:if="${message != null}" th:text="${message}"></p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Title</th>
+        <th>Kind</th>
+        <th>Duration</th>
+        <th>Target</th>
+        <th>Window</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="t : ${result.content}">
+        <td><a th:href="@{/admin/tests/{id}(id=${t.id})}" th:text="${t.code}" style="font-weight:bold;">CODE</a></td>
+        <td th:text="${t.titleEn}">Title</td>
+        <td th:text="${t.kind}">T0</td>
+        <td><span th:text="${t.durationMinutes}"></span> min</td>
+        <td><span th:text="${t.targetType}"></span> <small th:if="${!#strings.isEmpty(t.targetValue)}" th:text="'(' + ${t.targetValue} + ')'"></small></td>
+        <td>
+          <small th:if="${t.startAt != null || t.endAt != null}">
+            <span th:text="${#temporals.format(t.startAt, 'dd-MM-yyyy HH:mm')}"></span> to
+            <span th:text="${#temporals.format(t.endAt, 'dd-MM-yyyy HH:mm')}"></span>
+          </small>
+          <small th:if="${t.startAt == null && t.endAt == null}">Always open</small>
+        </td>
+        <td>
+          <span th:text="${t.status}"
+                th:style="${t.status == 'PUBLISHED' ? 'color:#2e7d32;font-weight:bold;' : (t.status == 'CLOSED' ? 'color:#c62828;' : 'color:#f57f17;')}">
+          </span>
+        </td>
+      </tr>
+      <tr th:if="${result.totalElements == 0}">
+        <td colspan="7">No tests found. Click <b>Create new test</b> above to create one.</td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

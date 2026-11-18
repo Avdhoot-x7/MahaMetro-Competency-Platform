@@ -1,0 +1,56 @@
+# Production: externalized secrets and tuned infrastructure parameters
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/competency?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${DB_USER:competency}
+    password: ${DB_PASSWORD:competency}
+    hikari:
+      pool-name: MahaMetroHikariPool
+      maximum-pool-size: ${DB_POOL_SIZE:50}
+      minimum-idle: ${DB_MIN_IDLE:10}
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+      leak-detection-threshold: 60000
+
+  # Session management: 'none' for standalone/sticky-sessions, 'redis' for multi-node clustering
+  session:
+    store-type: ${SESSION_STORE_TYPE:none}
+    timeout: 30m
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+# Application-level enterprise settings
+app:
+  media-dir: ${MEDIA_DIR:/var/mahametro/competency/media}
+  redis:
+    autosave-buffer:
+      enabled: ${AUTOSAVE_BUFFER_ENABLED:false}
+  sso:
+    header-enabled: ${SSO_HEADER_ENABLED:false}
+    header-name: ${SSO_HEADER_NAME:X-Remote-User}
+    trusted-proxies: ${SSO_TRUSTED_PROXIES:127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+
+# Actuator metrics & health monitoring for production
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+
+# Logging: prevent verbose debug traces in production
+logging:
+  level:
+    root: INFO
+    in.mahametro.competency: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.hibernate: WARN

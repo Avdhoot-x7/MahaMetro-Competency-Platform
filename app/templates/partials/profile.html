@@ -1,0 +1,54 @@
+{# expects: profile, plan, emp, cycles, bench(optional) #}
+{% set rc = status_class %}
+<div class="grid g4">
+  <div class="kpi"><div class="l">{{ t("Readiness") }}</div><div class="v"><span class="badge rag {{ rc[profile.readiness] }}">{{ t({"Red":"Red","Amber":"Amber","Green":"Green","None":"Not assessed"}[profile.readiness]) }}</span></div></div>
+  <div class="kpi"><div class="l">{{ t("Competency Index") }}</div><div class="v">{{ profile.index|num }}{% if profile.index is not none %}%{% endif %}</div><div class="l">{{ t("of assessed competencies at or above required level") }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Competencies assessed") }}</div><div class="v">{{ profile.assessed }} / {{ profile.rows|length }}</div></div>
+  <div class="kpi"><div class="l">{{ t("Safety gates open") }}</div><div class="v" style="color:{{ 'var(--gate)' if profile.safety_gates else 'inherit' }}">{{ profile.safety_gates }}</div>{% if profile.gap_closure is not none %}<div class="l">{{ t("Gap closure since baseline") }}: {{ profile.gap_closure|num }}%</div>{% endif %}</div>
+</div>
+{% if profile.assessed %}
+<div class="card" style="margin-top:16px">
+  <h2>{{ t("Required vs attained level") }}</h2>
+  <div class="chart-box" style="height:{{ 60 + profile.rows|length * 22 }}px"><canvas id="profileChart"></canvas></div>
+  <script type="application/json" id="profileData">{{ {"labels": profile.rows|map(attribute="code")|list, "names": profile.rows|map(attribute="name_" ~ lang)|list, "required": profile.rows|map(attribute="required")|list, "attained": profile.rows|map(attribute="level")|list, "lRequired": t("Required level"), "lAttained": t("Attained level")}|tojson_safe }}</script>
+</div>
+{% endif %}
+<div class="card table-scroll">
+  <h2>{{ t("Competency profile") }}</h2>
+  <table>
+    <thead><tr><th>{{ t("Competency") }}</th><th>{{ t("Category") }}</th><th class="center">{{ t("Required") }}</th>
+      {% for c in cycles %}<th class="right">{{ c }}</th>{% endfor %}
+      {% if bench %}<th class="right">{{ t("Peer median") }}</th>{% endif %}
+      <th class="center">{{ t("Level") }}</th><th class="center">{{ t("Gap") }}</th><th>{{ t("Status") }}</th></tr></thead>
+    <tbody>
+    {% for r in profile.rows %}
+      <tr><td><b>{{ r.code }}</b> {{ r.name(lang) }} {% if r.safety %}<span class="badge gate" title="{{ t('Safety-critical') }}">S</span>{% endif %}</td>
+        <td class="small muted">{{ t(r.category) }}</td><td class="center">{{ r.required }}</td>
+        {% for c in cycles %}<td class="right">{{ r.scores.get(c)|num }}</td>{% endfor %}
+        {% if bench %}<td class="right muted">{{ bench.get(r.code, {}).get("median")|num }}</td>{% endif %}
+        <td class="center">{{ r.level or "–" }}</td><td class="center">{{ r.gap if r.latest is not none else "–" }}</td>
+        <td><span class="badge {{ rc[r.status] }}">{{ t(r.status) }}</span></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p class="small muted">{{ t("Scores are 0–100 composites of knowledge test, situational judgement, practical/simulator check and supervisor rating, as available. Level bands: 1 Aware, 2 Basic (40+), 3 Competent (55+), 4 Advanced (70+), 5 Expert (85+).") }}</p>
+</div>
+{% if plan %}
+<div class="card">
+  <div class="page-head" style="margin-bottom:6px"><h2 style="margin:0">{{ t("Prescription: development plan") }} · {{ plan.cycle }}</h2>
+    <span class="badge {{ 'ok' if plan.status=='confirmed' else 'na' }}">{{ t(plan.status|capitalize) }}</span></div>
+  {% if not plan.items %}<p>{{ t("No gaps found. Keep it up.") }}</p>{% endif %}
+  {% for it in plan.items %}
+  <div class="plan-item {{ it.gap_type }}">
+    <div><b>{{ it.competency_code }} {{ L(it.competency, "name") }}</b>
+      <span class="badge {{ {'safety':'gate','major':'pri','minor':'dev','behavioural':'na','strength':'ok'}[it.gap_type] }}">{{ t({"safety":"Safety gate","major":"Gap of 2+ levels","minor":"Gap of 1 level","behavioural":"Behavioural gap","strength":"Strength"}[it.gap_type]) }}</span></div>
+    <div class="small muted">{{ t("Required") }} {{ it.required_level }} · {{ t("Attained") }} {{ it.attained_level }} · {{ t("Score") }} {{ it.score|num }}{% if it.target_date %} · {{ t("Complete by") }} {{ it.target_date|d }}{% endif %}</div>
+    {% if it.intervention %}<div>{{ L(it.intervention, "title") }} <span class="muted small">({{ it.intervention.provider }}, {{ t(it.intervention.mode) }}, {{ it.intervention.duration_hours|num }} h)</span></div>{% endif %}
+    {% if it.gap_type != "strength" %}<div class="small muted">{{ t("Re-test (T1) within 2 weeks after the training; on-job check (T2) after about 3 months.") }}</div>{% endif %}
+  </div>
+  {% endfor %}
+  {% if plan.status == "proposed" and (user.id == emp.id or user.emp_id == emp.reporting_officer or user.has("cell")) %}
+  <form method="post" action="/plan/{{ plan.id }}/confirm" class="noprint"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn sm" type="submit">{{ t("Confirm development plan") }}</button></form>
+  {% endif %}
+</div>
+{% endif %}

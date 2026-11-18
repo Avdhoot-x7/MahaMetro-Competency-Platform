@@ -1,0 +1,5 @@
+<div class="card table-scroll"><h2>{{ title }}</h2>
+<table><thead><tr><th>{{ t(label) }}</th><th class="right">{{ t("Staff") }}</th><th class="right">{{ t("Assessed") }}</th><th class="right">{{ t("% meeting") }}</th><th class="right">{{ t("Safety gates") }}</th><th>{{ t("Readiness") }}</th><th class="right">{{ t("Gap closure") }}</th></tr></thead><tbody>
+{% for g in rows %}<tr><td>{% if names and g.key in names %}<b>{{ g.key }}</b> {{ L(names[g.key], "name") }}{% else %}{{ g.key }}{% endif %}</td><td class="right">{{ g.people }}</td><td class="right">{{ g.assessed }}</td><td class="right">{{ g.meets_pct|num }}{% if g.meets_pct is not none %}%{% endif %}</td>
+<td class="right">{{ g.safety_gates }}</td><td class="nowrap"><span class="badge gate">{{ g.rag.Red }}</span> <span class="badge pri">{{ g.rag.Amber }}</span> <span class="badge ok">{{ g.rag.Green }}</span> <span class="badge na">{{ g.rag["None"] }}</span></td><td class="right">{{ g.gap_closure|num }}{% if g.gap_closure is not none %}%{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>

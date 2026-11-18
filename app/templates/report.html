@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Competency report") }} · {{ emp.emp_id }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>{{ t("Individual competency report") }}</h1>
+  <div>{{ emp.name(lang) }} · {{ emp.emp_id }} · {{ emp.designation }}</div>
+  <div class="muted small">{{ L(rf, "name") if rf else "" }} · {{ emp.grade_code }} {{ L(grade, "band") if grade else "" }} · {{ emp.department }} · {{ emp.location }}</div></div>
+  <button class="btn ghost noprint" onclick="window.print()">{{ t("Print / save as PDF") }}</button>
+</div>
+{% include "partials/profile.html" %}
+{% if rate_profile %}
+<div class="card noprint">
+  <h2>{{ t("Record supervisor rating or practical / simulator result") }}</h2>
+  <form method="post" action="/team/{{ emp.emp_id }}/rating">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <div class="row">
+      <div><label>{{ t("Competency") }}</label><select name="competency">{% for p in rate_profile %}<option value="{{ p.competency.code }}">{{ p.competency.code }} {{ L(p.competency, "name") }} ({{ t("req.") }} {{ p.required_level }})</option>{% endfor %}</select></div>
+      <div><label>{{ t("Evidence type") }}</label><select name="method"><option value="rating">{{ t("Supervisor rating (on-job behaviour)") }}</option><option value="practical">{{ t("Practical / simulator check") }}</option></select></div>
+      <div><label>{{ t("Cycle") }}</label><select name="cycle">{% for c in ["T0","T1","T2","T3","EVENT"] %}<option>{{ c }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="row">
+      <div><label>{{ t("Observed level (1–5)") }}</label><select name="level"><option value="0">–</option>{% for l in range(1,6) %}<option value="{{ l }}">{{ l }} · {{ t(["","Aware","Basic","Competent","Advanced","Expert"][l]) }}</option>{% endfor %}</select></div>
+      <div><label>{{ t("or checklist score (0–100)") }}</label><input type="number" name="score" min="0" max="100" step="0.5"></div>
+      <div style="flex:2"><label>{{ t("Evidence / comment") }}</label><input type="text" name="comment" maxlength="1000"></div>
+    </div>
+    <p><button class="btn" type="submit">{{ t("Save") }}</button></p>
+  </form>
+</div>
+{% endif %}
+<div class="card small muted">{{ t("Acknowledged by employee") }}: ____________________ &nbsp; {{ t("Reporting officer") }}: ____________________ &nbsp; {{ t("Date") }}: __________</div>
+{% endblock %}
+{% block scripts %}<script src="/static/vendor/chart.umd.min.js"></script><script src="/static/js/charts.js"></script>{% if print %}<script>window.addEventListener('load',()=>setTimeout(()=>window.print(),600))</script>{% endif %}{% endblock %}

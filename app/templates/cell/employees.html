@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Staff & roles") }}{% endblock %}
+{% block content %}
+<h1>{{ t("Staff & roles") }}</h1>{% include "cell/_nav.html" %}
+<form class="card row" method="get"><div><input type="search" name="q" value="{{ q }}" placeholder="{{ t('ID, name or designation') }}"></div>
+<div><select name="family"><option value="">{{ t("All role families") }}</option>{% for f in families %}<option value="{{ f.code }}" {{ 'selected' if f.code==family else '' }}>{{ f.code }}</option>{% endfor %}</select></div>
+<div style="flex:0"><label class="check"><input type="checkbox" name="unmapped" value="1" {{ 'checked' if unmapped else '' }}>{{ t("Unmapped only") }}</label></div><div style="flex:0"><button class="btn ghost">{{ t("Filter") }}</button></div></form>
+<div class="card table-scroll"><table><thead><tr><th>{{ t("Employee") }}</th><th>{{ t("Role family") }}</th><th>{{ t("Grade") }}</th><th>{{ t("Reporting officer") }}</th><th>{{ t("Department") }}</th><th>{{ t("Extra time %") }}</th><th>{{ t("Roles") }}</th><th></th></tr></thead><tbody>
+{% for e in rows %}<tr>
+<td class="nowrap"><a href="/employee/{{ e.emp_id }}">{{ e.emp_id }}</a> {{ e.name(lang) }}<div class="small muted">{{ e.designation }} · {{ e.location }}</div><label class="check small"><input form="f{{ e.id }}" type="checkbox" name="active" value="1" {{ 'checked' if e.active else '' }}>{{ t("active") }}</label></td>
+<td><select form="f{{ e.id }}" name="role_family_code"><option value="">–</option>{% for f in families %}<option value="{{ f.code }}" {{ 'selected' if f.code==e.role_family_code else '' }}>{{ f.code }}</option>{% endfor %}</select></td>
+<td><select form="f{{ e.id }}" name="grade_code"><option value="">–</option>{% for g in grades %}<option {{ 'selected' if g.code==e.grade_code else '' }}>{{ g.code }}</option>{% endfor %}</select></td>
+<td><input form="f{{ e.id }}" type="text" name="reporting_officer" value="{{ e.reporting_officer }}" style="width:100px"></td>
+<td><input form="f{{ e.id }}" type="text" name="department" value="{{ e.department }}" style="width:130px"></td>
+<td><input form="f{{ e.id }}" type="number" name="extra_time_pct" value="{{ e.extra_time_pct }}" style="width:70px"></td>
+<td class="small">{% for r in roles if r != "employee" %}<label class="check"><input form="f{{ e.id }}" type="checkbox" name="roles" value="{{ r }}" {{ 'checked' if r in e.roles else '' }}>{{ r }}</label>{% endfor %}
+<input form="f{{ e.id }}" type="password" name="new_password" placeholder="{{ t('set password (break-glass)') }}" autocomplete="new-password" style="margin-top:4px"></td>
+<td><form id="f{{ e.id }}" method="post" action="/cell/employees/{{ e.id }}"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn sm" type="submit">{{ t("Save") }}</button></form></td></tr>{% endfor %}
+</tbody></table><p class="small muted">{{ total }} · {% if page>1 %}<a href="?page={{ page-1 }}&q={{ q }}&family={{ family }}&unmapped={{ unmapped }}">‹</a>{% endif %} {% if page*50 < total %}<a href="?page={{ page+1 }}&q={{ q }}&family={{ family }}&unmapped={{ unmapped }}">›</a>{% endif %}</p></div>
+{% endblock %}

@@ -1,0 +1,7 @@
+<div class="card table-scroll">
+  <h2>{{ t("Competency benchmarks") }}</h2>
+  <table><thead><tr><th>{{ t("Competency") }}</th><th class="right">{{ t("Assessed") }}</th><th class="right">{{ t("Baseline avg") }}</th><th class="right">{{ t("Latest avg") }}</th><th class="right">P25</th><th class="right">{{ t("Median") }}</th><th class="right">P75</th><th class="right">{{ t("% meeting") }}</th></tr></thead><tbody>
+  {% for b in bench %}<tr><td><b>{{ b.code }}</b> {{ b["name_" ~ lang] or b.name_en }} {% if b.safety %}<span class="badge gate">S</span>{% endif %}</td><td class="right">{{ b.n }}</td><td class="right">{{ b.baseline|num }}</td><td class="right">{{ b.latest|num }}</td><td class="right">{{ b.p25|num }}</td><td class="right">{{ b.median|num }}</td><td class="right">{{ b.p75|num }}</td>
+    <td class="right">{% if b.meets_pct is not none %}<span class="badge {{ 'ok' if b.meets_pct >= 80 else ('pri' if b.meets_pct >= 50 else 'gate') }}">{{ b.meets_pct|num }}%</span>{% else %}–{% endif %}</td></tr>{% endfor %}
+  </tbody></table>
+</div>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Individual Development Plans - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &middot; <a th:href="@{/results}">Staff results</a></p>
+  <h1>Individual Development Plans (IDP)</h1>
+  <p>Targeted training interventions prescribed automatically from assessed competency gaps.</p>
+
+  <p class="row">
+    <span>Filter by status:</span>
+    <a th:href="@{/plans(status='all')}" th:style="${selectedStatus == 'all' ? 'font-weight:bold;text-decoration:underline;' : ''}">All</a> &middot;
+    <a th:href="@{/plans(status='proposed')}" th:style="${selectedStatus == 'proposed' ? 'font-weight:bold;text-decoration:underline;' : ''}">Proposed (awaiting confirmation)</a> &middot;
+    <a th:href="@{/plans(status='confirmed')}" th:style="${selectedStatus == 'confirmed' ? 'font-weight:bold;text-decoration:underline;' : ''}">Confirmed</a>
+  </p>
+
+  <p th:if="${#lists.isEmpty(plans)}">No development plans found for this filter.</p>
+
+  <table th:if="${!#lists.isEmpty(plans)}">
+    <thead>
+      <tr>
+        <th>Staff</th>
+        <th>Department</th>
+        <th>Cycle</th>
+        <th>Readiness</th>
+        <th>Items</th>
+        <th>Safety Gates</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="p : ${plans}">
+        <td>
+          <b th:text="${employees.get(p.id).nameEn}">Name</b>
+          <div class="meta" style="font-size:12px;color:#666;" th:text="${employees.get(p.id).empId}">ID</div>
+        </td>
+        <td>
+          <span th:text="${employees.get(p.id).department}">Dept</span>
+          <div class="meta" style="font-size:12px;color:#666;" th:text="${employees.get(p.id).designation}">Desig</div>
+        </td>
+        <td th:text="${p.cycle}">baseline</td>
+        <td>
+          <span class="badge" th:classappend="${#strings.toLowerCase(p.readiness)}" th:text="${p.readiness}">Red</span>
+        </td>
+        <td th:text="${totalItemMap.get(p.id)}">0</td>
+        <td>
+          <span th:if="${safetyGateMap.get(p.id) > 0}" class="badge safety-gate" th:text="${safetyGateMap.get(p.id)}">1</span>
+          <span th:if="${safetyGateMap.get(p.id) == 0}">0</span>
+        </td>
+        <td>
+          <span class="badge" th:classappend="${p.status == 'confirmed' ? 'green' : 'amber'}" th:text="${#strings.toUpperCase(p.status)}">PROPOSED</span>
+        </td>
+        <td th:text="${#temporals.format(p.createdAt, 'yyyy-MM-dd')}">2026-11-17</td>
+        <td>
+          <a th:href="@{/plans/{id}(id=${p.id})}">View Plan</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

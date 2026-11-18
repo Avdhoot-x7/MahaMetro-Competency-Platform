@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proctor Review - Attempt Details - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .kpi-row { display:flex; gap:16px; margin:20px 0; }
+    .kpi-box { flex:1; background:#f9f9f9; border:1px solid #ddd; padding:14px; border-radius:6px; }
+    .kpi-val { font-size:22px; font-weight:bold; margin-top:4px; }
+  </style>
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &middot; <a th:href="@{/proctor/flags}">&larr; Back to Proctoring Dashboard</a></p>
+  
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h1>Attempt Review #<span th:text="${attempt.id}"></span></h1>
+    <div>
+      <span th:text="${attempt.status}"
+            th:style="${attempt.status == 'FLAGGED' ? 'background:#d32f2f; color:#fff;' : (attempt.status == 'VOID' ? 'background:#757575; color:#fff;' : 'background:#2e7d32; color:#fff;')} + ' padding:6px 14px; border-radius:4px; font-weight:bold; font-size:16px;'">
+        STATUS
+      </span>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-box">
+      <small class="meta">Candidate</small>
+      <div class="kpi-val" th:text="${candidate != null ? candidate.nameEn : 'Employee'}"></div>
+      <small th:text="${candidate != null ? candidate.empId + ' &middot; ' + candidate.designation : ''}"></small>
+    </div>
+    <div class="kpi-box">
+      <small class="meta">Assessment Test</small>
+      <div class="kpi-val" th:text="${test != null ? test.code : 'TEST'}"></div>
+      <small th:text="${test != null ? test.titleEn : ''}"></small>
+    </div>
+    <div class="kpi-box">
+      <small class="meta">Tab Switches</small>
+      <div class="kpi-val" th:text="${attempt.tabSwitches}" th:style="${attempt.tabSwitches > 3 ? 'color:#d32f2f;' : ''}"></div>
+      <small>Limit: 3 switches</small>
+    </div>
+    <div class="kpi-box">
+      <small class="meta">Score & Percentage</small>
+      <div class="kpi-val" th:text="${attempt.score} + ' / ' + ${attempt.maxScore}"></div>
+      <small th:text="${attempt.percent} + '%'"></small>
+    </div>
+  </div>
+
+  <div th:if="${!#strings.isEmpty(attempt.flagReason)}" style="background:#ffebee; border:1px solid #ef5350; color:#c62828; padding:14px; border-radius:6px; margin-bottom:20px;">
+    <b>Flag Reason:</b> <span th:text="${attempt.flagReason}"></span>
+  </div>
+
+  <!-- Proctor Decision Form -->
+  <div style="background:#f5f5f5; border:1px solid #ccc; padding:20px; border-radius:6px; margin-bottom:30px;">
+    <h3 style="margin-top:0;">Proctor Decision</h3>
+    <p>As proctor or assessment officer, decide whether to accept this attempt's results or declare the attempt void.</p>
+    <form th:action="@{/proctor/attempts/{id}/decision(id=${attempt.id})}" method="post">
+      <div style="margin-bottom:14px;">
+        <label for="note" style="display:block; font-weight:bold; margin-bottom:6px;">Decision Note / Explanation:</label>
+        <input type="text" id="note" name="note" placeholder="Reason for accepting or voiding..." style="width:100%; max-width:600px; padding:8px;">
+      </div>
+      <div style="display:flex; gap:12px;">
+        <button type="submit" name="decision" value="accept" style="background:#2e7d32; color:#fff; padding:10px 24px; font-weight:bold; cursor:pointer; border-radius:4px; border:none;">
+          &#x2714; Accept Result (Publish Scores)
+        </button>
+        <button type="submit" name="decision" value="void" style="background:#d32f2f; color:#fff; padding:10px 24px; font-weight:bold; cursor:pointer; border-radius:4px; border:none;" onclick="return confirm('Are you sure you want to declare this attempt VOID? Any scores will be erased.');">
+          &#x2716; Declare Void
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Timing and Rapid Guessing Analysis -->
+  <h2>Timing & Rapid Guessing Analysis</h2>
+  <div class="kpi-row">
+    <div class="kpi-box">
+      <small class="meta">Response-Time Effort (RTE)</small>
+      <div class="kpi-val" th:text="${timing.rte} + '%'" th:style="${timing.lowEffort ? 'color:#d32f2f;' : 'color:#2e7d32;'}"></div>
+      <small>Threshold: &ge; 90% effort</small>
+    </div>
+    <div class="kpi-box">
+      <small class="meta">Rapid Guess Answers</small>
+      <div class="kpi-val" th:text="${timing.rapidCount} + ' / ' + ${timing.answeredCount}"></div>
+      <small>Flagged if &gt; 10%</small>
+    </div>
+    <div class="kpi-box">
+      <small class="meta">Total Answering Time</small>
+      <div class="kpi-val" th:text="${timing.totalSeconds} + 's'"></div>
+      <small th:text="(${timing.totalSeconds} / 60) + ' min'"></small>
+    </div>
+  </div>
+
+  <table style="width:100%; border-collapse:collapse; margin-bottom:30px;">
+    <thead>
+      <tr style="background:#f5f5f5; text-align:left; border-bottom:2px solid #ddd;">
+        <th style="padding:8px;">#</th>
+        <th style="padding:8px;">Question ID</th>
+        <th style="padding:8px;">Time Spent</th>
+        <th style="padding:8px;">Reading Limit</th>
+        <th style="padding:8px;">Verdict</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="it : ${timing.itemTimings}" style="border-bottom:1px solid #eee;" th:style="${it.rapid ? 'background:#ffebee;' : ''}">
+        <td style="padding:8px;" th:text="${it.position}"></td>
+        <td style="padding:8px;" th:text="'Q#' + ${it.questionId}"></td>
+        <td style="padding:8px;" th:text="${it.timeSpentSeconds} + ' sec'"></td>
+        <td style="padding:8px;" th:text="${it.limitSeconds} + ' sec'"></td>
+        <td style="padding:8px;">
+          <span th:if="${it.rapid}" style="color:#d32f2f; font-weight:bold;">&#x26A0; Rapid Guess</span>
+          <span th:if="${!it.rapid}" style="color:#2e7d32;">Normal</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Proctor Events Timeline -->
+  <h2>Proctor Events Timeline (<span th:text="${#lists.size(events)}">0</span>)</h2>
+  <p th:if="${#lists.isEmpty(events)}" class="muted">No proctor events recorded for this session.</p>
+
+  <table th:if="${!#lists.isEmpty(events)}" style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr style="background:#f5f5f5; text-align:left; border-bottom:2px solid #ddd;">
+        <th style="padding:8px;">Time</th>
+        <th style="padding:8px;">Event Type</th>
+        <th style="padding:8px;">Details</th>
+        <th style="padding:8px;">Media</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="ev : ${events}" style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;" th:text="${#temporals.format(ev.createdAt, 'HH:mm:ss.SSS')}"></td>
+        <td style="padding:8px;">
+          <b th:text="${ev.kind}" th:style="${ev.kind == 'tab_hidden' || ev.kind == 'copy' || ev.kind == 'paste' ? 'color:#d32f2f;' : 'color:#1976d2;'}"></b>
+        </td>
+        <td style="padding:8px;" th:text="${ev.detail}"></td>
+        <td style="padding:8px;">
+          <a th:if="${ev.mediaId != null}" th:href="@{/media/{id}(id=${ev.mediaId})}" target="_blank" style="color:#1976d2;">View Snapshot</a>
+          <span th:if="${ev.mediaId == null}">-</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

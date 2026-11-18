@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Media & passages") }}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ t("Media & passages") }}</h1><a class="btn ghost" href="/items">{{ t("Question bank") }}</a></div>
+<div class="grid g2">
+<div class="card"><h2>{{ t("Upload audio, video or image") }}</h2>
+  <p class="small muted">{{ t("Use short clips: PA announcements, alarm tones, CCTV or simulator recordings, equipment photos, panel indications. Max file size") }} {{ settings.max_upload_mb }} MB.</p>
+  <form method="post" action="/library/upload" enctype="multipart/form-data"><input type="hidden" name="csrf" value="{{ csrf }}">
+  <input type="file" name="file" accept="audio/*,video/*,image/*" required> <button class="btn" type="submit">{{ t("Upload") }}</button></form>
+  <table style="margin-top:12px"><tr><th>ID</th><th>{{ t("Type") }}</th><th>{{ t("File") }}</th><th></th></tr>
+  {% for m in media %}<tr><td>{{ m.id }}</td><td>{{ m.kind }}</td><td>{{ m.filename }}</td><td><a href="/media/{{ m.id }}" target="_blank">{{ t("Open") }}</a></td></tr>{% endfor %}</table>
+</div>
+<div class="card"><h2>{{ t("Reading passage") }}</h2>
+  <form method="post" action="/library/passage"><input type="hidden" name="csrf" value="{{ csrf }}">
+  <div class="row"><div><label>{{ t("Passage ID") }}</label><input type="text" name="code" required placeholder="P-0007"></div>
+  <div><label>{{ t("Media (optional)") }}</label><select name="media_id"><option value="">–</option>{% for m in media %}<option value="{{ m.id }}">{{ m.kind }} · {{ m.filename }}</option>{% endfor %}</select></div></div>
+  <div class="row"><div><label>{{ t("Title (English)") }}</label><input type="text" name="title_en"></div><div><label>{{ t("Title (Marathi)") }}</label><input type="text" name="title_mr"></div></div>
+  <label>{{ t("Passage (English)") }}</label><textarea name="body_en" required rows="6"></textarea>
+  <label>{{ t("Passage (Marathi)") }}</label><textarea name="body_mr" rows="6"></textarea>
+  <p><button class="btn" type="submit">{{ t("Save passage") }}</button></p></form>
+  <table><tr><th>ID</th><th>{{ t("Title") }}</th></tr>{% for p in passages %}<tr><td>{{ p.code }}</td><td>{{ L(p,"title") }}</td></tr>{% endfor %}</table>
+</div></div>
+{% endblock %}

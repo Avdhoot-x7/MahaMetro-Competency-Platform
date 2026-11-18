@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Details - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/admin/tests}">Back to assessment tests</a></p>
+  <h1 th:text="${test.titleEn}">Test Title</h1>
+  <p class="meta" th:if="${!#strings.isEmpty(test.titleMr)}" th:text="${test.titleMr}"></p>
+
+  <p class="msg" th:if="${message != null}" th:text="${message}"></p>
+
+  <div style="background:#f9f9f9; padding:16px; border-radius:4px; margin:16px 0;">
+    <p><b>Code:</b> <span th:text="${test.code}"></span> &middot;
+       <b>Kind:</b> <span th:text="${test.kind}"></span> &middot;
+       <b>Status:</b> <span th:text="${test.status}" style="font-weight:bold;"></span></p>
+    <p><b>Duration:</b> <span th:text="${test.durationMinutes}"></span> minutes &middot;
+       <b>Max Attempts:</b> <span th:text="${test.maxAttempts == 0 ? 'Unlimited' : test.maxAttempts}"></span> &middot;
+       <b>Items per Competency:</b> <span th:text="${test.itemsPerCompetency}"></span></p>
+    <p><b>Target:</b> <span th:text="${test.targetType}"></span> <span th:if="${!#strings.isEmpty(test.targetValue)}" th:text="'(' + ${test.targetValue} + ')'"></span></p>
+    <p><b>Schedule Window:</b>
+      <span th:if="${test.startAt != null || test.endAt != null}">
+        From <span th:text="${#temporals.format(test.startAt, 'dd-MM-yyyy HH:mm')}"></span> to <span th:text="${#temporals.format(test.endAt, 'dd-MM-yyyy HH:mm')}"></span>
+      </span>
+      <span th:if="${test.startAt == null && test.endAt == null}">Always available</span>
+    </p>
+    <p><b>Settings:</b>
+       Shuffle Questions: <b th:text="${test.shuffleQuestions}"></b> &middot;
+       Shuffle Options: <b th:text="${test.shuffleOptions}"></b> &middot;
+       Allow Back: <b th:text="${test.allowBack}"></b>
+    </p>
+  </div>
+
+  <div class="actions" style="margin-top:20px; display:flex; gap:12px;">
+    <form th:if="${test.status == 'DRAFT'}" th:action="@{/admin/tests/{id}/publish(id=${test.id})}" method="post">
+      <button type="submit" style="background:#2e7d32; color:#fff; padding:10px 20px; font-weight:bold; cursor:pointer;">Publish Test</button>
+    </form>
+    <form th:if="${test.status == 'PUBLISHED'}" th:action="@{/admin/tests/{id}/close(id=${test.id})}" method="post">
+      <button type="submit" style="background:#c62828; color:#fff; padding:10px 20px; font-weight:bold; cursor:pointer;">Close Test</button>
+    </form>
+  </div>
+</main>
+</body>
+</html>

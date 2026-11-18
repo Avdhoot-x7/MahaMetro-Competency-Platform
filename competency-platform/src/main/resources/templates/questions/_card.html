@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Question - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+</main>
+<!-- Shared block: one question with its picture, answers and solution -->
+<div th:fragment="card(v)" class="question">
+  <p class="meta">
+    <b th:text="${v.question.code}">CODE</b> &middot; Competency <span th:text="${v.question.competencyCode}"></span>
+    &middot; Topic <span th:text="${v.question.topicNo}"></span> &middot; Variation <span th:text="${v.question.variationNo}"></span>
+    &middot; <span th:text="${v.question.timeSeconds}"></span> s &middot; Difficulty <span th:text="${v.question.difficulty}"></span>
+    &middot; By <span th:text="${v.question.authorEmpId}"></span> &middot; <span th:text="${v.question.status}"></span>
+  </p>
+  <div class="stem" th:utext="${v.html}">Question text</div>
+
+  <!-- Question media -->
+  <div th:if="${v.mediaUrl != null}" class="media-box" style="margin: 8px 0;">
+    <img th:if="${v.mediaKind == 'image'}" th:src="@{${v.mediaUrl}}" alt="Question media" style="max-width:100%; max-height:400px; border-radius:4px;">
+    <audio th:if="${v.mediaKind == 'audio'}" controls th:src="@{${v.mediaUrl}}" style="width:100%; max-width:400px;"></audio>
+    <video th:if="${v.mediaKind == 'video'}" controls th:src="@{${v.mediaUrl}}" style="max-width:100%; max-height:400px; border-radius:4px;"></video>
+    <p th:if="${v.mediaKind == 'file'}" class="meta">Attached file: <a th:href="@{${v.mediaUrl}}" th:text="${v.question.mediaRef}" target="_blank"></a></p>
+  </div>
+
+  <ul class="options">
+    <li th:each="o : ${v.options}" th:classappend="${o.correct} ? 'right'">
+      <span th:text="${o.textEn}">Answer</span> <b th:if="${o.correct}">(correct)</b>
+    </li>
+  </ul>
+  <div class="solution" th:if="${!#strings.isEmpty(v.question.solutionText)}"><b>Solution:</b> <span th:utext="${v.solutionHtml}"></span></div>
+
+  <!-- Solution media -->
+  <div th:if="${v.solutionMediaUrl != null}" class="media-box" style="margin: 8px 0;">
+    <img th:if="${v.solutionMediaKind == 'image'}" th:src="@{${v.solutionMediaUrl}}" alt="Solution media" style="max-width:100%; max-height:400px; border-radius:4px;">
+    <audio th:if="${v.solutionMediaKind == 'audio'}" controls th:src="@{${v.solutionMediaUrl}}" style="width:100%; max-width:400px;"></audio>
+    <video th:if="${v.solutionMediaKind == 'video'}" controls th:src="@{${v.solutionMediaUrl}}" style="max-width:100%; max-height:400px; border-radius:4px;"></video>
+    <p th:if="${v.solutionMediaKind == 'file'}" class="meta">Solution file: <a th:href="@{${v.solutionMediaUrl}}" th:text="${v.question.solutionMedia}" target="_blank"></a></p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Manual scoring") }}{% endblock %}
+{% block content %}
+<h1>{{ t("Manual scoring") }}</h1>{% include "cell/_nav.html" %}
+<p class="muted">{{ t("Written and spoken answers. Score against the rubric; candidate names are hidden to reduce bias.") }}</p>
+{% if own_n %}<div class="flash info">{{ t("{n} of the waiting answers are your own. Another Assessment Cell member must mark them.", n=own_n) }}</div>{% endif %}
+{% for ai in queue %}
+<div class="card">{% set show_rubric = True %}{% include "partials/answer_review.html" %}
+<form method="post" action="/cell/scoring/{{ ai.id }}" class="row" style="align-items:flex-end"><input type="hidden" name="csrf" value="{{ csrf }}">
+<div style="flex:0 0 160px"><label>{{ t("Score") }} (0–{{ ai.max_score|num }})</label><input type="number" name="score" min="0" max="{{ ai.max_score }}" step="0.25" required></div>
+<div style="flex:3"><label>{{ t("Feedback to candidate") }}</label><input type="text" name="comment"></div>
+<div style="flex:0"><button class="btn" type="submit">{{ t("Save score") }}</button></div></form></div>
+{% else %}<div class="card muted">{{ t("Nothing waiting.") }}</div>{% endfor %}
+{% endblock %}

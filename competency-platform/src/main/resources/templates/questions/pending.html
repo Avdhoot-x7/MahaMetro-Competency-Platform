@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Approve questions - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/questions}">Back to the question bank</a></p>
+  <h1>Questions waiting for your approval</h1>
+  <p class="msg" th:if="${message}" th:text="${message}"></p>
+  <p class="msg error" th:if="${error}" th:text="${error}"></p>
+  <p th:if="${#lists.isEmpty(views)}">Nothing is waiting for you.</p>
+  <section th:each="v : ${views}" class="pending">
+    <div th:replace="~{questions/_card :: card(${v})}"></div>
+    <div class="row">
+      <form th:action="@{/questions/{id}/approve(id=${v.question.id})}" method="post" class="row">
+        <input name="note" type="text" placeholder="Comment (optional)">
+        <button type="submit">Approve - add to bank</button>
+      </form>
+      <form th:action="@{/questions/{id}/reject(id=${v.question.id})}" method="post" class="row">
+        <input name="note" type="text" placeholder="Reason" required>
+        <button type="submit" class="danger">Reject</button>
+      </form>
+    </div>
+  </section>
+</main>
+</body>
+</html>

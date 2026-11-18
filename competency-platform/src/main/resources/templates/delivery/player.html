@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assessment Test Player - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .player-header { display:flex; justify-content:space-between; align-items:center; background:#0d47a1; color:#fff; padding:12px 20px; border-radius:6px; margin-bottom:16px; }
+    .timer-badge { font-size:18px; font-weight:bold; background:#d32f2f; padding:6px 14px; border-radius:20px; }
+    .palette { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+    .palette-btn { width:36px; height:36px; border:1px solid #ccc; border-radius:4px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-weight:bold; color:#333; background:#f0f0f0; }
+    .palette-btn.current { border:2px solid #0d47a1; background:#bbdefb; }
+    .palette-btn.answered { background:#2e7d32; color:#fff; border-color:#1b5e20; }
+    .option-row { margin:10px 0; padding:10px 14px; border:1px solid #ddd; border-radius:4px; display:flex; align-items:center; cursor:pointer; }
+    .option-row:hover { background:#f5f5f5; }
+    .option-row input { margin-right:12px; cursor:pointer; }
+  </style>
+</head>
+<body>
+<main class="card wide">
+  <div id="tab-warning" style="display:none; background:#ffebee; border:1px solid #ef5350; color:#c62828; padding:10px 14px; margin-bottom:12px; border-radius:4px; font-weight:bold;">
+    &#x26A0; Warning: Tab switch detected! Your test session is proctored and tab switches are strictly recorded.
+  </div>
+  <div class="player-header">
+    <div>
+      <h2 th:text="${test.titleEn}" style="margin:0; font-size:20px;">Test Title</h2>
+      <small>Attempt #<span th:text="${attempt.id}"></span> &middot; Competency <span th:text="${currentItem.competencyCode}"></span></small>
+    </div>
+    <div class="timer-badge">
+      &#x23F1; Time Left: <span id="time-display">--:--</span>
+    </div>
+  </div>
+
+  <!-- Palette navigation -->
+  <div class="palette">
+    <a th:each="it : ${items}"
+       th:href="@{/delivery/attempts/{id}(id=${attempt.id}, pos=${it.position})}"
+       th:text="${it.position}"
+       class="palette-btn"
+       th:id="'pal-' + ${it.position}"
+       th:classappend="(${it.position == currentPos} ? ' current ' : '') + (${!#strings.isEmpty(it.selectedOptions) || !#strings.isEmpty(it.answeredText)} ? ' answered' : '')">
+      1
+    </a>
+  </div>
+
+  <!-- Current Question -->
+  <div class="question" style="background:#fff; border:1px solid #e0e0e0; padding:20px; border-radius:6px;">
+    <p class="meta">
+      <b>Question <span th:text="${currentPos}"></span> of <span th:text="${totalItems}"></span></b> &middot;
+      Competency: <span th:text="${currentItem.competencyCode}"></span> &middot;
+      Marks: <span th:text="${currentItem.marks}"></span>
+    </p>
+
+    <div class="stem" th:utext="${currentView.html}" style="font-size:17px; line-height:1.6; margin-bottom:14px;">Question text</div>
+
+    <!-- Media display -->
+    <div th:if="${currentView.mediaUrl != null}" style="margin: 12px 0;">
+      <img th:if="${currentView.mediaKind == 'image'}" th:src="@{${currentView.mediaUrl}}" alt="Question media" style="max-width:100%; max-height:400px; border-radius:4px;">
+      <audio th:if="${currentView.mediaKind == 'audio'}" controls th:src="@{${currentView.mediaUrl}}" style="width:100%; max-width:400px;"></audio>
+      <video th:if="${currentView.mediaKind == 'video'}" controls th:src="@{${currentView.mediaUrl}}" style="max-width:100%; max-height:400px; border-radius:4px;"></video>
+    </div>
+
+    <!-- Answer Choices -->
+    <form id="answer-form">
+      <div th:if="${currentItem.qtype == 'single'}">
+        <div th:each="opt : ${currentView.options}" class="option-row" th:onclick="'selectRadio(' + ${opt.id} + ')'">
+          <input type="radio" name="optChoice" th:value="${opt.id}" th:id="'opt-' + ${opt.id}"
+                 th:checked="${selectedSet.contains(#strings.toString(opt.id))}"
+                 onchange="saveAnswer()">
+          <label th:for="'opt-' + ${opt.id}" th:text="${opt.textEn}" style="cursor:pointer; flex:1;"></label>
+        </div>
+      </div>
+
+      <div th:if="${currentItem.qtype != 'single'}">
+        <div th:each="opt : ${currentView.options}" class="option-row">
+          <input type="checkbox" name="optChoice" th:value="${opt.id}" th:id="'opt-' + ${opt.id}"
+                 th:checked="${selectedSet.contains(#strings.toString(opt.id))}"
+                 onchange="saveAnswer()">
+          <label th:for="'opt-' + ${opt.id}" th:text="${opt.textEn}" style="cursor:pointer; flex:1;"></label>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Bottom navigation and submission -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+    <div>
+      <a th:if="${test.allowBack && currentPos > 1}"
+         th:href="@{/delivery/attempts/{id}(id=${attempt.id}, pos=${currentPos - 1})}"
+         class="btn" style="padding:10px 18px; background:#555; color:#fff; text-decoration:none; border-radius:4px;">&larr; Previous</a>
+    </div>
+
+    <div>
+      <a th:if="${currentPos < totalItems}"
+         th:href="@{/delivery/attempts/{id}(id=${attempt.id}, pos=${currentPos + 1})}"
+         class="btn" style="padding:10px 18px; background:#1976d2; color:#fff; text-decoration:none; border-radius:4px;">Next &rarr;</a>
+    </div>
+
+    <div>
+      <form th:action="@{/delivery/attempts/{id}/submit(id=${attempt.id})}" method="post" id="submit-form"
+            onsubmit="return confirm('Are you sure you want to finish and submit your test?');">
+        <button type="submit" style="background:#2e7d32; color:#fff; padding:10px 22px; font-size:16px; font-weight:bold; cursor:pointer; border-radius:4px;">Submit Test</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  let attemptId = /*[[${attempt.id}]]*/ 0;
+  let currentPos = /*[[${currentPos}]]*/ 1;
+  let remainingSeconds = /*[[${remainingSeconds}]]*/ 0;
+  let csrfToken = /*[[${_csrf.token}]]*/ '';
+  /*]]>*/
+
+  function updateTimer() {
+    if (remainingSeconds <= 0) {
+      document.getElementById("time-display").innerText = "00:00";
+      alert("Time is up! Your test will now be submitted.");
+      document.getElementById("submit-form").submit();
+      return;
+    }
+    let m = Math.floor(remainingSeconds / 60);
+    let s = remainingSeconds % 60;
+    document.getElementById("time-display").innerText = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+    remainingSeconds--;
+    setTimeout(updateTimer, 1000);
+  }
+  updateTimer();
+
+  function selectRadio(id) {
+    let r = document.getElementById("opt-" + id);
+    if (r && !r.checked) {
+      r.checked = true;
+      saveAnswer();
+    }
+  }
+
+  let questionStartTime = Date.now();
+
+  function saveAnswer() {
+    let selected = [];
+    document.querySelectorAll("input[name='optChoice']:checked").forEach(cb => selected.push(cb.value));
+    let val = selected.join(",");
+
+    let pal = document.getElementById("pal-" + currentPos);
+    if (pal) {
+      if (val.length > 0) {
+        pal.classList.add("answered");
+      } else {
+        pal.classList.remove("answered");
+      }
+    }
+
+    let spent = Math.max(1, Math.round((Date.now() - questionStartTime) / 1000));
+    let formData = new URLSearchParams();
+    formData.append("position", currentPos);
+    formData.append("selectedOptions", val);
+    formData.append("timeSpentSeconds", spent);
+    formData.append("_csrf", csrfToken);
+
+    fetch("/delivery/attempts/" + attemptId + "/answer", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: formData.toString()
+    });
+  }
+
+  function logEvent(kind, detail) {
+    let fd = new URLSearchParams();
+    fd.append("kind", kind);
+    fd.append("detail", detail || "");
+    fd.append("_csrf", csrfToken);
+    fetch("/delivery/attempts/" + attemptId + "/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: fd.toString()
+    });
+  }
+
+  document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+      logEvent("tab_hidden", "Window or tab was hidden");
+      let warn = document.getElementById("tab-warning");
+      if (warn) warn.style.display = "block";
+    } else {
+      logEvent("tab_visible", "Window or tab became visible again");
+    }
+  });
+
+  window.addEventListener("blur", function() {
+    logEvent("blur", "Window lost focus");
+  });
+
+  document.addEventListener("copy", function(e) {
+    e.preventDefault();
+    logEvent("copy", "Copy attempt prevented");
+  });
+
+  document.addEventListener("paste", function(e) {
+    e.preventDefault();
+    logEvent("paste", "Paste attempt prevented");
+  });
+
+  document.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+    logEvent("context_menu", "Right click prevented");
+  });
+</script>
+</body>
+</html>

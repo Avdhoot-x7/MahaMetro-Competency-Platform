@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Dashboard - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &gt; <span>Team Dashboard</span></p>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <div>
+      <h1 style="margin: 0;">Supervisor Team Dashboard</h1>
+      <p class="meta" style="color: #555; margin-top: 4px;">
+        Direct reports of <b th:text="${user.nameEn}">Supervisor Name</b> (<span th:text="${user.empId}">ID</span>)
+      </p>
+    </div>
+    <div>
+      <a th:href="@{/results/export(reportingOfficer=${user.empId})}"
+         style="display: inline-block; padding: 6px 12px; background: #1f3a5f; color: #fff; border-radius: 4px; text-decoration: none; font-size: 14px;">
+        Export Team Excel (.xlsx)
+      </a>
+    </div>
+  </div>
+
+  <!-- Metric Tiles -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 18px 0;">
+    <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #666;">Team Size</div>
+      <div style="font-size: 24px; font-weight: bold; color: #1f3a5f;" th:text="${summary.totalPeople}">0</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #666;">Assessed (Coverage)</div>
+      <div style="font-size: 24px; font-weight: bold; color: #1f3a5f;">
+        <span th:text="${summary.assessedPeople}">0</span> (<span th:text="${summary.coveragePct} + '%'">0%</span>)
+      </div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #666;">Avg Competency Met</div>
+      <div style="font-size: 24px; font-weight: bold; color: #2e8b57;"
+           th:text="${summary.averageIndexPct != null} ? ${summary.averageIndexPct} + '%' : '-'">-</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #666;">Safety Gate Alerts</div>
+      <div style="font-size: 24px; font-weight: bold; color: #c0392b;" th:text="${summary.safetyGates}">0</div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-bottom: 20px;">
+    <span><b class="badge red" th:text="${summary.redCount}">0</b> Red (Critical Gap / Safety Gate)</span>
+    <span style="margin-left: 12px;"><b class="badge amber" th:text="${summary.amberCount}">0</b> Amber (Moderate Gap)</span>
+    <span style="margin-left: 12px;"><b class="badge green" th:text="${summary.greenCount}">0</b> Green (Proficient)</span>
+    <span style="margin-left: 12px;"><b class="badge" th:text="${summary.notAssessedCount}">0</b> Not Assessed</span>
+  </div>
+
+  <!-- Top Gaps -->
+  <div th:if="${!summary.topGaps.isEmpty()}" style="margin-bottom: 24px;">
+    <h2>Priority Gaps in Team</h2>
+    <table>
+      <thead>
+        <tr><th>Competency</th><th>Name</th><th>Category</th><th>Safety Critical</th><th>Team Members Affected</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="g : ${summary.topGaps}">
+          <td><b th:text="${g.code}">C01</b></td>
+          <td th:text="${g.nameEn}">Competency Name</td>
+          <td th:text="${g.category}">Category</td>
+          <td>
+            <span th:if="${g.safetyCritical}" class="badge red">Yes (Gate)</span>
+            <span th:if="${!g.safetyCritical}">No</span>
+          </td>
+          <td><b th:text="${g.gapCount}" style="color: #c0392b;">0</b> member(s)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Team Members Table -->
+  <h2>Team Members (<span th:text="${members.size()}">0</span>)</h2>
+  <table>
+    <thead>
+      <tr><th>Employee ID</th><th>Name</th><th>Designation</th><th>Role Family</th><th>Grade</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="m : ${members}">
+        <td><b th:text="${m.empId}">ID</b></td>
+        <td th:text="${m.nameEn}">Name</td>
+        <td th:text="${m.designation}">Designation</td>
+        <td th:text="${m.roleFamilyCode}">Role family</td>
+        <td th:text="${m.gradeCode}">Grade</td>
+        <td>
+          <a th:href="@{/results/{id}(id=${m.id})}">View Profile</a> ·
+          <a th:href="@{/plans}">IDP</a>
+        </td>
+      </tr>
+      <tr th:if="${members.isEmpty()}">
+        <td colspan="6" style="text-align: center; color: #777; padding: 20px;">No direct reports found assigned to you.</td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

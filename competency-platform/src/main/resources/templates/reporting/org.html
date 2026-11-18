@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organisation Scorecard - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &gt; <span>Organisation Scorecard</span></p>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <div>
+      <h1 style="margin: 0;">Organisation Competency Scorecard</h1>
+      <p class="meta" style="color: #555; margin-top: 4px;">
+        Macro workforce readiness, departmental health, and safety gate analysis for Executive Management.
+      </p>
+    </div>
+    <div>
+      <a th:href="@{/results/export}"
+         style="display: inline-block; padding: 6px 12px; background: #1f3a5f; color: #fff; border-radius: 4px; text-decoration: none; font-size: 14px;">
+        Export Organisation Excel (.xlsx)
+      </a>
+    </div>
+  </div>
+
+  <!-- Metric Tiles -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 18px 0;">
+    <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #666;">Total Workforce</div>
+      <div style="font-size: 24px; font-weight: bold; color: #1f3a5f;" th:text="${summary.totalPeople}">0</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #666;">Assessed (Coverage)</div>
+      <div style="font-size: 24px; font-weight: bold; color: #1f3a5f;">
+        <span th:text="${summary.assessedPeople}">0</span> (<span th:text="${summary.coveragePct} + '%'">0%</span>)
+      </div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #666;">Avg Competency Met</div>
+      <div style="font-size: 24px; font-weight: bold; color: #2e8b57;"
+           th:text="${summary.averageIndexPct != null} ? ${summary.averageIndexPct} + '%' : '-'">-</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid #c9d2de; border-radius: 6px; padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #666;">Total Safety Gates</div>
+      <div style="font-size: 24px; font-weight: bold; color: #c0392b;" th:text="${summary.safetyGates}">0</div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-bottom: 20px;">
+    <span><b class="badge red" th:text="${summary.redCount}">0</b> Red (Safety Critical / &lt;70% Met)</span>
+    <span style="margin-left: 12px;"><b class="badge amber" th:text="${summary.amberCount}">0</b> Amber</span>
+    <span style="margin-left: 12px;"><b class="badge green" th:text="${summary.greenCount}">0</b> Green</span>
+    <span style="margin-left: 12px;"><b class="badge" th:text="${summary.notAssessedCount}">0</b> Not Assessed</span>
+  </div>
+
+  <!-- Breakdown by Department -->
+  <div th:if="${!summary.breakdowns.isEmpty()}" style="margin-bottom: 24px;">
+    <h2>Departmental Readiness Comparison</h2>
+    <table>
+      <thead>
+        <tr><th>Department</th><th>Total Staff</th><th>Assessed</th><th>Red</th><th>Amber</th><th>Green</th><th>Avg Met %</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="b : ${summary.breakdowns}">
+          <td><b th:text="${b.key}">Operations</b></td>
+          <td th:text="${b.total}">0</td>
+          <td th:text="${b.assessed}">0</td>
+          <td><span class="badge red" th:text="${b.red}">0</span></td>
+          <td><span class="badge amber" th:text="${b.amber}">0</span></td>
+          <td><span class="badge green" th:text="${b.green}">0</span></td>
+          <td th:text="${b.avgIndex != null} ? ${b.avgIndex} + '%' : '-'">-</td>
+          <td>
+            <a th:href="@{/dashboards/department(dept=${b.key})}">View Department</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Top Priority Gaps across Maha Metro -->
+  <div th:if="${!summary.topGaps.isEmpty()}" style="margin-bottom: 24px;">
+    <h2>Organisation Top Priority Competency Gaps</h2>
+    <table>
+      <thead>
+        <tr><th>Competency</th><th>Name</th><th>Category</th><th>Safety Critical</th><th>Staff Requiring Action</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="g : ${summary.topGaps}">
+          <td><b th:text="${g.code}">C01</b></td>
+          <td th:text="${g.nameEn}">Competency Name</td>
+          <td th:text="${g.category}">Category</td>
+          <td>
+            <span th:if="${g.safetyCritical}" class="badge red">Yes (Gate)</span>
+            <span th:if="${!g.safetyCritical}">No</span>
+          </td>
+          <td><b th:text="${g.gapCount}" style="color: #c0392b;">0</b> personnel</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    <a th:href="@{/results}">Browse and filter all staff assessment profiles</a>
+  </p>
+</main>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="card">
+  <h1>Maha Metro Competency Assessment</h1>
+  <p class="msg error" th:if="${param.error}">Wrong employee ID or password. After 5 wrong tries the account is locked for 15 minutes.</p>
+  <p class="msg" th:if="${param.logout}">You have signed out.</p>
+  <form th:action="@{/login}" method="post">
+    <label for="username">Employee ID</label>
+    <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit">Sign in</button>
+  </form>
+</main>
+</body>
+</html>

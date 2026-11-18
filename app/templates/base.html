@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ t("Competency Assessment") }}{% endblock %} · {{ t("Maha Metro CoE") }}</title>
+<link rel="stylesheet" href="/static/css/app.css">
+<meta name="csrf" content="{{ csrf }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/me">{{ t("Maha Metro · Centre of Excellence") }}<small>{{ t("Competency Assessment & Benchmarking") }}</small></a>
+    <nav>
+      {% for href, label in nav %}<a href="{{ href }}" class="{{ 'on' if request.url.path.startswith(href) else '' }}">{{ t(label) }}</a>{% endfor %}
+    </nav>
+    <div class="who">
+      <span class="lang">{% for code, name in languages.items() %}<a href="/lang/{{ code }}?next={{ request.url.path }}" class="{{ 'on' if lang == code else '' }}">{{ name }}</a> {% endfor %}</span>
+      {% if user %}<span title="{{ user.emp_id }}">{{ user.name(lang) }}</span> <a href="/logout">{{ t("Sign out") }}</a>{% endif %}
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  {% for kind, msg in pop_flash(request) %}<div class="flash {{ kind }}">{{ t(msg) }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+{% block scripts %}{% endblock %}
+</body>
+</html>

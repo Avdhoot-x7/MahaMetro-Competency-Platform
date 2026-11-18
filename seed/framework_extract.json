@@ -1,0 +1,2083 @@
+{
+ "competencies": [
+  {
+   "code": "C01",
+   "name_en": "Safety Culture & Emergency Response",
+   "category": "Core",
+   "safety_critical": true,
+   "description_en": "Hazard awareness, fire & evacuation, first aid, incident reporting, 'stop work' authority.",
+   "methods": "MCQ, SJT, drill observation"
+  },
+  {
+   "code": "C02",
+   "name_en": "Metro System Awareness",
+   "category": "Core",
+   "safety_critical": false,
+   "description_en": "Network, subsystems, organisation, how each department contributes to safe service.",
+   "methods": "MCQ"
+  },
+  {
+   "code": "C03",
+   "name_en": "Customer Orientation & Passenger Service",
+   "category": "Core",
+   "safety_critical": false,
+   "description_en": "Passenger needs, divyangjan assistance, complaint handling, service recovery.",
+   "methods": "SJT, supervisor rating"
+  },
+  {
+   "code": "C04",
+   "name_en": "Integrity, Ethics & Vigilance Awareness",
+   "category": "Core",
+   "safety_critical": false,
+   "description_en": "Conduct rules, conflict of interest, preventive vigilance, gifts and declarations.",
+   "methods": "MCQ, SJT"
+  },
+  {
+   "code": "C05",
+   "name_en": "Digital Literacy & Cyber Hygiene",
+   "category": "Core",
+   "safety_critical": false,
+   "description_en": "ERP/e-office/MMIS use, data handling, phishing and password hygiene.",
+   "methods": "MCQ, practical task"
+  },
+  {
+   "code": "C06",
+   "name_en": "Communication (Oral & Written, Bilingual)",
+   "category": "Core",
+   "safety_critical": false,
+   "description_en": "Clear radio/PA messages, reports, noting; English, Marathi, Hindi as role needs.",
+   "methods": "SJT, written task, supervisor rating"
+  },
+  {
+   "code": "B01",
+   "name_en": "Teamwork & Collaboration",
+   "category": "Behavioural",
+   "safety_critical": false,
+   "description_en": "Works across shifts, departments and contractors toward shared outcomes.",
+   "methods": "SJT, 180° rating"
+  },
+  {
+   "code": "B02",
+   "name_en": "Problem Solving & Decision Making",
+   "category": "Behavioural",
+   "safety_critical": false,
+   "description_en": "Analyses facts, weighs options, decides within authority, escalates in time.",
+   "methods": "SJT, case"
+  },
+  {
+   "code": "B03",
+   "name_en": "Composure Under Pressure",
+   "category": "Behavioural",
+   "safety_critical": false,
+   "description_en": "Stays calm and procedural during failures, crowding, incidents.",
+   "methods": "SJT, simulator observation"
+  },
+  {
+   "code": "B04",
+   "name_en": "Ownership & Accountability",
+   "category": "Behavioural",
+   "safety_critical": false,
+   "description_en": "Completes commitments, reports own errors, follows through.",
+   "methods": "180° rating, SJT"
+  },
+  {
+   "code": "B05",
+   "name_en": "Leadership & People Development",
+   "category": "Behavioural",
+   "safety_critical": false,
+   "description_en": "Guides, coaches and assesses others; builds team capability.",
+   "methods": "180° rating, case"
+  },
+  {
+   "code": "B06",
+   "name_en": "Planning & Organising",
+   "category": "Behavioural",
+   "safety_critical": false,
+   "description_en": "Prioritises work, plans resources and blocks, meets timelines.",
+   "methods": "SJT, case"
+  },
+  {
+   "code": "B07",
+   "name_en": "Stakeholder Management",
+   "category": "Behavioural",
+   "safety_critical": false,
+   "description_en": "Engages contractors, authorities, public and partner agencies constructively.",
+   "methods": "SJT, case, 180° rating"
+  },
+  {
+   "code": "D01",
+   "name_en": "General & Special Rules and Operating Procedures",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Metro GR/SR, operating manuals, authority to move, signals, speed restrictions.",
+   "methods": "MCQ, SJT, oral board"
+  },
+  {
+   "code": "D02",
+   "name_en": "Train Driving & Handling (CBTC modes)",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Cab controls, ATO/ATP/restricted modes, platform stopping, defects en route.",
+   "methods": "Simulator, MCQ"
+  },
+  {
+   "code": "D03",
+   "name_en": "Station Operations & Equipment",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "SCR operation, PA/PIDS, CCTV, crowd flow, station opening/closing.",
+   "methods": "MCQ, practical walk-through"
+  },
+  {
+   "code": "D04",
+   "name_en": "Traffic Control & Service Regulation",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Timetable, headway regulation, train regulation, service restoration.",
+   "methods": "Simulator, MCQ, SJT"
+  },
+  {
+   "code": "D05",
+   "name_en": "Degraded Working & Emergency Procedures",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Failures, evacuation, fire, single-line working, coordination with agencies.",
+   "methods": "Simulator, SJT, drill"
+  },
+  {
+   "code": "D06",
+   "name_en": "AFC, Ticketing & Revenue Handling",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Gates, TOMs, smart cards/QR, cash handling, revenue reconciliation.",
+   "methods": "MCQ, practical task"
+  },
+  {
+   "code": "D07",
+   "name_en": "Rolling Stock Systems",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Traction, brakes, doors, TCMS, bogies, troubleshooting guide.",
+   "methods": "MCQ, practical fault-finding"
+  },
+  {
+   "code": "D08",
+   "name_en": "Signalling & Train Control",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "CBTC, interlocking, track circuits/axle counters, point machines.",
+   "methods": "MCQ, practical fault-finding"
+  },
+  {
+   "code": "D09",
+   "name_en": "Telecom, SCADA & Communication Systems",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Radio, CCTV, PA/PIDS, SCADA, OFC network, clocks.",
+   "methods": "MCQ, practical task"
+  },
+  {
+   "code": "D10",
+   "name_en": "Traction Power Supply (RSS, OHE)",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Receiving/traction substations, OHE, power blocks, SCADA switching.",
+   "methods": "MCQ, practical task"
+  },
+  {
+   "code": "D11",
+   "name_en": "E&M Building Systems",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Lifts, escalators, HVAC/TVS, fire detection & suppression, BMS.",
+   "methods": "MCQ, practical task"
+  },
+  {
+   "code": "D12",
+   "name_en": "Civil, Track & Structures",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Track geometry, rail welding, viaduct/station structures, inspections.",
+   "methods": "MCQ, field task"
+  },
+  {
+   "code": "D13",
+   "name_en": "Electrical Safety & Permit-to-Work",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Isolation, testing for dead, earthing, LOTO, permit and block procedures.",
+   "methods": "MCQ, practical demonstration"
+  },
+  {
+   "code": "D14",
+   "name_en": "Maintenance Management & RAMS",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "PM/CM schedules, MMIS, failure analysis, reliability metrics (MDBF, MTTR).",
+   "methods": "MCQ, case"
+  },
+  {
+   "code": "D15",
+   "name_en": "Design & Engineering Review",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Codes and standards, drawings, design checks, interface management.",
+   "methods": "Case, MCQ"
+  },
+  {
+   "code": "D16",
+   "name_en": "Project Planning & Monitoring",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Scheduling, progress measurement, earned value, reporting.",
+   "methods": "Case, MCQ"
+  },
+  {
+   "code": "D17",
+   "name_en": "QA/QC & Construction Safety",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Inspection & test plans, material testing, site safety, NCR closure.",
+   "methods": "MCQ, case"
+  },
+  {
+   "code": "D18",
+   "name_en": "Safety Management System & Risk Assessment",
+   "category": "Domain",
+   "safety_critical": true,
+   "description_en": "Hazard logs, risk assessment, incident investigation, safety audits.",
+   "methods": "MCQ, case"
+  },
+  {
+   "code": "D19",
+   "name_en": "Accounting & Financial Reporting",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Accrual accounting, Ind AS, Companies Act reporting, closing of accounts.",
+   "methods": "MCQ, practical task"
+  },
+  {
+   "code": "D20",
+   "name_en": "Budgeting, Costing & Financial Concurrence",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Budget preparation, cost control, examination of proposals for concurrence.",
+   "methods": "Case, MCQ"
+  },
+  {
+   "code": "D21",
+   "name_en": "Taxation & Audit Compliance",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "GST, TDS, statutory/CAG audit replies, internal controls.",
+   "methods": "MCQ, case"
+  },
+  {
+   "code": "D22",
+   "name_en": "Service Rules, Establishment & Payroll",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Recruitment & promotion rules, leave, pay fixation, payroll.",
+   "methods": "MCQ, case"
+  },
+  {
+   "code": "D23",
+   "name_en": "Recruitment, Training & Performance Management",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Hiring process, training needs analysis, appraisal administration.",
+   "methods": "MCQ, case"
+  },
+  {
+   "code": "D24",
+   "name_en": "Industrial Relations & Labour Law Compliance",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Labour codes, contract labour compliance, grievance handling.",
+   "methods": "MCQ, case"
+  },
+  {
+   "code": "D25",
+   "name_en": "Public Procurement",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "GFR, CVC guidelines, GeM, e-tendering, bid evaluation.",
+   "methods": "MCQ, case"
+  },
+  {
+   "code": "D26",
+   "name_en": "Contract Management & Claims",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Contract conditions, variations, EOT, claims, dispute resolution.",
+   "methods": "Case, MCQ"
+  },
+  {
+   "code": "D27",
+   "name_en": "Inventory & Stores Management",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Material planning, stores procedures, spares criticality, stock verification.",
+   "methods": "MCQ, practical task"
+  },
+  {
+   "code": "D28",
+   "name_en": "Commercial Revenue & Property Development",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Fare policy, non-fare revenue, advertising, leasing, TOD.",
+   "methods": "Case, MCQ"
+  },
+  {
+   "code": "D29",
+   "name_en": "IT Infrastructure, Applications & Cybersecurity",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Networks, ERP, data centre, information security controls.",
+   "methods": "MCQ, practical task"
+  },
+  {
+   "code": "D30",
+   "name_en": "Office Procedure, Noting, Drafting & RTI",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "e-office, file noting, drafting letters, RTI replies.",
+   "methods": "Written task, MCQ"
+  },
+  {
+   "code": "D31",
+   "name_en": "Legal, Vigilance & Corporate Governance",
+   "category": "Domain",
+   "safety_critical": false,
+   "description_en": "Legal notices, vigilance procedures, board processes, compliance.",
+   "methods": "MCQ, case"
+  }
+ ],
+ "role_profiles": [
+  [
+   "TO",
+   "C01",
+   4
+  ],
+  [
+   "SC",
+   "C01",
+   4
+  ],
+  [
+   "OCC",
+   "C01",
+   4
+  ],
+  [
+   "RS",
+   "C01",
+   3
+  ],
+  [
+   "STA",
+   "C01",
+   3
+  ],
+  [
+   "TPS",
+   "C01",
+   3
+  ],
+  [
+   "EM",
+   "C01",
+   3
+  ],
+  [
+   "CT",
+   "C01",
+   3
+  ],
+  [
+   "PJ",
+   "C01",
+   3
+  ],
+  [
+   "SFS",
+   "C01",
+   4
+  ],
+  [
+   "FA",
+   "C01",
+   2
+  ],
+  [
+   "HRA",
+   "C01",
+   2
+  ],
+  [
+   "PCS",
+   "C01",
+   2
+  ],
+  [
+   "COM",
+   "C01",
+   2
+  ],
+  [
+   "IT",
+   "C01",
+   2
+  ],
+  [
+   "CORP",
+   "C01",
+   2
+  ],
+  [
+   "TO",
+   "C02",
+   3
+  ],
+  [
+   "SC",
+   "C02",
+   3
+  ],
+  [
+   "OCC",
+   "C02",
+   4
+  ],
+  [
+   "RS",
+   "C02",
+   3
+  ],
+  [
+   "STA",
+   "C02",
+   3
+  ],
+  [
+   "TPS",
+   "C02",
+   3
+  ],
+  [
+   "EM",
+   "C02",
+   3
+  ],
+  [
+   "CT",
+   "C02",
+   3
+  ],
+  [
+   "PJ",
+   "C02",
+   3
+  ],
+  [
+   "SFS",
+   "C02",
+   3
+  ],
+  [
+   "FA",
+   "C02",
+   2
+  ],
+  [
+   "HRA",
+   "C02",
+   2
+  ],
+  [
+   "PCS",
+   "C02",
+   2
+  ],
+  [
+   "COM",
+   "C02",
+   3
+  ],
+  [
+   "IT",
+   "C02",
+   2
+  ],
+  [
+   "CORP",
+   "C02",
+   2
+  ],
+  [
+   "TO",
+   "C03",
+   3
+  ],
+  [
+   "SC",
+   "C03",
+   4
+  ],
+  [
+   "OCC",
+   "C03",
+   3
+  ],
+  [
+   "RS",
+   "C03",
+   2
+  ],
+  [
+   "STA",
+   "C03",
+   2
+  ],
+  [
+   "TPS",
+   "C03",
+   2
+  ],
+  [
+   "EM",
+   "C03",
+   2
+  ],
+  [
+   "CT",
+   "C03",
+   2
+  ],
+  [
+   "PJ",
+   "C03",
+   2
+  ],
+  [
+   "SFS",
+   "C03",
+   3
+  ],
+  [
+   "FA",
+   "C03",
+   2
+  ],
+  [
+   "HRA",
+   "C03",
+   3
+  ],
+  [
+   "PCS",
+   "C03",
+   2
+  ],
+  [
+   "COM",
+   "C03",
+   4
+  ],
+  [
+   "IT",
+   "C03",
+   2
+  ],
+  [
+   "CORP",
+   "C03",
+   3
+  ],
+  [
+   "TO",
+   "C04",
+   3
+  ],
+  [
+   "SC",
+   "C04",
+   3
+  ],
+  [
+   "OCC",
+   "C04",
+   3
+  ],
+  [
+   "RS",
+   "C04",
+   3
+  ],
+  [
+   "STA",
+   "C04",
+   3
+  ],
+  [
+   "TPS",
+   "C04",
+   3
+  ],
+  [
+   "EM",
+   "C04",
+   3
+  ],
+  [
+   "CT",
+   "C04",
+   3
+  ],
+  [
+   "PJ",
+   "C04",
+   3
+  ],
+  [
+   "SFS",
+   "C04",
+   3
+  ],
+  [
+   "FA",
+   "C04",
+   4
+  ],
+  [
+   "HRA",
+   "C04",
+   3
+  ],
+  [
+   "PCS",
+   "C04",
+   4
+  ],
+  [
+   "COM",
+   "C04",
+   3
+  ],
+  [
+   "IT",
+   "C04",
+   3
+  ],
+  [
+   "CORP",
+   "C04",
+   4
+  ],
+  [
+   "TO",
+   "C05",
+   2
+  ],
+  [
+   "SC",
+   "C05",
+   3
+  ],
+  [
+   "OCC",
+   "C05",
+   3
+  ],
+  [
+   "RS",
+   "C05",
+   3
+  ],
+  [
+   "STA",
+   "C05",
+   3
+  ],
+  [
+   "TPS",
+   "C05",
+   3
+  ],
+  [
+   "EM",
+   "C05",
+   3
+  ],
+  [
+   "CT",
+   "C05",
+   3
+  ],
+  [
+   "PJ",
+   "C05",
+   3
+  ],
+  [
+   "SFS",
+   "C05",
+   3
+  ],
+  [
+   "FA",
+   "C05",
+   3
+  ],
+  [
+   "HRA",
+   "C05",
+   3
+  ],
+  [
+   "PCS",
+   "C05",
+   3
+  ],
+  [
+   "COM",
+   "C05",
+   3
+  ],
+  [
+   "IT",
+   "C05",
+   4
+  ],
+  [
+   "CORP",
+   "C05",
+   3
+  ],
+  [
+   "TO",
+   "C06",
+   3
+  ],
+  [
+   "SC",
+   "C06",
+   4
+  ],
+  [
+   "OCC",
+   "C06",
+   4
+  ],
+  [
+   "RS",
+   "C06",
+   2
+  ],
+  [
+   "STA",
+   "C06",
+   2
+  ],
+  [
+   "TPS",
+   "C06",
+   2
+  ],
+  [
+   "EM",
+   "C06",
+   2
+  ],
+  [
+   "CT",
+   "C06",
+   2
+  ],
+  [
+   "PJ",
+   "C06",
+   3
+  ],
+  [
+   "SFS",
+   "C06",
+   3
+  ],
+  [
+   "FA",
+   "C06",
+   3
+  ],
+  [
+   "HRA",
+   "C06",
+   3
+  ],
+  [
+   "PCS",
+   "C06",
+   3
+  ],
+  [
+   "COM",
+   "C06",
+   3
+  ],
+  [
+   "IT",
+   "C06",
+   3
+  ],
+  [
+   "CORP",
+   "C06",
+   4
+  ],
+  [
+   "TO",
+   "B01",
+   3
+  ],
+  [
+   "SC",
+   "B01",
+   3
+  ],
+  [
+   "OCC",
+   "B01",
+   3
+  ],
+  [
+   "RS",
+   "B01",
+   3
+  ],
+  [
+   "STA",
+   "B01",
+   3
+  ],
+  [
+   "TPS",
+   "B01",
+   3
+  ],
+  [
+   "EM",
+   "B01",
+   3
+  ],
+  [
+   "CT",
+   "B01",
+   3
+  ],
+  [
+   "PJ",
+   "B01",
+   3
+  ],
+  [
+   "SFS",
+   "B01",
+   3
+  ],
+  [
+   "FA",
+   "B01",
+   3
+  ],
+  [
+   "HRA",
+   "B01",
+   3
+  ],
+  [
+   "PCS",
+   "B01",
+   3
+  ],
+  [
+   "COM",
+   "B01",
+   3
+  ],
+  [
+   "IT",
+   "B01",
+   3
+  ],
+  [
+   "CORP",
+   "B01",
+   3
+  ],
+  [
+   "TO",
+   "B02",
+   3
+  ],
+  [
+   "SC",
+   "B02",
+   3
+  ],
+  [
+   "OCC",
+   "B02",
+   4
+  ],
+  [
+   "RS",
+   "B02",
+   3
+  ],
+  [
+   "STA",
+   "B02",
+   3
+  ],
+  [
+   "TPS",
+   "B02",
+   3
+  ],
+  [
+   "EM",
+   "B02",
+   3
+  ],
+  [
+   "CT",
+   "B02",
+   3
+  ],
+  [
+   "PJ",
+   "B02",
+   3
+  ],
+  [
+   "SFS",
+   "B02",
+   3
+  ],
+  [
+   "FA",
+   "B02",
+   3
+  ],
+  [
+   "HRA",
+   "B02",
+   3
+  ],
+  [
+   "PCS",
+   "B02",
+   3
+  ],
+  [
+   "COM",
+   "B02",
+   3
+  ],
+  [
+   "IT",
+   "B02",
+   3
+  ],
+  [
+   "CORP",
+   "B02",
+   3
+  ],
+  [
+   "TO",
+   "B03",
+   4
+  ],
+  [
+   "SC",
+   "B03",
+   4
+  ],
+  [
+   "OCC",
+   "B03",
+   4
+  ],
+  [
+   "RS",
+   "B03",
+   3
+  ],
+  [
+   "STA",
+   "B03",
+   3
+  ],
+  [
+   "TPS",
+   "B03",
+   3
+  ],
+  [
+   "EM",
+   "B03",
+   3
+  ],
+  [
+   "CT",
+   "B03",
+   2
+  ],
+  [
+   "PJ",
+   "B03",
+   2
+  ],
+  [
+   "SFS",
+   "B03",
+   4
+  ],
+  [
+   "FA",
+   "B03",
+   2
+  ],
+  [
+   "HRA",
+   "B03",
+   2
+  ],
+  [
+   "PCS",
+   "B03",
+   2
+  ],
+  [
+   "COM",
+   "B03",
+   3
+  ],
+  [
+   "IT",
+   "B03",
+   2
+  ],
+  [
+   "CORP",
+   "B03",
+   2
+  ],
+  [
+   "TO",
+   "B04",
+   3
+  ],
+  [
+   "SC",
+   "B04",
+   3
+  ],
+  [
+   "OCC",
+   "B04",
+   3
+  ],
+  [
+   "RS",
+   "B04",
+   3
+  ],
+  [
+   "STA",
+   "B04",
+   3
+  ],
+  [
+   "TPS",
+   "B04",
+   3
+  ],
+  [
+   "EM",
+   "B04",
+   3
+  ],
+  [
+   "CT",
+   "B04",
+   3
+  ],
+  [
+   "PJ",
+   "B04",
+   3
+  ],
+  [
+   "SFS",
+   "B04",
+   3
+  ],
+  [
+   "FA",
+   "B04",
+   3
+  ],
+  [
+   "HRA",
+   "B04",
+   3
+  ],
+  [
+   "PCS",
+   "B04",
+   3
+  ],
+  [
+   "COM",
+   "B04",
+   3
+  ],
+  [
+   "IT",
+   "B04",
+   3
+  ],
+  [
+   "CORP",
+   "B04",
+   3
+  ],
+  [
+   "TO",
+   "B05",
+   2
+  ],
+  [
+   "SC",
+   "B05",
+   2
+  ],
+  [
+   "OCC",
+   "B05",
+   2
+  ],
+  [
+   "RS",
+   "B05",
+   2
+  ],
+  [
+   "STA",
+   "B05",
+   2
+  ],
+  [
+   "TPS",
+   "B05",
+   2
+  ],
+  [
+   "EM",
+   "B05",
+   2
+  ],
+  [
+   "CT",
+   "B05",
+   2
+  ],
+  [
+   "PJ",
+   "B05",
+   3
+  ],
+  [
+   "SFS",
+   "B05",
+   2
+  ],
+  [
+   "FA",
+   "B05",
+   2
+  ],
+  [
+   "HRA",
+   "B05",
+   3
+  ],
+  [
+   "PCS",
+   "B05",
+   2
+  ],
+  [
+   "COM",
+   "B05",
+   2
+  ],
+  [
+   "IT",
+   "B05",
+   2
+  ],
+  [
+   "CORP",
+   "B05",
+   2
+  ],
+  [
+   "TO",
+   "B06",
+   2
+  ],
+  [
+   "SC",
+   "B06",
+   2
+  ],
+  [
+   "OCC",
+   "B06",
+   3
+  ],
+  [
+   "RS",
+   "B06",
+   3
+  ],
+  [
+   "STA",
+   "B06",
+   3
+  ],
+  [
+   "TPS",
+   "B06",
+   3
+  ],
+  [
+   "EM",
+   "B06",
+   3
+  ],
+  [
+   "CT",
+   "B06",
+   3
+  ],
+  [
+   "PJ",
+   "B06",
+   4
+  ],
+  [
+   "SFS",
+   "B06",
+   3
+  ],
+  [
+   "FA",
+   "B06",
+   3
+  ],
+  [
+   "HRA",
+   "B06",
+   3
+  ],
+  [
+   "PCS",
+   "B06",
+   3
+  ],
+  [
+   "COM",
+   "B06",
+   3
+  ],
+  [
+   "IT",
+   "B06",
+   3
+  ],
+  [
+   "CORP",
+   "B06",
+   3
+  ],
+  [
+   "TO",
+   "B07",
+   1
+  ],
+  [
+   "SC",
+   "B07",
+   2
+  ],
+  [
+   "OCC",
+   "B07",
+   2
+  ],
+  [
+   "RS",
+   "B07",
+   1
+  ],
+  [
+   "STA",
+   "B07",
+   1
+  ],
+  [
+   "TPS",
+   "B07",
+   1
+  ],
+  [
+   "EM",
+   "B07",
+   1
+  ],
+  [
+   "CT",
+   "B07",
+   2
+  ],
+  [
+   "PJ",
+   "B07",
+   3
+  ],
+  [
+   "SFS",
+   "B07",
+   3
+  ],
+  [
+   "FA",
+   "B07",
+   2
+  ],
+  [
+   "HRA",
+   "B07",
+   3
+  ],
+  [
+   "PCS",
+   "B07",
+   3
+  ],
+  [
+   "COM",
+   "B07",
+   4
+  ],
+  [
+   "IT",
+   "B07",
+   2
+  ],
+  [
+   "CORP",
+   "B07",
+   3
+  ],
+  [
+   "TO",
+   "D01",
+   4
+  ],
+  [
+   "SC",
+   "D01",
+   4
+  ],
+  [
+   "OCC",
+   "D01",
+   5
+  ],
+  [
+   "RS",
+   "D01",
+   2
+  ],
+  [
+   "STA",
+   "D01",
+   3
+  ],
+  [
+   "TPS",
+   "D01",
+   3
+  ],
+  [
+   "EM",
+   "D01",
+   1
+  ],
+  [
+   "CT",
+   "D01",
+   3
+  ],
+  [
+   "PJ",
+   "D01",
+   1
+  ],
+  [
+   "SFS",
+   "D01",
+   3
+  ],
+  [
+   "TO",
+   "D02",
+   4
+  ],
+  [
+   "OCC",
+   "D02",
+   3
+  ],
+  [
+   "RS",
+   "D02",
+   2
+  ],
+  [
+   "TO",
+   "D03",
+   2
+  ],
+  [
+   "SC",
+   "D03",
+   4
+  ],
+  [
+   "OCC",
+   "D03",
+   3
+  ],
+  [
+   "STA",
+   "D03",
+   2
+  ],
+  [
+   "EM",
+   "D03",
+   2
+  ],
+  [
+   "SFS",
+   "D03",
+   2
+  ],
+  [
+   "COM",
+   "D03",
+   2
+  ],
+  [
+   "TO",
+   "D04",
+   2
+  ],
+  [
+   "SC",
+   "D04",
+   2
+  ],
+  [
+   "OCC",
+   "D04",
+   4
+  ],
+  [
+   "TO",
+   "D05",
+   4
+  ],
+  [
+   "SC",
+   "D05",
+   4
+  ],
+  [
+   "OCC",
+   "D05",
+   5
+  ],
+  [
+   "RS",
+   "D05",
+   3
+  ],
+  [
+   "STA",
+   "D05",
+   3
+  ],
+  [
+   "TPS",
+   "D05",
+   3
+  ],
+  [
+   "EM",
+   "D05",
+   3
+  ],
+  [
+   "CT",
+   "D05",
+   3
+  ],
+  [
+   "SFS",
+   "D05",
+   4
+  ],
+  [
+   "SC",
+   "D06",
+   3
+  ],
+  [
+   "STA",
+   "D06",
+   3
+  ],
+  [
+   "FA",
+   "D06",
+   2
+  ],
+  [
+   "COM",
+   "D06",
+   3
+  ],
+  [
+   "TO",
+   "D07",
+   3
+  ],
+  [
+   "OCC",
+   "D07",
+   2
+  ],
+  [
+   "RS",
+   "D07",
+   4
+  ],
+  [
+   "TO",
+   "D08",
+   2
+  ],
+  [
+   "OCC",
+   "D08",
+   3
+  ],
+  [
+   "RS",
+   "D08",
+   2
+  ],
+  [
+   "STA",
+   "D08",
+   4
+  ],
+  [
+   "SC",
+   "D09",
+   2
+  ],
+  [
+   "OCC",
+   "D09",
+   3
+  ],
+  [
+   "STA",
+   "D09",
+   4
+  ],
+  [
+   "TPS",
+   "D09",
+   2
+  ],
+  [
+   "EM",
+   "D09",
+   2
+  ],
+  [
+   "IT",
+   "D09",
+   2
+  ],
+  [
+   "OCC",
+   "D10",
+   3
+  ],
+  [
+   "RS",
+   "D10",
+   2
+  ],
+  [
+   "TPS",
+   "D10",
+   4
+  ],
+  [
+   "SC",
+   "D11",
+   2
+  ],
+  [
+   "EM",
+   "D11",
+   4
+  ],
+  [
+   "SFS",
+   "D11",
+   2
+  ],
+  [
+   "CT",
+   "D12",
+   4
+  ],
+  [
+   "PJ",
+   "D12",
+   3
+  ],
+  [
+   "OCC",
+   "D13",
+   3
+  ],
+  [
+   "RS",
+   "D13",
+   3
+  ],
+  [
+   "STA",
+   "D13",
+   3
+  ],
+  [
+   "TPS",
+   "D13",
+   4
+  ],
+  [
+   "EM",
+   "D13",
+   4
+  ],
+  [
+   "CT",
+   "D13",
+   3
+  ],
+  [
+   "PJ",
+   "D13",
+   2
+  ],
+  [
+   "SFS",
+   "D13",
+   3
+  ],
+  [
+   "RS",
+   "D14",
+   3
+  ],
+  [
+   "STA",
+   "D14",
+   3
+  ],
+  [
+   "TPS",
+   "D14",
+   3
+  ],
+  [
+   "EM",
+   "D14",
+   3
+  ],
+  [
+   "CT",
+   "D14",
+   3
+  ],
+  [
+   "RS",
+   "D15",
+   2
+  ],
+  [
+   "STA",
+   "D15",
+   2
+  ],
+  [
+   "TPS",
+   "D15",
+   2
+  ],
+  [
+   "EM",
+   "D15",
+   2
+  ],
+  [
+   "CT",
+   "D15",
+   2
+  ],
+  [
+   "PJ",
+   "D15",
+   4
+  ],
+  [
+   "PJ",
+   "D16",
+   4
+  ],
+  [
+   "PCS",
+   "D16",
+   2
+  ],
+  [
+   "CT",
+   "D17",
+   3
+  ],
+  [
+   "PJ",
+   "D17",
+   4
+  ],
+  [
+   "SFS",
+   "D17",
+   3
+  ],
+  [
+   "TO",
+   "D18",
+   2
+  ],
+  [
+   "SC",
+   "D18",
+   2
+  ],
+  [
+   "OCC",
+   "D18",
+   3
+  ],
+  [
+   "RS",
+   "D18",
+   2
+  ],
+  [
+   "STA",
+   "D18",
+   2
+  ],
+  [
+   "TPS",
+   "D18",
+   2
+  ],
+  [
+   "EM",
+   "D18",
+   2
+  ],
+  [
+   "CT",
+   "D18",
+   2
+  ],
+  [
+   "PJ",
+   "D18",
+   3
+  ],
+  [
+   "SFS",
+   "D18",
+   4
+  ],
+  [
+   "FA",
+   "D19",
+   4
+  ],
+  [
+   "PJ",
+   "D20",
+   2
+  ],
+  [
+   "FA",
+   "D20",
+   4
+  ],
+  [
+   "PCS",
+   "D20",
+   2
+  ],
+  [
+   "COM",
+   "D20",
+   2
+  ],
+  [
+   "FA",
+   "D21",
+   4
+  ],
+  [
+   "PCS",
+   "D21",
+   2
+  ],
+  [
+   "COM",
+   "D21",
+   2
+  ],
+  [
+   "FA",
+   "D22",
+   2
+  ],
+  [
+   "HRA",
+   "D22",
+   4
+  ],
+  [
+   "HRA",
+   "D23",
+   4
+  ],
+  [
+   "PJ",
+   "D24",
+   2
+  ],
+  [
+   "HRA",
+   "D24",
+   3
+  ],
+  [
+   "PCS",
+   "D24",
+   2
+  ],
+  [
+   "CORP",
+   "D24",
+   2
+  ],
+  [
+   "PJ",
+   "D25",
+   2
+  ],
+  [
+   "FA",
+   "D25",
+   3
+  ],
+  [
+   "PCS",
+   "D25",
+   4
+  ],
+  [
+   "COM",
+   "D25",
+   2
+  ],
+  [
+   "IT",
+   "D25",
+   2
+  ],
+  [
+   "CORP",
+   "D25",
+   2
+  ],
+  [
+   "PJ",
+   "D26",
+   4
+  ],
+  [
+   "FA",
+   "D26",
+   2
+  ],
+  [
+   "PCS",
+   "D26",
+   4
+  ],
+  [
+   "COM",
+   "D26",
+   3
+  ],
+  [
+   "CORP",
+   "D26",
+   3
+  ],
+  [
+   "RS",
+   "D27",
+   2
+  ],
+  [
+   "STA",
+   "D27",
+   2
+  ],
+  [
+   "TPS",
+   "D27",
+   2
+  ],
+  [
+   "EM",
+   "D27",
+   2
+  ],
+  [
+   "PCS",
+   "D27",
+   3
+  ],
+  [
+   "FA",
+   "D28",
+   2
+  ],
+  [
+   "COM",
+   "D28",
+   4
+  ],
+  [
+   "CORP",
+   "D28",
+   2
+  ],
+  [
+   "STA",
+   "D29",
+   2
+  ],
+  [
+   "IT",
+   "D29",
+   4
+  ],
+  [
+   "PJ",
+   "D30",
+   2
+  ],
+  [
+   "FA",
+   "D30",
+   3
+  ],
+  [
+   "HRA",
+   "D30",
+   3
+  ],
+  [
+   "PCS",
+   "D30",
+   3
+  ],
+  [
+   "COM",
+   "D30",
+   3
+  ],
+  [
+   "IT",
+   "D30",
+   2
+  ],
+  [
+   "CORP",
+   "D30",
+   4
+  ],
+  [
+   "HRA",
+   "D31",
+   2
+  ],
+  [
+   "PCS",
+   "D31",
+   2
+  ],
+  [
+   "CORP",
+   "D31",
+   4
+  ]
+ ]
+}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ code }}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:640px;margin:6vh auto">
+  <h1>{{ t("Something needs attention") }}</h1>
+  <p>{{ t(detail|string) }}</p>
+  <p class="muted small">{{ t("Error code") }} {{ code }}</p>
+  <a class="btn ghost" href="/me">{{ t("Back to my dashboard") }}</a>
+</div>
+{% endblock %}

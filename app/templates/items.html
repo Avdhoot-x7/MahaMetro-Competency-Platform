@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ t("Question bank") }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ t("Question bank") }}</h1>
+  <div class="muted small">{% for s in ["draft","review","approved","retired"] %}{{ t(s|capitalize) }}: {{ counts.get(s, 0) }} &nbsp; {% endfor %}</div></div>
+  <div class="row" style="flex:0"><a class="btn" href="/items/new">{{ t("New question") }}</a>
+  {% if user.has("reviewer","cell") %}<a class="btn ghost" href="/items/review">{{ t("Review queue") }} ({{ review_n }})</a>{% endif %}
+  <a class="btn ghost" href="/library">{{ t("Media & passages") }}</a> <a class="btn ghost" href="/items/guide">{{ t("Question-writing guide") }}</a></div></div>
+<form class="card row" method="get">
+  <div><input type="search" name="q" value="{{ f.q }}" placeholder="{{ t('Search ID or text') }}"></div>
+  <div><select name="competency"><option value="">{{ t("All competencies") }}</option>{% for c in comps %}<option value="{{ c.code }}" {{ 'selected' if c.code==f.competency else '' }}>{{ c.code }} {{ L(c,"name")|truncate(40) }}</option>{% endfor %}</select></div>
+  <div><select name="qtype"><option value="">{{ t("All types") }}</option>{% for q in qtypes %}<option value="{{ q }}" {{ 'selected' if q==f.qtype else '' }}>{{ t(q) }}</option>{% endfor %}</select></div>
+  <div><select name="status"><option value="">{{ t("All statuses") }}</option>{% for s in ["draft","review","approved","retired"] %}<option value="{{ s }}" {{ 'selected' if s==f.status else '' }}>{{ t(s|capitalize) }}</option>{% endfor %}</select></div>
+  <div><select name="pool"><option value="">{{ t("All pools") }}</option>{% for s in ["exam","practice","both"] %}<option value="{{ s }}" {{ 'selected' if s==f.pool else '' }}>{{ t(s) }}</option>{% endfor %}</select></div>
+  <div style="flex:0"><label class="check"><input type="checkbox" name="mine" value="1" {{ 'checked' if f.mine else '' }}>{{ t("Mine") }}</label></div>
+  <div style="flex:0"><button class="btn ghost" type="submit">{{ t("Filter") }}</button></div>
+</form>
+<div class="card table-scroll">
+<table><thead><tr><th>{{ t("ID") }}</th><th>{{ t("Question") }}</th><th>{{ t("Type") }}</th><th>{{ t("Level") }}</th><th>{{ t("Pool") }}</th><th>{{ t("Status") }}</th><th class="right">p</th><th class="right">r<sub>pb</sub></th><th></th></tr></thead><tbody>
+{% for i in items %}<tr><td class="nowrap"><b>{{ i.code }}</b><div class="small muted">{{ i.competency_code }}</div></td>
+<td>{{ L(i,"stem")|truncate(110) }}{% if not i.stem_mr %} <span class="badge na" title="{{ t('Marathi text missing') }}">EN</span>{% endif %}{% if i.needs_sme_validation %} <span class="badge pri">{{ t("SME validation") }}</span>{% endif %}{% if i.media_id %} <span class="badge na">{{ t("media") }}</span>{% endif %}{% if i.passage_id %} <span class="badge na">{{ t("passage") }}</span>{% endif %}{% set q = quality.get(i.id) %}{% if q %} <span class="badge dev" title="{{ q|join(' · ') }}">{{ q|length }} {{ t("checks") }}</span>{% endif %}</td>
+<td class="small">{{ t(i.qtype) }}</td><td class="small">{{ i.target_level }} · {{ t(i.bloom) }}</td><td class="small">{{ t(i.pool) }}</td>
+<td><span class="badge {{ {'approved':'ok','review':'dev','draft':'na','retired':'na'}[i.status] }}">{{ t(i.status|capitalize) }}</span></td>
+<td class="right small">{{ i.p_value|num(2) }}</td><td class="right small">{{ i.point_biserial|num(2) }}{% if item_flag(i) %} <span class="badge pri">{{ t(item_flag(i)) }}</span>{% endif %}</td>
+<td class="nowrap"><a href="/items/{{ i.id }}/preview">{{ t("Preview") }}</a> · <a href="/items/{{ i.id }}/edit">{{ t("Edit") }}</a></td></tr>
+{% else %}<tr><td colspan="9" class="muted">{{ t("No questions match.") }}</td></tr>{% endfor %}
+</tbody></table>
+<p class="small muted">{{ total }} {{ t("questions") }} · {% if page > 1 %}<a href="?page={{ page-1 }}&q={{ f.q }}&competency={{ f.competency }}&status={{ f.status }}&qtype={{ f.qtype }}&pool={{ f.pool }}&mine={{ f.mine }}">‹ {{ t("Previous") }}</a>{% endif %}
+{% if page*50 < total %} <a href="?page={{ page+1 }}&q={{ f.q }}&competency={{ f.competency }}&status={{ f.status }}&qtype={{ f.qtype }}&pool={{ f.pool }}&mine={{ f.mine }}">{{ t("Next") }} ›</a>{% endif %}</p>
+</div>
+{% endblock %}
