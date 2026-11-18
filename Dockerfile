@@ -1,13 +1,14 @@
-FROM python:3.12-slim
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 MEDIA_DIR=/data/media
+# Multi-stage Dockerfile for MahaMetro Competency Platform (Java 17 + Spring Boot + Tomcat)
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY app ./app
-COPY seed ./seed
-COPY scripts ./scripts
-RUN useradd -r -u 10001 mmapp && mkdir -p /data/media /data/import && chown -R mmapp /data
-USER mmapp
-EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s CMD python -c "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/healthz')"
-CMD ["gunicorn", "app.main:app", "-k", "uvicorn.workers.UvicornWorker", "-w", "4", "-b", "0.0.0.0:8000", "--timeout", "120", "--forwarded-allow-ips", "*"]
+COPY competency-platform/pom.xml ./pom.xml
+COPY competency-platform/src ./src
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+VOLUME /tmp
+COPY --from=builder /app/target/competency.war app.war
+EXPOSE 8080
+ENV SPRING_PROFILES_ACTIVE=dev
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.war"]
