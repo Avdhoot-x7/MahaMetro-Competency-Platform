@@ -22,8 +22,30 @@
   </style>
 </head>
 <body>
+
+<header class="top-nav">
+  <a th:href="@{/}" class="top-nav-brand">
+    <div class="brand-icon">M</div>
+    <div>
+      <div class="brand-title">MAHA METRO</div>
+      <div class="brand-subtitle">Psychometric Intelligence &middot; Section 9</div>
+    </div>
+  </a>
+
+  <nav class="top-nav-links">
+    <a th:href="@{/}" class="top-nav-link">Home</a>
+    <a th:href="@{/questions}" class="top-nav-link">Question Bank</a>
+    <a th:href="@{/questions/generate}" class="top-nav-link">AI Studio</a>
+    <a th:href="@{/questions/analysis}" class="top-nav-link active">Item Analysis</a>
+    <a th:href="@{/results}" class="top-nav-link">Staff Results</a>
+  </nav>
+
+  <div class="top-nav-user">
+    <a th:href="@{/questions}" class="btn btn-outline btn-sm">&larr; Back to Question Bank</a>
+  </div>
+</header>
+
 <main class="card wide">
-  <p><a th:href="@{/}">Home</a> &middot; <a th:href="@{/questions}">Question Bank</a> &middot; <b>Psychometric Item Analysis</b></p>
 
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <div>

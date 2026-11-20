@@ -5,19 +5,115 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sign in - Maha Metro Competency Assessment</title>
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    body {
+      background: radial-gradient(circle at 15% 15%, #eff6ff 0%, #f1f5f9 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-container {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .brand-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .brand-logo-large {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      box-shadow: 0 8px 16px rgba(30, 64, 175, 0.25);
+      margin-bottom: 12px;
+    }
+    .login-card {
+      background: #ffffff;
+      padding: 36px 32px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
 </head>
 <body>
-<main class="card">
-  <h1>Maha Metro Competency Assessment</h1>
-  <p class="msg error" th:if="${param.error}">Wrong employee ID or password. After 5 wrong tries the account is locked for 15 minutes.</p>
-  <p class="msg" th:if="${param.logout}">You have signed out.</p>
-  <form th:action="@{/login}" method="post">
-    <label for="username">Employee ID</label>
-    <input id="username" name="username" type="text" autocomplete="username" required autofocus>
-    <label for="password">Password</label>
-    <input id="password" name="password" type="password" autocomplete="current-password" required>
-    <button type="submit">Sign in</button>
-  </form>
-</main>
+<div class="login-container">
+  <div class="brand-header">
+    <div class="brand-logo-large">M</div>
+    <h1 style="margin: 0; font-size: 22px; color: var(--primary);">MAHA METRO</h1>
+    <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px;">Competency Assessment Platform</div>
+  </div>
+
+  <main class="login-card">
+    <h2 style="margin: 0 0 16px; font-size: 18px; color: var(--text-main);">Sign In to Portal</h2>
+
+    <p class="msg error" th:if="${param.error}">Invalid Employee ID or password. Accounts lock for 15 minutes after 5 consecutive failed attempts.</p>
+    <p class="msg" th:if="${param.logout}">You have been signed out safely.</p>
+
+    <form th:action="@{/login}" method="post">
+      <label for="username">Employee ID / SAP Personnel No.</label>
+      <input id="username" name="username" type="text" autocomplete="username" placeholder="e.g. DEMO-CELL" required autofocus>
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px; padding: 11px;">Sign In</button>
+    </form>
+
+    <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border);">
+      <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+        Demo Reviewer Quick-Fill
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 10px;">Click any role to autofill login credentials:</p>
+      
+      <div class="quick-login-grid">
+        <button type="button" class="quick-login-pill" onclick="fillCreds('ADMIN', 'Admin@12345')">
+          <span style="display:block; font-weight:700; color:var(--primary);">ADMIN</span>
+          <span style="font-size:10.5px; color:#64748b;">Administrator</span>
+        </button>
+        <button type="button" class="quick-login-pill" onclick="fillCreds('DEMO-CELL', 'Demo@2027')">
+          <span style="display:block; font-weight:700; color:var(--ai-purple);">DEMO-CELL</span>
+          <span style="font-size:10.5px; color:#64748b;">Assessment Cell</span>
+        </button>
+        <button type="button" class="quick-login-pill" onclick="fillCreds('DEMO-EMP1', 'Demo@2027')">
+          <span style="display:block; font-weight:700; color:var(--success);">DEMO-EMP1</span>
+          <span style="font-size:10.5px; color:#64748b;">Candidate</span>
+        </button>
+        <button type="button" class="quick-login-pill" onclick="fillCreds('DEMO-SME', 'Demo@2027')">
+          <span style="display:block; font-weight:700; color:var(--warning);">DEMO-SME</span>
+          <span style="font-size:10.5px; color:#64748b;">Subject Expert</span>
+        </button>
+        <button type="button" class="quick-login-pill" onclick="fillCreds('DEMO-PROC', 'Demo@2027')">
+          <span style="display:block; font-weight:700; color:var(--danger);">DEMO-PROC</span>
+          <span style="font-size:10.5px; color:#64748b;">Proctor</span>
+        </button>
+        <button type="button" class="quick-login-pill" onclick="fillCreds('DEMO-PROG', 'Demo@2027')">
+          <span style="display:block; font-weight:700; color:#3b82f6;">DEMO-PROG</span>
+          <span style="font-size:10.5px; color:#64748b;">Coordinator</span>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  function fillCreds(username, password) {
+    document.getElementById('username').value = username;
+    document.getElementById('password').value = password;
+    const btn = document.querySelector('button[type="submit"]');
+    btn.style.boxShadow = '0 0 0 3px rgba(30, 64, 175, 0.4)';
+    setTimeout(() => { btn.style.boxShadow = ''; }, 600);
+  }
+</script>
 </body>
 </html>

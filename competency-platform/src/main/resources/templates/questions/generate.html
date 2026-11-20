@@ -16,10 +16,33 @@
   </style>
 </head>
 <body>
+
+<header class="top-nav">
+  <a th:href="@{/}" class="top-nav-brand">
+    <div class="brand-icon">M</div>
+    <div>
+      <div class="brand-title">MAHA METRO</div>
+      <div class="brand-subtitle">AI Question Studio &middot; Spec v1.3</div>
+    </div>
+  </a>
+
+  <nav class="top-nav-links">
+    <a th:href="@{/}" class="top-nav-link">Home</a>
+    <a th:href="@{/questions}" class="top-nav-link">Question Bank</a>
+    <a th:href="@{/questions/generate}" class="top-nav-link active">AI Studio</a>
+    <a th:href="@{/questions/analysis}" class="top-nav-link">Item Analysis</a>
+  </nav>
+
+  <div class="top-nav-user">
+    <a th:href="@{/questions}" class="btn btn-outline btn-sm">&larr; Back to Question Bank</a>
+  </div>
+</header>
+
 <main class="card wide">
-  <p><a th:href="@{/questions}">Back to the question bank</a></p>
-  <h1>AI Question Bank Generator</h1>
-  <p style="color:#4b5563;">Drafts assessment items conforming strictly to CoE Guide v1.3 writing rules (R1 to R10), bilingual translation (English & Marathi), and per-option operational misconceptions.</p>
+  <div style="margin-bottom:20px;">
+    <h1 style="margin:0 0 6px;">AI Question Generator Studio</h1>
+    <p style="color:var(--text-muted); margin:0;">Drafts bilingual assessment items conforming strictly to CoE Guide v1.3 writing rules (R1 to R10), bilingual translation (English &amp; Marathi), and per-option operational misconceptions.</p>
+  </div>
 
   <p class="msg" th:if="${message}" th:text="${message}"></p>
   <p class="msg error" th:if="${error}" th:text="${error}"></p>

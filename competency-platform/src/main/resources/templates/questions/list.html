@@ -3,46 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Question bank - Maha Metro Competency Assessment</title>
+  <title>Question Bank - Maha Metro Competency Assessment</title>
   <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
+
+<header class="top-nav">
+  <a th:href="@{/}" class="top-nav-brand">
+    <div class="brand-icon">M</div>
+    <div>
+      <div class="brand-title">MAHA METRO</div>
+      <div class="brand-subtitle">Question Bank Management</div>
+    </div>
+  </a>
+
+  <nav class="top-nav-links">
+    <a th:href="@{/}" class="top-nav-link">Home</a>
+    <a th:href="@{/questions}" class="top-nav-link active">Question Bank</a>
+    <a th:href="@{/questions/generate}" class="top-nav-link">AI Studio</a>
+    <a th:href="@{/questions/analysis}" class="top-nav-link">Item Analysis</a>
+    <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
+  </nav>
+
+  <div class="top-nav-user">
+    <a th:href="@{/}" class="btn btn-outline btn-sm">&larr; Back to Dashboard</a>
+  </div>
+</header>
+
 <main class="card wide">
-  <p><a th:href="@{/}">Home</a></p>
-  <h1>Question bank</h1>
-  <p>In the bank: <b th:text="${inBank}">0</b> &middot; Waiting for a subject expert: <b th:text="${waiting}">0</b></p>
-  <p class="row">
-    <a th:if="${canUpload}" th:href="@{/questions/generate}" style="background:#4338ca; color:white; padding:4px 10px; border-radius:4px; font-weight:bold; text-decoration:none;">AI Generator (Spec v1.3)</a>
-    <a th:href="@{/questions/analysis}" style="background:#0284c7; color:white; padding:4px 10px; border-radius:4px; font-weight:bold; text-decoration:none;">Item Analysis (Section 9)</a>
-    <a th:if="${canUpload}" th:href="@{/questions/upload}">Upload questions (Excel)</a>
-    <a th:if="${canApprove}" th:href="@{/questions/pending}">Approve questions</a>
-    <span>Show:
-      <a th:href="@{/questions}">all</a> |
-      <a th:href="@{/questions(status='SUBMITTED')}">waiting</a> |
-      <a th:href="@{/questions(status='APPROVED')}">in the bank</a> |
-      <a th:href="@{/questions(status='REJECTED')}">rejected</a>
-    </span>
-  </p>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+    <div>
+      <h1 style="margin:0 0 6px;">Enterprise Question Bank</h1>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <span class="badge green">In Bank: <b th:text="${inBank}" style="margin-left:4px;">0</b></span>
+        <span class="badge amber">Pending SME Review: <b th:text="${waiting}" style="margin-left:4px;">0</b></span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a th:if="${canUpload}" th:href="@{/questions/generate}" class="btn btn-ai">
+        ✨ AI Question Studio (Spec v1.3)
+      </a>
+      <a th:href="@{/questions/analysis}" class="btn btn-primary">
+        📊 Psychometrics &amp; Item Analysis
+      </a>
+      <a th:if="${canUpload}" th:href="@{/questions/upload}" class="btn btn-outline">
+        📤 Upload Excel
+      </a>
+      <a th:if="${canApprove}" th:href="@{/questions/pending}" class="btn btn-warning">
+        ⚖️ SME Approvals
+      </a>
+    </div>
+  </div>
+
+  <!-- Status Filter Pills -->
+  <div style="background:#f1f5f9; padding:8px 14px; border-radius:var(--radius-md); display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+    <span style="font-size:13px; font-weight:700; color:#475569; text-transform:uppercase;">Filter:</span>
+    <a th:href="@{/questions}" class="btn btn-sm" th:classappend="${status == null ? 'btn-primary' : 'btn-outline'}">All Items</a>
+    <a th:href="@{/questions(status='SUBMITTED')}" class="btn btn-sm" th:classappend="${status == 'SUBMITTED' ? 'btn-warning' : 'btn-outline'}">Waiting SME</a>
+    <a th:href="@{/questions(status='APPROVED')}" class="btn btn-sm" th:classappend="${status == 'APPROVED' ? 'btn-success' : 'btn-outline'}">Approved in Bank</a>
+    <a th:href="@{/questions(status='REJECTED')}" class="btn btn-sm" th:classappend="${status == 'REJECTED' ? 'btn-danger' : 'btn-outline'}">Rejected</a>
+  </div>
+
   <table>
-    <thead><tr><th>Code</th><th>Competency</th><th>Topic</th><th>Variation</th><th>Question</th><th>Status</th><th>By</th></tr></thead>
+    <thead>
+      <tr>
+        <th style="width:130px;">Item Code</th>
+        <th style="width:110px;">Competency</th>
+        <th style="width:80px;">Topic</th>
+        <th style="width:90px;">Variation</th>
+        <th>Stem (English / Marathi)</th>
+        <th style="width:120px;">Status</th>
+        <th style="width:110px;">Author</th>
+      </tr>
+    </thead>
     <tbody>
     <tr th:each="q : ${result.content}">
-      <td><a th:href="@{/questions/{id}(id=${q.id})}" th:text="${q.code}">CODE</a></td>
-      <td th:text="${q.competencyCode}"></td>
+      <td><a th:href="@{/questions/{id}(id=${q.id})}" th:text="${q.code}" style="font-family:monospace; font-weight:700;">CODE</a></td>
+      <td><span class="badge blue" th:text="${q.competencyCode}"></span></td>
       <td th:text="${q.topicNo}"></td>
-      <td th:text="${q.variationNo}"></td>
-      <td th:text="${#strings.abbreviate(q.stemEn, 90)}"></td>
-      <td th:text="${q.status}"></td>
-      <td th:text="${q.authorEmpId}"></td>
+      <td th:text="'Var ' + ${q.variationNo}"></td>
+      <td>
+        <div th:text="${#strings.abbreviate(q.stemEn, 90)}" style="font-weight:500;"></div>
+        <div th:if="${!#strings.isEmpty(q.stemMr)}" th:text="${#strings.abbreviate(q.stemMr, 90)}" style="font-size:12px; color:#64748b; margin-top:2px;"></div>
+      </td>
+      <td>
+        <span th:if="${q.status == 'APPROVED'}" class="badge green">APPROVED</span>
+        <span th:if="${q.status == 'SUBMITTED'}" class="badge amber">PENDING SME</span>
+        <span th:if="${q.status == 'REJECTED'}" class="badge red">REJECTED</span>
+        <span th:if="${q.status == 'DRAFT'}" class="badge">DRAFT</span>
+      </td>
+      <td th:text="${q.authorEmpId}" style="font-size:13px; color:#475569;"></td>
     </tr>
-    <tr th:if="${result.totalElements == 0}"><td colspan="7">No questions yet.</td></tr>
+    <tr th:if="${result.totalElements == 0}"><td colspan="7" style="text-align:center; padding:30px; color:#64748b;">No questions match the current filter.</td></tr>
     </tbody>
   </table>
-  <p class="row">
-    <a th:if="${result.hasPrevious()}" th:href="@{/questions(status=${status},page=${result.number - 1})}">Previous</a>
-    <span>Page <span th:text="${result.number + 1}">1</span> of <span th:text="${result.totalPages}">1</span></span>
-    <a th:if="${result.hasNext()}" th:href="@{/questions(status=${status},page=${result.number + 1})}">Next</a>
-  </p>
+
+  <!-- Pagination Controls -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;" th:if="${result.totalPages > 1}">
+    <div>
+      <span style="font-size:13px; color:var(--text-muted);">
+        Page <b th:text="${result.number + 1}">1</b> of <b th:text="${result.totalPages}">1</b>
+        (<span th:text="${result.totalElements}"></span> total questions)
+      </span>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <a th:if="${result.hasPrevious()}" th:href="@{/questions(status=${status},page=${result.number - 1})}" class="btn btn-outline btn-sm">&larr; Previous</a>
+      <a th:if="${result.hasNext()}" th:href="@{/questions(status=${status},page=${result.number + 1})}" class="btn btn-outline btn-sm">Next &rarr;</a>
+    </div>
+  </div>
 </main>
 </body>
 </html>
