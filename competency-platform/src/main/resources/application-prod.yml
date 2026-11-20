@@ -1,7 +1,7 @@
 # Production: externalized secrets and tuned infrastructure parameters
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:${DB_URL:${MYSQL_JDBC_URL:jdbc:mysql://${MYSQLHOST:localhost}:${MYSQLPORT:3306}/${MYSQLDATABASE:competency}?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false}}}
+    url: ${SPRING_DATASOURCE_URL:${MYSQL_URL:${MYSQL_PRIVATE_URL:${DATABASE_URL:${DB_URL:${MYSQL_JDBC_URL:jdbc:mysql://${MYSQLHOST:localhost}:${MYSQLPORT:3306}/${MYSQLDATABASE:competency}?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false}}}}}}
     username: ${SPRING_DATASOURCE_USERNAME:${DB_USER:${MYSQLUSER:competency}}}
     password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD:${MYSQLPASSWORD:competency}}}
     hikari:
@@ -33,6 +33,10 @@ app:
     header-enabled: ${SSO_HEADER_ENABLED:false}
     header-name: ${SSO_HEADER_NAME:X-Remote-User}
     trusted-proxies: ${SSO_TRUSTED_PROXIES:127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+  bootstrap-admin:
+    emp-id: ADMIN
+    password: ${ADMIN_PASSWORD:Admin@12345}
+  demo-data: ${DEMO_DATA:true}
 
 # Actuator metrics & health monitoring for production
 management:
