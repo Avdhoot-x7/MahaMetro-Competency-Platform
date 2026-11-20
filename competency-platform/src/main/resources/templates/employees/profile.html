@@ -311,11 +311,11 @@
           <span class="badge" th:classappend="${summary.readiness == 'Green' ? 'green' : (summary.readiness == 'Amber' ? 'amber' : 'red')}" th:text="${summary.readiness}">Green</span>
         </div>
         <div style="font-size:24px; font-weight:800; color:var(--primary); margin-bottom:8px;">
-          <span th:text="${summary.competencyIndex != null ? summary.competencyIndex + '%' : '0%'}">85%</span>
+          <span th:text="${summary.indexPct != null ? summary.indexPct + '%' : '0%'}">85%</span>
         </div>
         <div style="display:flex; gap:16px; font-size:13px; color:#475569;">
-          <div>Gaps: <b th:text="${summary.gapCount}">0</b></div>
-          <div>Safety Gates: <b th:text="${summary.safetyGateCount}" style="color:var(--danger);">0</b></div>
+          <div>Gaps: <b th:text="${summary.gapsCount}">0</b></div>
+          <div>Safety Gates: <b th:text="${summary.safetyGates}" style="color:var(--danger);">0</b></div>
         </div>
       </div>
 
