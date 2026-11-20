@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Question & Solution Review - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .review-card { background:#fff; border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:24px; box-shadow:0 1px 3px rgba(0,0,0,0.05); }
+    .review-header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:14px; }
+    .opt-box { padding:10px 14px; border:1px solid #e0e0e0; border-radius:6px; margin-bottom:8px; font-size:14px; }
+    .opt-correct { background:#e8f5e9; border-color:#81c784; }
+    .opt-wrong-selected { background:#ffebee; border-color:#e57373; }
+    .rationale-box { background:#f5f7fa; border-left:4px solid #1976d2; padding:14px; border-radius:4px; margin-top:14px; font-size:13px; line-height:1.5; }
+    .misconception-box { background:#fff3e0; border-left:4px solid #ff9800; padding:10px 14px; border-radius:4px; margin-top:8px; font-size:13px; color:#e65100; }
+  </style>
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/}">Home</a> &middot; <a th:href="@{/delivery/attempts/{id}/summary(id=${attempt.id})}">&larr; Back to Summary</a></p>
+
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <h1 style="margin-bottom:4px;">Assessment Solution Review</h1>
+      <p style="margin:0; color:#666;" th:text="${test != null ? test.titleEn : 'Test'}">Test Title</p>
+    </div>
+    <div style="text-align:right;">
+      <span style="font-size:20px; font-weight:bold;" th:text="${attempt.score} + ' / ' + ${attempt.maxScore} + ' (' + ${attempt.percent} + '%)'">Score</span><br>
+      <small style="color:#777;">Candidate: <b th:text="${employee.nameEn}">Employee</b></small>
+    </div>
+  </div>
+
+  <div style="background:#e8f4fd; border:1px solid #b3e5fc; border-radius:6px; padding:14px; margin:20px 0; font-size:13px; color:#0277bd;">
+    <b>Pedagogical Review &amp; Learning Support:</b> Reviewing correct rationales and misconceptions improves long-term technical retention. Your answers and the official SOP / Rule Book solutions are presented below in English and Marathi.
+  </div>
+
+  <div th:each="r, iterStat : ${reviewItems}" class="review-card">
+    <div class="review-header">
+      <div>
+        <span style="font-size:16px; font-weight:bold; color:#1a237e;" th:text="'Question #' + ${r.item.position}">Question #1</span>
+        &middot; <span class="badge" th:text="${r.item.competencyCode}">CORE-01</span>
+        &middot; <small th:text="'[' + ${r.item.qtype} + ']'"></small>
+      </div>
+      <div>
+        <span th:if="${r.item.isCorrect}" style="background:#2e7d32; color:#fff; padding:4px 10px; border-radius:4px; font-weight:bold; font-size:12px;">
+          &#x2714; Correct (+<span th:text="${r.item.awardedScore}">1.0</span> marks)
+        </span>
+        <span th:if="${!r.item.isCorrect}" style="background:#d32f2f; color:#fff; padding:4px 10px; border-radius:4px; font-weight:bold; font-size:12px;">
+          &#x2716; Incorrect (0 marks)
+        </span>
+      </div>
+    </div>
+
+    <!-- Stem EN & MR -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:16px; font-weight:600; color:#222; margin-bottom:6px;" th:text="${r.question.stemEn}">Stem English</div>
+      <div th:if="${r.question.stemMr != null and !r.question.stemMr.isEmpty()}"
+           style="font-size:15px; color:#444; font-style:italic;" th:text="${r.question.stemMr}">Stem Marathi</div>
+    </div>
+
+    <!-- Options -->
+    <div th:if="${!#lists.isEmpty(r.options)}">
+      <div th:each="opt : ${r.options}" class="opt-box"
+           th:classappend="${opt.correct ? 'opt-correct' : (#strings.contains(r.item.selectedOptions, opt.id.toString()) ? 'opt-wrong-selected' : '')}">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <b th:if="${#strings.contains(r.item.selectedOptions, opt.id.toString())}">[Your Choice] </b>
+            <span th:text="${opt.textEn}">Option text English</span>
+            <span th:if="${opt.textMr != null and !opt.textMr.isEmpty()}" style="color:#666;" th:text="' / ' + ${opt.textMr}">Option text Marathi</span>
+          </div>
+          <div>
+            <span th:if="${opt.correct}" style="color:#2e7d32; font-weight:bold;">&#x2714; Correct Key</span>
+            <span th:if="${!opt.correct and #strings.contains(r.item.selectedOptions, opt.id.toString())}" style="color:#d32f2f; font-weight:bold;">&#x2716; Incorrect Choice</span>
+          </div>
+        </div>
+
+        <!-- Misconception warning if chosen -->
+        <div th:if="${#strings.contains(r.item.selectedOptions, opt.id.toString()) and !opt.correct and opt.misconception != null and !opt.misconception.isEmpty()}"
+             class="misconception-box">
+          <b>Identified Misconception:</b> <span th:text="${opt.misconception}">Misconception note</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Answered text for numeric/fill_blank -->
+    <div th:if="${#lists.isEmpty(r.options) and r.item.answeredText != null and !r.item.answeredText.isEmpty()}" style="margin:12px 0;">
+      <p><b>Your Answer:</b> <span th:text="${r.item.answeredText}"></span></p>
+      <p th:if="${r.question.answerNumeric != null}"><b>Expected Value:</b> <span th:text="${r.question.answerNumeric} + ' (&plusmn;' + ${r.question.numericTolerance} + ')'"></span></p>
+    </div>
+
+    <!-- Rationale and Source Reference -->
+    <div class="rationale-box">
+      <div style="font-weight:bold; color:#0d47a1; margin-bottom:4px;">Pedagogical Rationale &amp; Source Reference:</div>
+      <div th:text="${r.question.rationaleEn}">English Rationale</div>
+      <div th:if="${r.question.rationaleMr != null and !r.question.rationaleMr.isEmpty()}"
+           style="color:#333; margin-top:4px;" th:text="${r.question.rationaleMr}">Marathi Rationale</div>
+      <div th:if="${r.question.sourceRef != null and !r.question.sourceRef.isEmpty()}"
+           style="margin-top:8px; font-size:12px; color:#555;">
+        <b>Standard Operating Procedure / Source:</b> <span th:text="${r.question.sourceRef}">Source Reference</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:30px;">
+    <a th:href="@{/delivery/attempts/{id}/summary(id=${attempt.id})}" style="background:#1976d2; color:#fff; padding:10px 24px; text-decoration:none; border-radius:4px; font-weight:bold;">
+      &larr; Return to Test Summary
+    </a>
+  </div>
+</main>
+</body>
+</html>

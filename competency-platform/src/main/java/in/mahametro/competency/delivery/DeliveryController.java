@@ -14,7 +14,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,12 +44,16 @@ public class DeliveryController {
     private final QuestionRepository questionRepository;
     private final QuestionOptionRepository optionRepository;
     private final in.mahametro.competency.proctoring.ProctoringService proctoringService;
+    private final in.mahametro.competency.proctoring.BehaviorAnalyticsService behaviorAnalyticsService;
+    private final in.mahametro.competency.access.AccessService accessService;
     private final CurrentUser currentUser;
 
     public DeliveryController(AssessmentTestRepository testRepository, TestService testService,
             DeliveryService deliveryService, QuestionRepository questionRepository,
             QuestionOptionRepository optionRepository,
             in.mahametro.competency.proctoring.ProctoringService proctoringService,
+            in.mahametro.competency.proctoring.BehaviorAnalyticsService behaviorAnalyticsService,
+            in.mahametro.competency.access.AccessService accessService,
             CurrentUser currentUser) {
         this.testRepository = testRepository;
         this.testService = testService;
@@ -55,6 +61,8 @@ public class DeliveryController {
         this.questionRepository = questionRepository;
         this.optionRepository = optionRepository;
         this.proctoringService = proctoringService;
+        this.behaviorAnalyticsService = behaviorAnalyticsService;
+        this.accessService = accessService;
         this.currentUser = currentUser;
     }
 
@@ -172,10 +180,12 @@ public class DeliveryController {
     public ResponseEntity<?> recordEvent(
             @PathVariable("id") Long id,
             @RequestParam("kind") String kind,
+            @RequestParam(name = "itemId", required = false) Long itemId,
             @RequestParam(name = "detail", defaultValue = "") String detail,
             Principal principal) {
         Employee me = currentUser.get(principal);
         int tabSwitches = proctoringService.recordEvent(id, me, kind, detail, null);
+        deliveryService.recordAttemptEvent(id, itemId, kind, detail);
         return ResponseEntity.ok(Map.of("status", "ok", "tabSwitches", tabSwitches));
     }
 
@@ -201,14 +211,52 @@ public class DeliveryController {
     public String summary(@PathVariable("id") Long id, Principal principal, Model model) {
         Employee me = currentUser.get(principal);
         Attempt attempt = deliveryService.findById(id);
-        if (attempt == null || !attempt.getEmployeeId().equals(me.getId())) {
+        boolean isPrivileged = accessService.hasAny(me.getId(), "test.proctor") || accessService.hasAny(me.getId(), "test.manage");
+        if (attempt == null || (!attempt.getEmployeeId().equals(me.getId()) && !isPrivileged)) {
             throw new AccessDeniedException("Unauthorized access to this test attempt.");
         }
 
         AssessmentTest test = testRepository.findById(attempt.getTestId()).orElse(null);
+        in.mahametro.competency.proctoring.BehaviorAnalyticsService.BehaviorReport report =
+                behaviorAnalyticsService.generateReport(attempt, isPrivileged);
+
         model.addAttribute("attempt", attempt);
         model.addAttribute("test", test);
         model.addAttribute("employee", me);
+        model.addAttribute("behaviorReport", report);
         return "delivery/summary";
+    }
+
+    @GetMapping("/attempts/{id}/review")
+    public String reviewSolutions(@PathVariable("id") Long id, Principal principal, Model model) {
+        Employee me = currentUser.get(principal);
+        Attempt attempt = deliveryService.findById(id);
+        boolean isPrivileged = accessService.hasAny(me.getId(), "test.proctor") || accessService.hasAny(me.getId(), "test.manage");
+        if (attempt == null || (!attempt.getEmployeeId().equals(me.getId()) && !isPrivileged)) {
+            throw new AccessDeniedException("Unauthorized access to this test attempt.");
+        }
+
+        AssessmentTest test = testRepository.findById(attempt.getTestId()).orElse(null);
+        List<AttemptItem> items = deliveryService.getItems(id);
+
+        deliveryService.recordAttemptEvent(id, null, "solution_open", "Candidate opened solution review screen");
+
+        List<Map<String, Object>> reviewItems = new ArrayList<>();
+        for (AttemptItem item : items) {
+            Question q = questionRepository.findById(item.getQuestionId()).orElse(null);
+            List<QuestionOption> opts = q != null ? optionRepository.findByQuestionIdOrderByOrdAsc(q.getId()) : Collections.emptyList();
+            Map<String, Object> map = new HashMap<>();
+            map.put("item", item);
+            if (q != null) map.put("question", q);
+            map.put("options", opts);
+            reviewItems.add(map);
+            deliveryService.recordAttemptEvent(id, item.getQuestionId(), "solution_item_view", "10");
+        }
+
+        model.addAttribute("attempt", attempt);
+        model.addAttribute("test", test);
+        model.addAttribute("employee", me);
+        model.addAttribute("reviewItems", reviewItems);
+        return "delivery/review";
     }
 }

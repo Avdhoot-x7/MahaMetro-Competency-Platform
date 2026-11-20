@@ -54,11 +54,16 @@ public class AssessmentTest {
     private String targetType = TARGET_ALL;
     private String targetValue = "";
     private String status = STATUS_DRAFT;
+    @jakarta.persistence.Transient
+    private int maxTabSwitches = 3;
     private String createdBy = "";
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    protected AssessmentTest() {
+    public int getMaxTabSwitches() { return maxTabSwitches; }
+    public void setMaxTabSwitches(int maxTabSwitches) { this.maxTabSwitches = maxTabSwitches; }
+
+    public AssessmentTest() {
     }
 
     public AssessmentTest(String code, String titleEn, String kind, int durationMinutes) {

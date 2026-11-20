@@ -38,6 +38,7 @@ public class ProctorController {
     private final AssessmentTestRepository testRepository;
     private final EmployeeRepository employeeRepository;
     private final CurrentUser currentUser;
+    private final BehaviorAnalyticsService behaviorAnalyticsService;
 
     public ProctorController(ProctoringService proctoringService,
                              TimingAnalysisService timingService,
@@ -45,7 +46,8 @@ public class ProctorController {
                              AttemptItemRepository attemptItemRepository,
                              AssessmentTestRepository testRepository,
                              EmployeeRepository employeeRepository,
-                             CurrentUser currentUser) {
+                             CurrentUser currentUser,
+                             BehaviorAnalyticsService behaviorAnalyticsService) {
         this.proctoringService = proctoringService;
         this.timingService = timingService;
         this.attemptRepository = attemptRepository;
@@ -53,6 +55,7 @@ public class ProctorController {
         this.testRepository = testRepository;
         this.employeeRepository = employeeRepository;
         this.currentUser = currentUser;
+        this.behaviorAnalyticsService = behaviorAnalyticsService;
     }
 
     @GetMapping("/flags")
@@ -92,6 +95,7 @@ public class ProctorController {
         List<AttemptItem> items = attemptItemRepository.findByAttemptIdOrderByPositionAsc(id);
         List<ProctorEvent> events = proctoringService.getEventsForAttempt(id);
         TimingAnalysisService.TimingSummary timing = timingService.analyse(attempt, items);
+        BehaviorAnalyticsService.BehaviorReport behaviorReport = behaviorAnalyticsService.generateReport(attempt, true);
 
         model.addAttribute("attempt", attempt);
         model.addAttribute("candidate", candidate);
@@ -99,6 +103,7 @@ public class ProctorController {
         model.addAttribute("items", items);
         model.addAttribute("events", events);
         model.addAttribute("timing", timing);
+        model.addAttribute("behaviorReport", behaviorReport);
         return "proctor/attempt";
     }
 

@@ -70,6 +70,34 @@
         </button>
       </div>
     </form>
+  <!-- Employee Behaviour Analytics (Section 7) -->
+  <div th:if="${behaviorReport != null}" style="margin:30px 0;">
+    <h2>Employee Test Behaviour Analytics (Section 7 - 20 Measures)</h2>
+    <div style="background:#e8eaf6; border-left:4px solid #3f51b5; padding:12px; margin-bottom:16px; font-size:13px; color:#1a237e;">
+      <b>Proctor &amp; Assessment Cell View:</b> Unmasked confidential flags (A5 Rapid Guessing, E1 Rule Compliance). Behaviour measures support development conversations and never alter competency scores.
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-bottom:24px;">
+      <div th:each="h : ${behaviorReport.headings}" style="background:#fff; border:1px solid #ddd; border-radius:6px; padding:14px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div>
+            <b th:text="${h.heading}">Heading</b><br>
+            <small style="color:#777;" th:text="${h.purpose}">Purpose</small>
+          </div>
+          <span style="padding:3px 8px; border-radius:10px; font-size:11px; font-weight:bold; color:#fff;"
+                th:style="'background-color:' + ${h.badgeColor}" th:text="${h.status}">Status</span>
+        </div>
+        <div th:each="m : ${h.measures}" style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f5f5f5; font-size:12px;">
+          <div>
+            <span th:text="${m.name} + ' (' + ${m.code} + ')'"></span>
+            <span th:if="${m.flagged}" style="color:#d32f2f; font-weight:bold;">&#x26A0;</span>
+            <span th:if="${m.confidential}" style="background:#ffebee; color:#c62828; padding:1px 4px; border-radius:2px; font-size:10px;">Cell Only</span>
+          </div>
+          <div style="text-align:right;">
+            <b th:text="${m.value}"></b>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Timing and Rapid Guessing Analysis -->

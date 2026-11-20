@@ -37,3 +37,4 @@ ehthumbs.db
 # LLM temporary logs
 Claude outputs/
 scratch/*.tmp
+scratch_docs/

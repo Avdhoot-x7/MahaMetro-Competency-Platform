@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Question Generator - Maha Metro Competency Assessment</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 4px; font-size: 14px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; box-sizing: border-box; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .badge-pass { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .badge-warn { background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .badge-block { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+  </style>
+</head>
+<body>
+<main class="card wide">
+  <p><a th:href="@{/questions}">Back to the question bank</a></p>
+  <h1>AI Question Bank Generator</h1>
+  <p style="color:#4b5563;">Drafts assessment items conforming strictly to CoE Guide v1.3 writing rules (R1 to R10), bilingual translation (English & Marathi), and per-option operational misconceptions.</p>
+
+  <p class="msg" th:if="${message}" th:text="${message}"></p>
+  <p class="msg error" th:if="${error}" th:text="${error}"></p>
+
+  <!-- Summary of last generation run -->
+  <div th:if="${batchResult != null}" style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:6px; margin-bottom:24px;">
+    <h3>Generation Run Report: <code th:text="${batchResult.batchId}">BATCH</code></h3>
+    <div style="display:flex; gap:16px; margin-top:8px;">
+      <span class="badge-pass">Passed Clean: <span th:text="${batchResult.passedCount}">0</span></span>
+      <span class="badge-warn">Passed with Warnings: <span th:text="${batchResult.warnedCount}">0</span></span>
+      <span class="badge-block">Blocked by Rules: <span th:text="${batchResult.blockedCount}">0</span></span>
+    </div>
+    <ul style="margin-top:12px; font-size:13px; color:#475569;" th:if="${!#lists.isEmpty(batchResult.batchLogs)}">
+      <li th:each="log : ${batchResult.batchLogs}" th:text="${log}"></li>
+    </ul>
+  </div>
+
+  <form th:action="@{/questions/generate}" method="post">
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="competencyCode">Target Competency *</label>
+        <select id="competencyCode" name="competencyCode" required>
+          <option th:each="c : ${competencies}" th:value="${c.code}" th:text="${c.code + ' - ' + c.nameEn + (c.safetyCritical ? ' ⚑ (Safety-Critical)' : '')}"></option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="targetLevel">Proficiency Level (1 - 5) *</label>
+        <select id="targetLevel" name="targetLevel">
+          <option value="1">1 - Aware / जाणीव (Remember)</option>
+          <option value="2">2 - Basic / प्राथमिक (Understand)</option>
+          <option value="3" selected>3 - Competent / सक्षम (Apply)</option>
+          <option value="4">4 - Advanced / प्रगत (Analyse) ⚑</option>
+          <option value="5">5 - Expert / तज्ज्ञ (Analyse)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="qtype">Question Type *</label>
+        <select id="qtype" name="qtype">
+          <option value="single" selected>Single Choice (MCQ)</option>
+          <option value="sjt">Situational Judgement Test (SJT)</option>
+          <option value="multi">Multiple Selection</option>
+          <option value="sequence">Step Sequence Ordering</option>
+          <option value="match">Matching Pairs</option>
+          <option value="numeric">Numeric Calculation with Tolerance</option>
+          <option value="fill_blank">Fill in the Blank</option>
+          <option value="short_text">Short Text Response (Rubric)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="nItems">Batch Size (1 to 10)</label>
+        <input type="number" id="nItems" name="nItems" value="5" min="1" max="10" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="sourceRef">Source Document Reference * (Rule R9)</label>
+      <input type="text" id="sourceRef" name="sourceRef" placeholder="e.g. MahaMetro G&SR Rule 4.12, SOP-TO-03 Cl. 2.1" required>
+    </div>
+
+    <div class="form-group">
+      <label for="referenceText">Reference Operational Text / SOP Extract *</label>
+      <textarea id="referenceText" name="referenceText" rows="4" placeholder="Paste the exact procedure or rule excerpt that generated questions must ground their answers upon..." required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="misconceptions">Known Operational Misconceptions (Rule R3, one per line)</label>
+      <textarea id="misconceptions" name="misconceptions" rows="3" placeholder="Proceeds on red signal assuming track is clear without controller permission&#10;Resets circuit breaker repeatedly without inspection&#10;Assumes auxiliary power restores without checking OCC telemetry"></textarea>
+    </div>
+
+    <div style="margin-top:20px;">
+      <button type="submit" style="background:#1d4ed8; color:white; padding:10px 20px; font-size:15px; border-radius:4px; border:none; cursor:pointer;">Draft Questions with AI & Run QC Checks</button>
+    </div>
+  </form>
+
+  <div th:if="${batchResult != null and !#lists.isEmpty(batchResult.items)}" style="margin-top:32px;">
+    <h2>Generated Draft Items Ready for SME Review</h2>
+    <div th:each="v : ${batchResult.items}" style="border-bottom:2px solid #e2e8f0; padding-bottom:16px; margin-bottom:16px;">
+      <div th:replace="~{questions/_card :: card(${v})}"></div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

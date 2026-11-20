@@ -9,4 +9,10 @@ public interface AttemptItemRepository extends JpaRepository<AttemptItem, Long> 
     List<AttemptItem> findByAttemptIdOrderByPositionAsc(Long attemptId);
 
     Optional<AttemptItem> findByAttemptIdAndPosition(Long attemptId, int position);
+
+    List<AttemptItem> findByQuestionId(Long questionId);
+
+    List<AttemptItem> findByAttemptId(Long attemptId);
+
+    long countByQuestionId(Long questionId);
 }

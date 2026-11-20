@@ -72,6 +72,10 @@ public class Attempt {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getTestId() {
         return testId;
     }

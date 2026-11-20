@@ -5,28 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Test Complete - Maha Metro Competency Assessment</title>
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .heading-card { background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:16px; margin-bottom:16px; text-align:left; box-shadow:0 1px 3px rgba(0,0,0,0.05); }
+    .heading-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .heading-title { font-size:16px; font-weight:bold; color:#1a237e; }
+    .badge-status { padding:4px 10px; border-radius:12px; font-size:12px; font-weight:bold; color:#fff; }
+    .measure-item { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0f0f0; font-size:13px; }
+    .measure-name { color:#444; }
+    .measure-val { font-weight:600; color:#111; }
+    .measure-flag { color:#d32f2f; font-weight:bold; font-size:11px; margin-left:6px; }
+    .alert-disclaimer { background:#e8eaf6; border-left:4px solid #3f51b5; padding:12px 16px; border-radius:4px; font-size:13px; color:#283593; margin:20px 0; text-align:left; }
+  </style>
 </head>
 <body>
-<main class="card">
-  <div style="text-align:center; padding:20px 0;">
+<main class="card wide">
+  <div style="text-align:center; padding:10px 0;">
     <h1 style="color:#2e7d32; margin-bottom:8px;">Test Submitted Successfully!</h1>
     <p style="font-size:16px;">Thank you, <b th:text="${employee.nameEn}">Employee</b>.</p>
 
-    <div style="background:#f4fbf4; border:1px solid #c8e6c9; border-radius:8px; padding:20px; margin:20px 0; display:inline-block; min-width:300px;">
+    <div style="background:#f4fbf4; border:1px solid #c8e6c9; border-radius:8px; padding:20px; margin:16px 0; display:inline-block; min-width:320px;">
       <p style="margin:6px 0;"><b>Test:</b> <span th:text="${test != null ? test.titleEn : 'Assessment Test'}">Test</span></p>
       <p style="margin:6px 0;"><b>Status:</b> <span th:text="${attempt.status}" style="font-weight:bold;">SCORED</span></p>
-      <p style="margin:6px 0; font-size:20px;">
+      <p style="margin:6px 0; font-size:22px;">
         <b>Score:</b> <span th:text="${attempt.score}">0</span> / <span th:text="${attempt.maxScore}">0</span>
         (<b th:text="${attempt.percent} + '%'">0%</b>)
       </p>
     </div>
 
-    <p style="margin-top:20px;">
-      Your competency ratings have been updated in your profile.
-    </p>
+    <div style="margin:16px 0; display:flex; justify-content:center; gap:16px;">
+      <a th:href="@{/delivery/attempts/{id}/review(id=${attempt.id})}" style="background:#2e7d32; color:#fff; padding:10px 22px; text-decoration:none; border-radius:4px; font-weight:bold;">
+        &#x1F4D6; Review Questions, Answers &amp; Solutions &rarr;
+      </a>
+      <a th:href="@{/me}" style="background:#1976d2; color:#fff; padding:10px 22px; text-decoration:none; border-radius:4px; font-weight:bold;">
+        View My Competency Results &rarr;
+      </a>
+    </div>
 
-    <div style="margin-top:24px; display:flex; justify-content:center; gap:16px;">
-      <a th:href="@{/me}" style="background:#1976d2; color:#fff; padding:10px 22px; text-decoration:none; border-radius:4px; font-weight:bold;">View My Competency Results &rarr;</a>
+    <!-- Behavior Analytics Section (Section 7) -->
+    <div th:if="${behaviorReport != null}" style="margin-top:30px; text-align:left;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid #3f51b5; padding-bottom:8px; margin-bottom:16px;">
+        <h2 style="margin:0; color:#1a237e;">Employee Test Behaviour Analytics (Section 7)</h2>
+        <small style="color:#666;">20 Behaviour Measures Evaluated Under 6 Reporting Headings</small>
+      </div>
+
+      <div class="alert-disclaimer">
+        <b>Pedagogical Notice:</b>
+        <span th:text="${behaviorReport.disclaimer}">
+          Behavior measures support development conversations; they never alter a competency score and are never used alone for a decision about a person.
+        </span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px;">
+        <div th:each="h : ${behaviorReport.headings}" class="heading-card">
+          <div class="heading-header">
+            <div>
+              <div class="heading-title" th:text="${h.heading}">Heading Title</div>
+              <small style="color:#777;" th:text="${h.purpose}">Purpose</small>
+            </div>
+            <span class="badge-status" th:style="'background-color:' + ${h.badgeColor}" th:text="${h.status}">
+              Typical
+            </span>
+          </div>
+
+          <div th:each="m : ${h.measures}" class="measure-item">
+            <div>
+              <span class="measure-name" th:text="${m.name} + ' (' + ${m.code} + ')'">Measure</span>
+              <span th:if="${m.positiveSignal}" style="color:#2e7d32; font-size:11px; margin-left:4px;">&#x2714; Positive</span>
+              <span th:if="${m.flagged}" class="measure-flag" th:title="${m.flagReason}">&#x26A0; Flagged</span>
+            </div>
+            <div style="text-align:right;">
+              <span class="measure-val" th:text="${m.value}">Value</span><br>
+              <small style="color:#888;" th:text="${m.benchmark}">Benchmark</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:28px;">
       <a th:href="@{/}" style="background:#757575; color:#fff; padding:10px 22px; text-decoration:none; border-radius:4px; font-weight:bold;">Home</a>
     </div>
   </div>

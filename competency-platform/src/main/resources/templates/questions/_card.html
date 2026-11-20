@@ -15,9 +15,18 @@
     <b th:text="${v.question.code}">CODE</b> &middot; Competency <span th:text="${v.question.competencyCode}"></span>
     &middot; Topic <span th:text="${v.question.topicNo}"></span> &middot; Variation <span th:text="${v.question.variationNo}"></span>
     &middot; <span th:text="${v.question.timeSeconds}"></span> s &middot; Difficulty <span th:text="${v.question.difficulty}"></span>
-    &middot; By <span th:text="${v.question.authorEmpId}"></span> &middot; <span th:text="${v.question.status}"></span>
+    <span th:if="${v.question.origin == 'ai_draft'}" style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:3px; font-weight:bold; font-size:11px;">AI DRAFT</span>
+    &middot; <span th:text="${v.question.status}"></span>
   </p>
+
+  <!-- Quality Checks Box for Reviewers -->
+  <div th:if="${v.question.qcWarnings != null and !v.question.qcWarnings.isEmpty()}" style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:8px 12px; margin:8px 0; border-radius:4px; font-size:13px;">
+    <strong style="color:#b45309;">Quality Checks (CoE Guide v1.3):</strong>
+    <span style="color:#78350f;" th:text="${v.question.qcWarnings}"></span>
+  </div>
+
   <div class="stem" th:utext="${v.html}">Question text</div>
+  <div th:if="${v.question.stemMr != null and !v.question.stemMr.isEmpty()}" class="stem" style="color:#4b5563; font-style:italic; margin-top:4px;" th:text="${v.question.stemMr}">Marathi question text</div>
 
   <!-- Question media -->
   <div th:if="${v.mediaUrl != null}" class="media-box" style="margin: 8px 0;">
@@ -29,10 +38,20 @@
 
   <ul class="options">
     <li th:each="o : ${v.options}" th:classappend="${o.correct} ? 'right'">
-      <span th:text="${o.textEn}">Answer</span> <b th:if="${o.correct}">(correct)</b>
+      <div>
+        <span th:text="${o.textEn}">Answer</span>
+        <span th:if="${o.textMr != null and !o.textMr.isEmpty()}" style="color:#4b5563; font-size:13px;"> / <span th:text="${o.textMr}"></span></span>
+        <b th:if="${o.correct}">(correct)</b>
+      </div>
+      <div th:if="${!o.correct and o.misconception != null and !o.misconception.isEmpty()}" style="font-size:12px; color:#b91c1c; margin-top:2px;">
+        <em>Misconception:</em> <span th:text="${o.misconception}"></span>
+      </div>
     </li>
   </ul>
   <div class="solution" th:if="${!#strings.isEmpty(v.question.solutionText)}"><b>Solution:</b> <span th:utext="${v.solutionHtml}"></span></div>
+  <div class="solution" th:if="${v.question.rationaleEn != null and !v.question.rationaleEn.isEmpty()}">
+    <b>Rationale & Source:</b> <span th:text="${v.question.rationaleEn}"></span> (<em th:text="${v.question.sourceRef}"></em>)
+  </div>
 
   <!-- Solution media -->
   <div th:if="${v.solutionMediaUrl != null}" class="media-box" style="margin: 8px 0;">

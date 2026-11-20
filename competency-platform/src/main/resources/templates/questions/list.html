@@ -12,6 +12,8 @@
   <h1>Question bank</h1>
   <p>In the bank: <b th:text="${inBank}">0</b> &middot; Waiting for a subject expert: <b th:text="${waiting}">0</b></p>
   <p class="row">
+    <a th:if="${canUpload}" th:href="@{/questions/generate}" style="background:#4338ca; color:white; padding:4px 10px; border-radius:4px; font-weight:bold; text-decoration:none;">AI Generator (Spec v1.3)</a>
+    <a th:href="@{/questions/analysis}" style="background:#0284c7; color:white; padding:4px 10px; border-radius:4px; font-weight:bold; text-decoration:none;">Item Analysis (Section 9)</a>
     <a th:if="${canUpload}" th:href="@{/questions/upload}">Upload questions (Excel)</a>
     <a th:if="${canApprove}" th:href="@{/questions/pending}">Approve questions</a>
     <span>Show:

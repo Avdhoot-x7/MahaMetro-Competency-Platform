@@ -33,6 +33,9 @@ public class QuestionWorkflowService {
     public Question approve(Employee actor, Long questionId, String note) {
         Question question = loadForDecision(actor, questionId);
         question.setApproverEmpId(actor.getEmpId());
+        if (question.getReviewerEmpId() == null || question.getReviewerEmpId().isBlank()) {
+            question.setReviewerEmpId(actor.getEmpId());
+        }
         question.setApprovedAt(LocalDateTime.now());
         return move(question, actor, Question.APPROVED, note);
     }

@@ -1,5 +1,6 @@
 package in.mahametro.competency.questions;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,6 +22,12 @@ public class Question {
     public static final String APPROVED = "APPROVED";
     public static final String REJECTED = "REJECTED";
     public static final String RETIRED = "RETIRED";
+
+    public static final String STATUS_DRAFT = "DRAFT";
+    public static final String STATUS_REVIEW = "SUBMITTED";
+    public static final String STATUS_APPROVED = "APPROVED";
+    public static final String STATUS_REJECTED = "REJECTED";
+    public static final String STATUS_RETIRED = "RETIRED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,11 +53,32 @@ public class Question {
     private String pool = "exam";
     private String status = SUBMITTED;
     private String authorEmpId;
-    private String reviewerEmpId = "";
     private String approverEmpId = "";
     private LocalDateTime approvedAt;
     private String uploadBatch = "";
     private int versionNo = 1;
+
+    // Spec extensions: Nov 18, 2026 Question Bank Generation & Assessment Spec
+    private String difficultyBand = "medium";
+    private String origin = "sme";
+    private String genModel = "";
+    private String genPromptVersion = "";
+    private String genBatchId = "";
+    private String qcWarnings = "";
+    private String sourceRef = "";
+    private String rationaleEn = "";
+    private String rationaleMr = "";
+    private Double answerNumeric;
+    private Double numericTolerance;
+    private String acceptedAnswers = "";
+    private String rubricEn = "";
+    private String rubricMr = "";
+    private boolean needsSmeValidation = false;
+    private Double pValue;
+    private Double pointBiserial;
+    @Column(name = "stats_n")
+    private int statsN = 0;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -81,6 +109,7 @@ public class Question {
     }
 
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getCode() { return code; }
     void setCode(String code) { this.code = code; }
     public Long getParentId() { return parentId; }
@@ -98,11 +127,13 @@ public class Question {
     public int getTargetLevel() { return targetLevel; }
     public void setTargetLevel(int targetLevel) { this.targetLevel = targetLevel; }
     public String getBloom() { return bloom; }
+    public void setBloom(String bloom) { this.bloom = bloom; }
     public String getQtype() { return qtype; }
     public void setQtype(String qtype) { this.qtype = qtype; }
     public String getStemEn() { return stemEn; }
     public void setStemEn(String stemEn) { this.stemEn = stemEn; }
     public String getStemMr() { return stemMr; }
+    public void setStemMr(String stemMr) { this.stemMr = stemMr; }
     public String getMediaRef() { return mediaRef; }
     public void setMediaRef(String mediaRef) { this.mediaRef = mediaRef; }
     public String getSolutionText() { return solutionText; }
@@ -118,12 +149,51 @@ public class Question {
     public void setStatus(String status) { this.status = status; }
     public String getAuthorEmpId() { return authorEmpId; }
     public String getApproverEmpId() { return approverEmpId; }
-    void setApproverEmpId(String approverEmpId) { this.approverEmpId = approverEmpId; }
-    public LocalDateTime getApprovedAt() { return approvedAt; }
-    void setApprovedAt(LocalDateTime approvedAt) { this.approvedAt = approvedAt; }
+    public void setApproverEmpId(String approverEmpId) { this.approverEmpId = approverEmpId; }
+    public String getReviewerEmpId() { return approverEmpId; }
+    public void setReviewerEmpId(String reviewerEmpId) { this.approverEmpId = reviewerEmpId; }
     public String getUploadBatch() { return uploadBatch; }
     public void setUploadBatch(String uploadBatch) { this.uploadBatch = uploadBatch; }
+    public LocalDateTime getApprovedAt() { return approvedAt; }
+    public void setApprovedAt(LocalDateTime approvedAt) { this.approvedAt = approvedAt; }
     public int getVersionNo() { return versionNo; }
+    public void setVersionNo(int versionNo) { this.versionNo = versionNo; }
+    public String getDifficultyBand() { return difficultyBand; }
+    public void setDifficultyBand(String difficultyBand) { this.difficultyBand = difficultyBand; }
+    public String getOrigin() { return origin; }
+    public void setOrigin(String origin) { this.origin = origin; }
+    public String getGenModel() { return genModel; }
+    public void setGenModel(String genModel) { this.genModel = genModel; }
+    public String getGenPromptVersion() { return genPromptVersion; }
+    public void setGenPromptVersion(String genPromptVersion) { this.genPromptVersion = genPromptVersion; }
+    public String getGenBatchId() { return genBatchId; }
+    public void setGenBatchId(String genBatchId) { this.genBatchId = genBatchId; }
+    public String getQcWarnings() { return qcWarnings; }
+    public void setQcWarnings(String qcWarnings) { this.qcWarnings = qcWarnings; }
+    public String getSourceRef() { return sourceRef; }
+    public void setSourceRef(String sourceRef) { this.sourceRef = sourceRef; }
+    public String getRationaleEn() { return rationaleEn; }
+    public void setRationaleEn(String rationaleEn) { this.rationaleEn = rationaleEn; }
+    public String getRationaleMr() { return rationaleMr; }
+    public void setRationaleMr(String rationaleMr) { this.rationaleMr = rationaleMr; }
+    public Double getAnswerNumeric() { return answerNumeric; }
+    public void setAnswerNumeric(Double answerNumeric) { this.answerNumeric = answerNumeric; }
+    public Double getNumericTolerance() { return numericTolerance; }
+    public void setNumericTolerance(Double numericTolerance) { this.numericTolerance = numericTolerance; }
+    public String getAcceptedAnswers() { return acceptedAnswers; }
+    public void setAcceptedAnswers(String acceptedAnswers) { this.acceptedAnswers = acceptedAnswers; }
+    public String getRubricEn() { return rubricEn; }
+    public void setRubricEn(String rubricEn) { this.rubricEn = rubricEn; }
+    public String getRubricMr() { return rubricMr; }
+    public void setRubricMr(String rubricMr) { this.rubricMr = rubricMr; }
+    public boolean isNeedsSmeValidation() { return needsSmeValidation; }
+    public void setNeedsSmeValidation(boolean needsSmeValidation) { this.needsSmeValidation = needsSmeValidation; }
+    public Double getPValue() { return pValue; }
+    public void setPValue(Double pValue) { this.pValue = pValue; }
+    public Double getPointBiserial() { return pointBiserial; }
+    public void setPointBiserial(Double pointBiserial) { this.pointBiserial = pointBiserial; }
+    public int getStatsN() { return statsN; }
+    public void setStatsN(int statsN) { this.statsN = statsN; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

@@ -53,6 +53,7 @@
     </p>
 
     <div class="stem" th:utext="${currentView.html}" style="font-size:17px; line-height:1.6; margin-bottom:14px;">Question text</div>
+    <div th:if="${currentView.stemMr != null and !currentView.stemMr.isEmpty()}" class="stem" style="font-size:15px; color:#4b5563; font-style:italic; margin-bottom:14px;" th:text="${currentView.stemMr}">Marathi question text</div>
 
     <!-- Media display -->
     <div th:if="${currentView.mediaUrl != null}" style="margin: 12px 0;">
@@ -63,22 +64,39 @@
 
     <!-- Answer Choices -->
     <form id="answer-form">
-      <div th:if="${currentItem.qtype == 'single'}">
+      <!-- Single choice or SJT -->
+      <div th:if="${currentItem.qtype == 'single' or currentItem.qtype == 'truefalse' or currentItem.qtype == 'sjt'}">
         <div th:each="opt : ${currentView.options}" class="option-row" th:onclick="'selectRadio(' + ${opt.id} + ')'">
           <input type="radio" name="optChoice" th:value="${opt.id}" th:id="'opt-' + ${opt.id}"
                  th:checked="${selectedSet.contains(#strings.toString(opt.id))}"
                  onchange="saveAnswer()">
-          <label th:for="'opt-' + ${opt.id}" th:text="${opt.textEn}" style="cursor:pointer; flex:1;"></label>
+          <label th:for="'opt-' + ${opt.id}" style="cursor:pointer; flex:1;">
+            <span th:text="${opt.textEn}">Option text</span>
+            <span th:if="${opt.textMr != null and !opt.textMr.isEmpty()}" style="color:#4b5563; font-size:14px;"> / <span th:text="${opt.textMr}"></span></span>
+          </label>
         </div>
       </div>
 
-      <div th:if="${currentItem.qtype != 'single'}">
+      <!-- Multiple selection or Sequence -->
+      <div th:if="${currentItem.qtype == 'multi' or currentItem.qtype == 'sequence'}">
         <div th:each="opt : ${currentView.options}" class="option-row">
           <input type="checkbox" name="optChoice" th:value="${opt.id}" th:id="'opt-' + ${opt.id}"
                  th:checked="${selectedSet.contains(#strings.toString(opt.id))}"
                  onchange="saveAnswer()">
-          <label th:for="'opt-' + ${opt.id}" th:text="${opt.textEn}" style="cursor:pointer; flex:1;"></label>
+          <label th:for="'opt-' + ${opt.id}" style="cursor:pointer; flex:1;">
+            <span th:text="${opt.textEn}">Option text</span>
+            <span th:if="${opt.textMr != null and !opt.textMr.isEmpty()}" style="color:#4b5563; font-size:14px;"> / <span th:text="${opt.textMr}"></span></span>
+          </label>
         </div>
+      </div>
+
+      <!-- Numeric calculation or Fill in the Blank -->
+      <div th:if="${currentItem.qtype == 'numeric' or currentItem.qtype == 'fill_blank' or currentItem.qtype == 'short_text'}" style="margin-top:12px;">
+        <label for="answeredText" style="display:block; font-weight:bold; margin-bottom:6px;">Your Answer:</label>
+        <input type="text" id="answeredText" name="answeredText" th:value="${currentItem.answeredText}"
+               placeholder="Type your answer here..."
+               style="width:100%; max-width:400px; padding:10px; font-size:16px; border:1px solid #ccc; border-radius:4px;"
+               oninput="saveAnswer()">
       </div>
     </form>
   </div>

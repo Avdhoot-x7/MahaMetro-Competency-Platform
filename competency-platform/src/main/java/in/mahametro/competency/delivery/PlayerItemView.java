@@ -34,6 +34,8 @@ public class PlayerItemView {
     public AttemptItem getAttemptItem() { return attemptItem; }
     public Question getQuestion() { return question; }
     public String getHtml() { return html; }
+    public String getStemMr() { return question.getStemMr(); }
+    public String getQtype() { return question.getQtype(); }
     public String getMediaUrl() { return mediaUrl; }
     public String getMediaKind() { return mediaKind; }
     public List<QuestionOption> getOptions() { return options; }

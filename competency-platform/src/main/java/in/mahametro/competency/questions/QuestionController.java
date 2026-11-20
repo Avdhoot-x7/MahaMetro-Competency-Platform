@@ -45,10 +45,13 @@ public class QuestionController {
     private final QuestionWorkflowService workflow;
     private final CurrentUser currentUser;
     private final AccessService access;
+    private final AiQuestionGeneratorService generator;
+    private final ItemAnalysisService itemAnalysisService;
 
     public QuestionController(QuestionRepository questions, QuestionOptionRepository options,
             CompetencyRepository competencies, QuestionImportService importer, QuestionWorkflowService workflow,
-            CurrentUser currentUser, AccessService access) {
+            CurrentUser currentUser, AccessService access, AiQuestionGeneratorService generator,
+            ItemAnalysisService itemAnalysisService) {
         this.questions = questions;
         this.options = options;
         this.competencies = competencies;
@@ -56,6 +59,52 @@ public class QuestionController {
         this.workflow = workflow;
         this.currentUser = currentUser;
         this.access = access;
+        this.generator = generator;
+        this.itemAnalysisService = itemAnalysisService;
+    }
+
+    @GetMapping("/generate")
+    public String showGenerator(Principal principal, Model model) {
+        currentUser.requireAny(principal, "question.write", "question.manage");
+        model.addAttribute("competencies", competencies.findAllByOrderByCodeAsc());
+        return "questions/generate";
+    }
+
+    @PostMapping("/generate")
+    public String runGenerator(@RequestParam("competencyCode") String competencyCode,
+                               @RequestParam(name = "targetLevel", defaultValue = "3") int targetLevel,
+                               @RequestParam(name = "qtype", defaultValue = "single") String qtype,
+                               @RequestParam(name = "nItems", defaultValue = "5") int nItems,
+                               @RequestParam("sourceRef") String sourceRef,
+                               @RequestParam("referenceText") String referenceText,
+                               @RequestParam(name = "misconceptions", defaultValue = "") String misconceptionsText,
+                               Principal principal, Model model) {
+        Employee me = currentUser.requireAny(principal, "question.write", "question.manage");
+        AiQuestionGeneratorService.GenerationRequest req = new AiQuestionGeneratorService.GenerationRequest();
+        req.competencyCode = competencyCode;
+        req.targetLevel = targetLevel;
+        req.qtype = qtype;
+        req.nItems = nItems;
+        req.sourceRef = sourceRef;
+        req.referenceText = referenceText;
+        req.authorEmpId = me.getEmpId();
+        if (targetLevel <= 1) { req.bloom = "Remember"; req.difficultyBand = "easy"; }
+        else if (targetLevel == 2) { req.bloom = "Understand"; req.difficultyBand = "easy"; }
+        else if (targetLevel == 3) { req.bloom = "Apply"; req.difficultyBand = "medium"; }
+        else { req.bloom = "Analyse"; req.difficultyBand = "hard"; }
+
+        if (misconceptionsText != null && !misconceptionsText.isBlank()) {
+            req.misconceptions = java.util.Arrays.stream(misconceptionsText.split("\n"))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+        }
+
+        AiQuestionGeneratorService.GeneratedBatchResult batch = generator.generateBatch(req);
+        model.addAttribute("batchResult", batch);
+        model.addAttribute("competencies", competencies.findAllByOrderByCodeAsc());
+        model.addAttribute("message", "Generated " + batch.generatedCount + " items (" + batch.passedCount + " clean, " + batch.warnedCount + " with warnings, " + batch.blockedCount + " blocked by QC).");
+        return "questions/generate";
     }
 
     @GetMapping
@@ -167,6 +216,24 @@ public class QuestionController {
             redirect.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/questions/pending";
+    }
+
+    @GetMapping("/analysis")
+    public String showItemAnalysis(Principal principal, Model model) {
+        currentUser.requireAny(principal, "question.read", "question.write", "question.approve", "question.manage");
+        List<ItemAnalysisService.ItemAnalysisResult> results = itemAnalysisService.runAllItemAnalysis();
+        model.addAttribute("results", results);
+        long flaggedCount = results.stream().filter(r -> r.getFlags() != null && !r.getFlags().isEmpty() && !r.getFlags().get(0).contains("No test attempts")).count();
+        model.addAttribute("flaggedCount", flaggedCount);
+        return "questions/analysis";
+    }
+
+    @PostMapping("/analysis/run")
+    public String runItemAnalysisBatch(Principal principal, RedirectAttributes redirect) {
+        currentUser.requireAny(principal, "question.write", "question.approve", "question.manage");
+        List<ItemAnalysisService.ItemAnalysisResult> results = itemAnalysisService.runAllItemAnalysis();
+        redirect.addFlashAttribute("message", "Item Analysis completed successfully for " + results.size() + " items.");
+        return "redirect:/questions/analysis";
     }
 
     private QuestionView toView(Question question) {
