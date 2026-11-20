@@ -8,7 +8,10 @@
 </head>
 <body>
 <main class="card wide">
-  <p><a th:href="@{/admin/employees}">Back to staff</a></p>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <p style="margin:0;"><a th:href="@{/admin/employees}">&larr; Back to staff directory</a></p>
+    <a th:href="@{/profile/{id}(id=${employee.id})}" class="btn btn-primary btn-sm">👤 View Full Personnel Profile &amp; Metadata &rarr;</a>
+  </div>
   <h1><span th:text="${employee.nameEn}">Name</span> (<span th:text="${employee.empId}">ID</span>)</h1>
   <p>
     <span th:text="${employee.designation}"></span> &middot; <span th:text="${employee.department}"></span> &middot;

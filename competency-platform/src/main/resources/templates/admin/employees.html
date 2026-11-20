@@ -21,7 +21,7 @@
     <button type="submit">Search</button>
   </form>
   <table>
-    <thead><tr><th>Employee ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Role family</th><th>Grade</th><th>Active</th></tr></thead>
+    <thead><tr><th>Employee ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Role family</th><th>Grade</th><th>Active</th><th>Profile</th></tr></thead>
     <tbody>
     <tr th:each="e : ${result.content}">
       <td><a th:href="@{/admin/employees/{id}(id=${e.id})}" th:text="${e.empId}">ID</a></td>
@@ -30,7 +30,8 @@
       <td th:text="${e.department}"></td>
       <td th:text="${e.roleFamilyCode}"></td>
       <td th:text="${e.gradeCode}"></td>
-      <td th:text="${e.active} ? 'Yes' : 'No'"></td>
+      <td><span class="badge" th:classappend="${e.active ? 'green' : 'red'}" th:text="${e.active} ? 'Yes' : 'No'"></span></td>
+      <td><a th:href="@{/profile/{id}(id=${e.id})}" class="btn btn-outline btn-sm" style="padding:3px 8px; font-size:12px;">👤 Profile</a></td>
     </tr>
     </tbody>
   </table>

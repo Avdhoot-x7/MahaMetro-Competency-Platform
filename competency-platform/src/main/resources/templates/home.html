@@ -20,6 +20,7 @@
 
   <nav class="top-nav-links">
     <a th:href="@{/}" class="top-nav-link active">Home</a>
+    <a th:href="@{/profile}" class="top-nav-link">My Profile</a>
     <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
     <a th:href="@{/questions}" class="top-nav-link">Question Bank</a>
     <a th:href="@{/results}" class="top-nav-link">Staff Results</a>
@@ -28,11 +29,11 @@
   </nav>
 
   <div class="top-nav-user" th:if="${employee != null}">
-    <div class="user-pill">
+    <a th:href="@{/profile}" class="user-pill" style="text-decoration:none; color:inherit; cursor:pointer;" title="Click to view &amp; edit profile">
       <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
       <b th:text="${employee.nameEn}">User Name</b>
       <span style="color:#64748b;" th:text="'(' + ${employee.empId} + ')'">ID</span>
-    </div>
+    </a>
     <form th:action="@{/logout}" method="post" style="margin: 0;">
       <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
     </form>
@@ -58,6 +59,9 @@
       <p th:if="${employee == null}">Competency Assessment Framework, AI Item Banking (Spec v1.3), and Behaviour Telemetry.</p>
     </div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <a th:href="@{/profile}" class="btn btn-outline btn-lg" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.4);">
+        👤 My Profile &amp; Metadata
+      </a>
       <a th:href="@{/delivery}" class="btn btn-accent btn-lg" style="box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);">
         📝 Take Assessment
       </a>
@@ -245,6 +249,24 @@
       <div style="display:flex; gap:8px;">
         <a th:href="@{/proctor/flags}" class="btn btn-danger" style="flex:1;">Flagged Attempts</a>
         <a th:href="@{/admin/tests}" class="btn btn-outline">Test Blueprints</a>
+      </div>
+    </div>
+
+    <!-- Card 7: Employee Profiles & Personnel Metadata -->
+    <div class="action-card" style="border-left: 4px solid var(--primary);">
+      <div>
+        <div class="action-card-header">
+          <div class="action-card-icon" style="background:#eff6ff; color:#1e40af;">👤</div>
+          <div>
+            <h3 class="action-card-title">Employee Profile &amp; Metadata</h3>
+            <span class="badge blue">All Staff &middot; Personal Master</span>
+          </div>
+        </div>
+        <p class="action-card-desc">Review SAP personnel master details, Marathi name, contact info, reporting supervisor, Divyangjan extra-time allowance, and consent records.</p>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <a th:href="@{/profile}" class="btn btn-primary" style="flex:1;">My Profile</a>
+        <a th:href="@{/admin/employees}" class="btn btn-outline">Staff Directory</a>
       </div>
     </div>
 
