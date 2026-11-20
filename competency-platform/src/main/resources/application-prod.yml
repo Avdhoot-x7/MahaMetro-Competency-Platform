@@ -1,9 +1,9 @@
 # Production: externalized secrets and tuned infrastructure parameters
 spring:
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/competency?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false}
-    username: ${DB_USER:competency}
-    password: ${DB_PASSWORD:competency}
+    url: ${SPRING_DATASOURCE_URL:${DB_URL:${MYSQL_JDBC_URL:jdbc:mysql://${MYSQLHOST:localhost}:${MYSQLPORT:3306}/${MYSQLDATABASE:competency}?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false}}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USER:${MYSQLUSER:competency}}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD:${MYSQLPASSWORD:competency}}}
     hikari:
       pool-name: MahaMetroHikariPool
       maximum-pool-size: ${DB_POOL_SIZE:50}

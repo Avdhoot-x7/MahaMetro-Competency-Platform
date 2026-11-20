@@ -1,29 +1,12 @@
 services:
   - type: web
-    name: mahametro-competency-platform
-    env: docker
-    dockerfilePath: ./Dockerfile
-    plan: standard
+    name: mahametro-competency
+    runtime: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: singapore
     envVars:
-      - key: PORT
-        value: 8080
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: SPRING_DATASOURCE_URL
-        fromDatabase:
-          name: mahametro-db
-          property: connectionString
-      - key: SPRING_DATASOURCE_USERNAME
-        fromDatabase:
-          name: mahametro-db
-          property: user
-      - key: SPRING_DATASOURCE_PASSWORD
-        fromDatabase:
-          name: mahametro-db
-          property: password
-
-databases:
-  - name: mahametro-db
-    databaseName: competency
-    user: competency
-    plan: standard
+      - key: PORT
+        value: 8080
