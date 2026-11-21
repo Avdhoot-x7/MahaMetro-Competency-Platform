@@ -1,4 +1,0 @@
-<div class="tabs noprint">
-{% for href, label in [("/cell","Overview"),("/cell/tests","Tests & schedules"),("/cell/scoring","Manual scoring"),("/cell/flags","Proctoring review"),("/cell/imports","Imports"),("/cell/employees","Staff & roles"),("/cell/framework","Framework"),("/cell/interventions","Training catalogue"),("/cell/item-stats","Item analysis"),("/cell/audit","Audit log")] %}
-<a href="{{ href }}" class="{{ 'on' if request.url.path == href or (href != '/cell' and request.url.path.startswith(href)) else '' }}">{{ t(label) }}</a>{% endfor %}
-</div>

@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-{% block title %}{{ t("Proctoring review") }}{% endblock %}
-{% block content %}
-<h1>{{ t("Proctoring review") }}</h1>{% include "cell/_nav.html" %}
-<div class="card table-scroll"><table><thead><tr><th>{{ t("Attempt") }}</th><th>{{ t("Employee") }}</th><th>{{ t("Test") }}</th><th>{{ t("Reason") }}</th><th class="right">%</th><th></th></tr></thead><tbody>
-{% for a in atts %}<tr><td>{{ a.id }}</td><td>{{ a.employee.emp_id }} · {{ a.employee.name(lang) }}</td><td>{{ a.test.code }}</td><td class="small">{{ a.flag_reason }}</td><td class="right">{{ a.percent|num }}</td><td><a href="/cell/attempts/{{ a.id }}">{{ t("Review") }}</a></td></tr>
-{% else %}<tr><td colspan="6" class="muted">{{ t("No flagged attempts.") }}</td></tr>{% endfor %}</tbody></table></div>
-{% endblock %}

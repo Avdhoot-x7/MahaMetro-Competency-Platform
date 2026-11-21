@@ -20,8 +20,9 @@ RUN apk add --no-cache curl tzdata
 # Set timezone to Asia/Kolkata
 ENV TZ=Asia/Kolkata
 
-# Copy compiled artifact
+# Copy compiled artifact and media assets
 COPY --from=builder /build/target/competency.war app.war
+COPY data/media /app/data/media
 
 EXPOSE 8080
 
