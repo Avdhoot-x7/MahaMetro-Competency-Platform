@@ -7,16 +7,52 @@
   <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
+
+<!-- Global Top Navigation Header -->
+<header class="top-nav">
+  <a th:href="@{/}" class="top-nav-brand">
+    <div class="brand-icon">M</div>
+    <div>
+      <div class="brand-title">MAHA METRO</div>
+      <div class="brand-subtitle">Competency Assessment Platform</div>
+    </div>
+  </a>
+
+  <nav class="top-nav-links">
+    <a th:href="@{/}" class="top-nav-link">Home</a>
+    <a th:href="@{/practice}" class="top-nav-link">Practice Drills</a>
+    <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
+    <a th:href="@{/me}" class="top-nav-link">My Heat Map</a>
+    <a th:href="@{/plans}" class="top-nav-link active">My IDP</a>
+    <a th:href="@{/profile}" class="top-nav-link">My Profile</a>
+  </nav>
+
+  <div class="top-nav-user" th:if="${(currentUser != null ? currentUser : employee) != null}">
+    <a th:href="@{/}" class="btn btn-outline btn-sm" style="text-decoration:none; margin-right:8px;">&larr; Back to Candidate Hub</a>
+    <a th:href="@{/profile}" class="user-pill" style="text-decoration:none; color:inherit; cursor:pointer;" title="Click to view &amp; edit profile">
+      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+      <b th:text="${(currentUser != null ? currentUser : employee).nameEn}">User Name</b>
+      <span style="color:#64748b;" th:text="'(' + ${(currentUser != null ? currentUser : employee).empId} + ')'">ID</span>
+    </a>
+    <form th:action="@{/logout}" method="post" style="margin: 0;">
+      <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
+    </form>
+  </div>
+</header>
+
 <main class="card wide">
-  <p>
-    <a th:href="@{/}">Home</a> &middot;
-    <a th:href="@{/plans}">Back to all plans</a> &middot;
-    <a th:href="@{/results/{id}(id=${employee.id})}">View full competency profile</a>
-  </p>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+    <p style="margin:0;">
+      <a th:href="@{/}">&larr; Home / Candidate Hub</a> &middot;
+      <a th:href="@{/plans}">Back to all plans</a> &middot;
+      <a th:href="@{/results/{id}(id=${employee.id})}">View full competency profile</a>
+    </p>
+    <a th:href="@{/}" class="btn btn-outline btn-sm">&larr; Candidate Hub</a>
+  </div>
 
   <p th:if="${msg != null}" class="msg" th:text="${msg}"></p>
 
-  <h1>Individual Development Plan: <span th:text="${employee.nameEn}">Name</span> (<span th:text="${employee.empId}">ID</span>)</h1>
+  <h1>🎯 Individual Development Plan: <span th:text="${employee.nameEn}">Name</span> (<span th:text="${employee.empId}">ID</span>)</h1>
   <p>
     <span th:text="${employee.designation}"></span> &middot;
     <span th:text="${employee.department}"></span> &middot;
@@ -99,5 +135,10 @@
     </form>
   </div>
 </main>
+
+<footer style="text-align:center; padding:24px; color:var(--text-muted); font-size:12.5px;">
+  &copy; 2026 Maharashtra Metro Rail Corporation Limited (Maha Metro) &middot; Competency Assessment &amp; Learning Platform
+</footer>
+
 </body>
 </html>

@@ -14,6 +14,10 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByCompetencyCodeAndStatus(String competencyCode, String status);
 
+    List<Question> findByTopicNoAndStatus(String topicNo, String status);
+
+    long countByTopicNoAndStatus(String topicNo, String status);
+
     long countByStatus(String status);
 
     Optional<Question> findFirstByCompetencyCodeAndTopicNoOrderByIdAsc(String competencyCode, String topicNo);

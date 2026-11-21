@@ -100,6 +100,8 @@ public class PlanController {
         model.addAttribute("totalItemMap", totalItemMap);
         model.addAttribute("safetyGateMap", safetyGateMap);
         model.addAttribute("selectedStatus", statusFilter != null ? statusFilter : "all");
+        model.addAttribute("employee", me);
+        model.addAttribute("currentUser", me);
         return "plans/list";
     }
 
@@ -142,6 +144,7 @@ public class PlanController {
 
         model.addAttribute("plan", plan);
         model.addAttribute("employee", target);
+        model.addAttribute("currentUser", me);
         model.addAttribute("items", items);
         model.addAttribute("competencies", compMap);
         model.addAttribute("interventions", ivMap);

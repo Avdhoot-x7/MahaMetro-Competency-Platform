@@ -10,6 +10,22 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
     }
+    .comp-overview-row {
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+    .comp-overview-row:hover {
+      background: #f8fafc;
+    }
+    .comp-detail-drawer {
+      display: none;
+      background: #f8fafc;
+      border-top: 1px dashed #cbd5e1;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .comp-detail-drawer.open {
+      display: table-row;
+    }
   </style>
 </head>
 <body>
@@ -26,6 +42,7 @@
 
   <nav class="top-nav-links">
     <a th:href="@{/}" class="top-nav-link">Home</a>
+    <a th:href="@{/practice}" class="top-nav-link">Practice Drills</a>
     <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
     <a th:href="@{/me}" class="top-nav-link" th:classappend="${own ? 'active' : ''}">My Heat Map</a>
     <a th:href="@{/plans}" class="top-nav-link">My IDP</a>
@@ -34,6 +51,7 @@
   </nav>
 
   <div class="top-nav-user" th:if="${employee != null}">
+    <a th:href="@{/}" class="btn btn-outline btn-sm" style="text-decoration:none; margin-right:8px;">&larr; Back to Candidate Hub</a>
     <a th:href="@{/profile}" class="user-pill" style="text-decoration:none; color:inherit; cursor:pointer;" title="Click to view &amp; edit profile">
       <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
       <b th:text="${employee.nameEn}">User Name</b>
@@ -46,7 +64,13 @@
 </header>
 
 <main class="card wide">
-  <p><a th:href="@{/}">Home</a> <span th:if="${!own}">&middot; <a th:href="@{/results}">Back to staff results</a></span></p>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+    <p style="margin:0;">
+      <a th:href="@{/}">&larr; Home / Candidate Hub</a>
+      <span th:if="${!own}">&middot; <a th:href="@{/results}">Back to staff results</a></span>
+    </p>
+    <a th:href="@{/}" class="btn btn-outline btn-sm">&larr; Candidate Hub</a>
+  </div>
 
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
     <div>
@@ -64,7 +88,7 @@
         Export Excel Report (.xlsx)
       </a>
       <a th:href="@{/plans}" class="btn btn-accent btn-sm">
-        View Action IDP
+        View Action IDP &rarr;
       </a>
     </div>
   </div>
@@ -93,7 +117,7 @@
 
   <p th:if="${#lists.isEmpty(profile.rows)}">No role family is set for this person, so there is nothing to assess.</p>
 
-  <!-- Interactive Visual Competency Result Heat Map Section -->
+  <!-- Interactive Visual Competency Result Heat Map Cards Section -->
   <div th:if="${!#lists.isEmpty(profile.rows)}" class="heatmap-container" style="margin: 28px 0; background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow-sm);">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 14px;">
       <div>
@@ -101,7 +125,7 @@
           <span>🔥</span> Competency Result Heat Map &amp; Gap Matrix
         </h2>
         <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted);">
-          Visual multidimensional heat matrix showing attained proficiency versus role required standards.
+          Visual multidimensional matrix showing attained proficiency versus role required standards. Click any card or ledger row to inspect details.
         </p>
       </div>
 
@@ -116,10 +140,11 @@
 
     <!-- Heat Map Grid Cards -->
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px;" id="heatmap-grid">
-      <div th:each="r : ${profile.rows}"
+      <div th:each="r, stat : ${profile.rows}"
            class="heatmap-card"
            th:attr="data-category=${r.category}, data-safety=${r.safetyCritical}, data-gap=${r.gap}, data-status=${r.status}"
-           th:style="${r.safetyCritical && r.gap > 0 ? 'border: 2px solid #ef4444; background: linear-gradient(145deg, #fff5f5 0%, #fee2e2 100%);' : (r.gap >= 2 ? 'border: 2px solid #f97316; background: linear-gradient(145deg, #fffaf0 0%, #ffedd5 100%);' : (r.gap == 1 ? 'border: 1px solid #f59e0b; background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%);' : 'border: 1px solid #10b981; background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%);'))}"
+           th:onclick="'toggleLedger(' + ${stat.index} + '); document.getElementById(''ledger-row-' + ${stat.index} + ''').scrollIntoView({behavior:''smooth'', block:''center''});'"
+           th:style="${r.safetyCritical && r.gap > 0 ? 'border: 2px solid #ef4444; background: linear-gradient(145deg, #fff5f5 0%, #fee2e2 100%); cursor:pointer;' : (r.gap >= 2 ? 'border: 2px solid #f97316; background: linear-gradient(145deg, #fffaf0 0%, #ffedd5 100%); cursor:pointer;' : (r.gap == 1 ? 'border: 1px solid #f59e0b; background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%); cursor:pointer;' : 'border: 1px solid #10b981; background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%); cursor:pointer;'))}"
            style="border-radius: 10px; padding: 14px; position: relative; transition: all 0.2s ease-in-out; box-shadow: var(--shadow-sm);">
 
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
@@ -138,7 +163,7 @@
         <!-- Heat Bar Level Visualizer -->
         <div style="background: rgba(255,255,255,0.7); padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.06); font-size: 12.5px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Required Level: <b th:text="'L' + ${r.required}">L3</b></span>
+            <span>Required: <b th:text="'L' + ${r.required}">L3</b></span>
             <span>Attained: <b th:text="${r.assessed ? 'L' + r.level : 'Not Assessed'}">L2</b></span>
           </div>
 
@@ -154,39 +179,137 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: #475569;">
           <span>Score: <b th:text="${r.score != null ? r.score + '%' : '-'}">78%</b></span>
-          <span th:if="${r.gap > 0}" style="color: #dc2626; font-weight: 700;" th:text="'-' + ${r.gap} + ' Level Gap'">-1 Level Gap</span>
-          <span th:if="${r.gap == 0}" style="color: #059669; font-weight: 700;">✓ Meets Target</span>
+          <span style="color:var(--primary); font-weight:600;">🔍 View Ledger &darr;</span>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- Detailed Tabular Breakdown -->
-  <h2 style="margin-top: 32px;">Competency Performance Ledger</h2>
-  <table th:if="${!#lists.isEmpty(profile.rows)}">
+  <!-- Interactive Competency Overview & Expandable Ledger Section -->
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:36px; margin-bottom:12px;">
+    <div>
+      <h2 style="margin:0; font-size:20px; color:var(--text-main);">
+        📊 Competency Scores &amp; Interactive Performance Ledger
+      </h2>
+      <p style="margin:4px 0 0; font-size:13px; color:var(--text-muted);">
+        Click any competency row or button to expand the detailed evaluation breakdown below it.
+      </p>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button type="button" class="btn btn-outline btn-sm" onclick="expandAllLedgers(true);">
+        📂 Expand All
+      </button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="expandAllLedgers(false);">
+        📁 Collapse All
+      </button>
+    </div>
+  </div>
+
+  <!-- Expandable Ledger Table -->
+  <table th:if="${!#lists.isEmpty(profile.rows)}" style="width:100%; border-collapse:collapse;">
     <thead>
-      <tr>
+      <tr style="background:#f1f5f9;">
+        <th style="width:36px; text-align:center;"></th>
         <th>Code</th>
-        <th>Competency</th>
+        <th>Competency Name</th>
         <th>Category</th>
-        <th>Required Level</th>
-        <th>Assessment Score</th>
-        <th>Level Reached</th>
-        <th>Gap</th>
-        <th>Readiness Status</th>
+        <th style="text-align:center;">Required</th>
+        <th style="text-align:center;">Attained</th>
+        <th style="text-align:center;">Score</th>
+        <th style="text-align:center;">Gap</th>
+        <th>Status</th>
+        <th style="text-align:right;">Ledger</th>
       </tr>
     </thead>
-    <tbody>
-      <tr th:each="r : ${profile.rows}">
-        <td th:text="${r.code}"></td>
-        <td><span th:text="${r.name}"></span> <small th:if="${r.safetyCritical}" style="color: #dc2626; font-weight:bold;">(safety-critical)</small></td>
-        <td th:text="${r.category}"></td>
-        <td th:text="${r.required}"></td>
-        <td th:text="${r.score != null} ? ${r.score} + '%' : '-'"></td>
-        <td th:text="${r.assessed} ? ${r.level} : '-'"></td>
-        <td th:text="${r.gap}"></td>
-        <td><span class="badge" th:classappend="${#strings.replace(#strings.toLowerCase(r.status), ' ', '-')}" th:text="${r.status}">Meets</span></td>
+    <tbody th:each="r, stat : ${profile.rows}">
+      <!-- Summary Row (Clickable) -->
+      <tr th:id="'ledger-row-' + ${stat.index}"
+          class="comp-overview-row"
+          th:onclick="'toggleLedger(' + ${stat.index} + ')'"
+          style="border-bottom:1px solid #e2e8f0;">
+        <td style="text-align:center; font-size:14px; color:#64748b;" th:id="'toggle-icon-' + ${stat.index}">▶</td>
+        <td><b th:text="${r.code}">TO-01</b></td>
+        <td>
+          <span th:text="${r.name}" style="font-weight:600; color:var(--text-main);">Competency Name</span>
+          <span th:if="${r.safetyCritical}" style="color: #dc2626; font-size: 11px; font-weight:700; margin-left:6px;">(Safety Gate)</span>
+        </td>
+        <td th:text="${r.category}" style="font-size:13px; color:#475569;">Technical</td>
+        <td style="text-align:center; font-weight:700;" th:text="'L' + ${r.required}">L3</td>
+        <td style="text-align:center; font-weight:700;" th:style="${r.gap > 0 ? 'color:#dc2626;' : 'color:#059669;'}" th:text="${r.assessed ? 'L' + r.level : '-'}">L2</td>
+        <td style="text-align:center; font-weight:700;" th:text="${r.score != null} ? ${r.score} + '%' : '-'">78.5%</td>
+        <td style="text-align:center;">
+          <span th:if="${r.gap > 0}" class="badge red" th:text="'-' + ${r.gap}">-1</span>
+          <span th:if="${r.gap == 0}" class="badge green">0</span>
+        </td>
+        <td>
+          <span class="badge" th:classappend="${#strings.replace(#strings.toLowerCase(r.status), ' ', '-')}" th:text="${r.status}">Meets</span>
+        </td>
+        <td style="text-align:right;">
+          <button type="button" class="btn btn-outline btn-sm" style="font-size:12px; padding:3px 8px;" th:id="'toggle-btn-' + ${stat.index}">
+            Details &darr;
+          </button>
+        </td>
+      </tr>
+
+      <!-- Detailed Breakdown Drawer Row (Initially Collapsed, Expands on Click) -->
+      <tr th:id="'ledger-drawer-' + ${stat.index}" class="comp-detail-drawer">
+        <td colspan="10" style="padding:16px 20px;">
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:18px; box-shadow:var(--shadow-sm);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px; border-bottom:1px solid #f1f5f9; padding-bottom:10px;">
+              <div>
+                <span class="badge blue" th:text="${r.category}">Technical</span>
+                <span th:if="${r.safetyCritical}" class="badge red">⚠️ Safety-Critical Operational Gate</span>
+                <h3 style="margin:6px 0 2px; font-size:16px; color:var(--primary);" th:text="${r.code} + ' : ' + ${r.name}">TO-01 : Driving</h3>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:12px; color:var(--text-muted);">Proficiency Target</div>
+                <div style="font-size:15px; font-weight:700; color:var(--text-main);">
+                  Required: <span th:text="'Level ' + ${r.required}">Level 3</span> &middot; Attained: <span th:style="${r.gap > 0 ? 'color:#dc2626;' : 'color:#059669;'}" th:text="${r.assessed ? 'Level ' + r.level : 'Not Assessed'}">Level 2</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detailed Metrics Grid -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;">
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 12px;">
+                <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#64748b;">Assessment Score</div>
+                <div style="font-size:18px; font-weight:800; color:var(--primary);" th:text="${r.score != null ? r.score + '%' : 'Pending Evaluation'}">78.5%</div>
+                <div style="font-size:11.5px; color:#64748b; margin-top:2px;">Standard Cut Score: 70.0%</div>
+              </div>
+
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 12px;">
+                <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#64748b;">Evaluation Status</div>
+                <div style="font-size:16px; font-weight:700;" th:style="${r.gap > 0 ? 'color:#dc2626;' : 'color:#059669;'}" th:text="${r.status}">Meets Requirement</div>
+                <div style="font-size:11.5px; color:#64748b; margin-top:2px;" th:text="${r.gap > 0 ? '-' + r.gap + ' Level Gap to target' : 'Certified compliant'}">Compliant</div>
+              </div>
+
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 12px;">
+                <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#64748b;">Certification Protocol</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-main);" th:text="${r.safetyCritical ? 'Annual Recertification (Mandatory)' : 'Biennial Evaluation'}">Annual</div>
+                <div style="font-size:11.5px; color:#64748b; margin-top:2px;">Maha Metro Center of Excellence</div>
+              </div>
+            </div>
+
+            <!-- Prescribed Training / Intervention (if gap exists) -->
+            <div th:if="${r.gap > 0}" style="padding:12px 14px; background:#fff7ed; border-left:4px solid #ea580c; border-radius:4px; margin-bottom:12px;">
+              <b style="color:#9a3412; font-size:13.5px;">🎯 Targeted Training Prescription:</b>
+              <div style="font-size:13px; color:#7c2d12; margin-top:3px;">
+                This competency exhibits an active gap. An intervention module at Maha Metro CoE has been prescribed under your Individual Development Plan (IDP).
+              </div>
+              <div style="margin-top:8px;">
+                <a th:href="@{/plans}" class="btn btn-accent btn-sm" style="font-size:12px; padding:4px 10px;">
+                  Inspect IDP Module Details &rarr;
+                </a>
+              </div>
+            </div>
+
+            <!-- Compliant Note (if no gap) -->
+            <div th:if="${r.gap == 0}" style="padding:10px 14px; background:#f0fdf4; border-left:4px solid #10b981; border-radius:4px; font-size:13px; color:#166534;">
+              <b>✓ Certified Standard Met:</b> Candidate demonstrates satisfactory competence according to role specification standards. Continuous practice is encouraged to maintain proficiency.
+            </div>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -265,6 +388,40 @@
         card.style.display = (gap > 0) ? 'block' : 'none';
       } else if (type === 'MEETS') {
         card.style.display = (gap === 0) ? 'block' : 'none';
+      }
+    });
+  }
+
+  function toggleLedger(idx) {
+    const drawer = document.getElementById('ledger-drawer-' + idx);
+    const icon = document.getElementById('toggle-icon-' + idx);
+    const btn = document.getElementById('toggle-btn-' + idx);
+    if (!drawer) return;
+
+    if (drawer.classList.contains('open')) {
+      drawer.classList.remove('open');
+      if (icon) icon.innerText = '▶';
+      if (btn) btn.innerText = 'Details ↓';
+    } else {
+      drawer.classList.add('open');
+      if (icon) icon.innerText = '▼';
+      if (btn) btn.innerText = 'Close ↑';
+    }
+  }
+
+  function expandAllLedgers(expand) {
+    const drawers = document.querySelectorAll('.comp-detail-drawer');
+    drawers.forEach((drawer, idx) => {
+      const icon = document.getElementById('toggle-icon-' + idx);
+      const btn = document.getElementById('toggle-btn-' + idx);
+      if (expand) {
+        drawer.classList.add('open');
+        if (icon) icon.innerText = '▼';
+        if (btn) btn.innerText = 'Close ↑';
+      } else {
+        drawer.classList.remove('open');
+        if (icon) icon.innerText = '▶';
+        if (btn) btn.innerText = 'Details ↓';
       }
     });
   }

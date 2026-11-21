@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practice Drill Player - Maha Metro</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .practice-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #ffffff;
+      border-bottom: 2px solid #e2e8f0;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .question-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s ease;
+    }
+    .question-card.answered {
+      border-left: 4px solid #10b981;
+    }
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .option-item:hover {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+    .option-item input[type="radio"] {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Global Top Navigation Header -->
+<header class="top-nav">
+  <a th:href="@{/}" class="top-nav-brand">
+    <div class="brand-icon">M</div>
+    <div>
+      <div class="brand-title">MAHA METRO</div>
+      <div class="brand-subtitle">Competency Assessment Platform</div>
+    </div>
+  </a>
+
+  <nav class="top-nav-links">
+    <a th:href="@{/}" class="top-nav-link">Home</a>
+    <a th:href="@{/practice}" class="top-nav-link active">Practice Drills</a>
+    <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
+    <a th:href="@{/me}" class="top-nav-link">My Heat Map</a>
+    <a th:href="@{/plans}" class="top-nav-link">My IDP</a>
+    <a th:href="@{/profile}" class="top-nav-link">My Profile</a>
+  </nav>
+
+  <div class="top-nav-user" th:if="${employee != null}">
+    <a th:href="@{/practice}" class="btn btn-outline btn-sm" style="text-decoration:none; margin-right:8px;">&larr; Practice Hub</a>
+    <a th:href="@{/profile}" class="user-pill" style="text-decoration:none; color:inherit; cursor:pointer;" title="Click to view &amp; edit profile">
+      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+      <b th:text="${employee.nameEn}">User Name</b>
+      <span style="color:#64748b;" th:text="'(' + ${employee.empId} + ')'">ID</span>
+    </a>
+  </div>
+</header>
+
+<!-- Sticky Progress & Submit Action Bar -->
+<div class="practice-bar">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <span style="font-size:24px;" th:text="${section.icon}">🚆</span>
+    <div>
+      <b style="font-size:16px; color:#065f46;" th:text="${section.titleEn}">Train Operations Practice</b>
+      <div style="font-size:12px; color:var(--text-muted);">
+        Self-Paced Formative Drill &middot; <span id="answered-counter">0</span> of <span th:text="${totalCount}">20</span> Answered
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:12px;">
+    <button type="button" onclick="document.getElementById('practice-form').submit();" class="btn btn-success" style="padding:10px 22px; font-weight:700; font-size:14.5px; box-shadow:0 3px 10px rgba(16,185,129,0.3);">
+      🏁 Submit Practice Drill Now
+    </button>
+  </div>
+</div>
+
+<main class="card wide" style="margin-top:20px;">
+  <!-- Informational Notice -->
+  <div style="padding:14px 18px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:var(--radius-md); margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+    <div>
+      <b style="color:#166534;">💡 Formative Practice Environment</b>
+      <div style="font-size:12.5px; color:#15803d;">
+        Answer in any sequence. You can submit at any time, even with partial answers, to view instant pedagogical solutions and explanations.
+      </div>
+    </div>
+    <a th:if="${!#strings.isEmpty(section.coeResourceUrl)}" th:href="${section.coeResourceUrl}" target="_blank" class="btn btn-outline btn-sm">
+      📖 View CoE Reference SOP
+    </a>
+  </div>
+
+  <form id="practice-form" th:action="@{/practice/submit}" method="post">
+    <input type="hidden" name="topicNo" th:value="${section.key}">
+
+    <div th:each="qv, qStat : ${questions}" class="question-card" th:id="'qcard-' + ${qv.question.id}">
+      <input type="hidden" name="questionIds" th:value="${qv.question.id}">
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #f1f5f9; padding-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="badge green" th:text="'Question ' + ${qStat.count} + ' of ' + ${totalCount}">Question 1 of 12</span>
+          <span class="badge" style="background:#f1f5f9; color:#475569;" th:text="${qv.question.code}">CODE</span>
+          <span class="badge" style="background:#e0f2fe; color:#0369a1;" th:text="'Bloom: ' + ${qv.question.bloom}">Bloom: Apply</span>
+        </div>
+        <span class="badge" style="background:#fef3c7; color:#92400e;" th:text="${qv.question.difficulty}">medium</span>
+      </div>
+
+      <!-- Question Stem (English & Marathi) -->
+      <div style="font-size:16px; font-weight:700; color:var(--text-main); margin-bottom:8px; line-height:1.45;">
+        <span th:text="${qv.question.stemEn}">Question stem in English</span>
+      </div>
+      <div th:if="${!#strings.isEmpty(qv.question.stemMr)}" style="font-size:14.5px; color:#334155; margin-bottom:16px; line-height:1.45; font-weight:500;">
+        <span th:text="${qv.question.stemMr}">मराठी प्रश्न विधाने</span>
+      </div>
+
+      <!-- Options -->
+      <div style="margin-top:14px;">
+        <label th:each="opt : ${qv.options}" class="option-item">
+          <input type="radio"
+                 th:name="'answer_' + ${qv.question.id}"
+                 th:value="${opt.id}"
+                 th:onchange="'markAnswered(' + ${qv.question.id} + ');'">
+          <div style="flex:1;">
+            <div style="font-size:14px; color:var(--text-main); font-weight:600;" th:text="${opt.textEn}">Option English</div>
+            <div th:if="${!#strings.isEmpty(opt.textMr)}" style="font-size:13px; color:#475569; margin-top:2px;" th:text="${opt.textMr}">पर्याय मराठी</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Bottom Submit Button -->
+    <div style="text-align:center; padding:24px 0 36px;">
+      <button type="submit" class="btn btn-success btn-lg" style="padding:14px 36px; font-size:16px; font-weight:700;">
+        🏁 Submit Practice Drill &amp; Review Detailed Solutions &rarr;
+      </button>
+      <div style="font-size:12.5px; color:var(--text-muted); margin-top:8px;">
+        You can submit at any time &middot; Unanswered questions will be recorded for comprehensive review
+      </div>
+    </div>
+  </form>
+</main>
+
+<script>
+  const answeredSet = new Set();
+  function markAnswered(qId) {
+    answeredSet.add(qId);
+    const card = document.getElementById('qcard-' + qId);
+    if (card) {
+      card.classList.add('answered');
+    }
+    const counter = document.getElementById('answered-counter');
+    if (counter) {
+      counter.innerText = answeredSet.size;
+    }
+  }
+</script>
+
+</body>
+</html>

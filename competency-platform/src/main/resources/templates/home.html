@@ -10,7 +10,7 @@
       background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 55%, #ea580c 130%);
       color: #fff;
       border-radius: var(--radius-lg);
-      padding: 30px;
+      padding: 26px 30px;
       margin-bottom: 24px;
       display: flex;
       justify-content: space-between;
@@ -20,8 +20,8 @@
       flex-wrap: wrap;
     }
     .portal-avatar {
-      width: 68px;
-      height: 68px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: #ffffff;
       color: var(--primary);
@@ -55,7 +55,7 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin-top: 14px;
+      margin-top: 10px;
     }
     .quicknav-pill {
       background: rgba(255, 255, 255, 0.15);
@@ -76,7 +76,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 32px 0 16px;
+      margin: 28px 0 16px;
       padding-bottom: 10px;
       border-bottom: 2px solid #f1f5f9;
       flex-wrap: wrap;
@@ -98,7 +98,7 @@
     }
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 20px;
     }
     .practice-card {
@@ -106,7 +106,7 @@
       border: 1px solid var(--border);
       border-top: 4px solid #10b981;
       border-radius: var(--radius-lg);
-      padding: 22px;
+      padding: 20px;
       box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
@@ -122,16 +122,25 @@
       border: 1px solid var(--border);
       border-top: 4px solid #ea580c;
       border-radius: var(--radius-lg);
-      padding: 22px;
+      padding: 20px;
       box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
     }
     .attempt-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
+    }
+    .attempt-card.unattempted {
+      border: 2px solid #ef4444;
+      border-top: 5px solid #dc2626;
+      background: linear-gradient(180deg, #fffefe 0%, #fffbfb 100%);
+    }
+    .attempt-card.completed {
+      border-top: 4px solid #10b981;
     }
     .scorecard-grid {
       display: grid;
@@ -143,7 +152,7 @@
       background: #ffffff;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 18px;
+      padding: 16px;
       box-shadow: var(--shadow-sm);
     }
     .scorecard-label {
@@ -155,88 +164,47 @@
       margin-bottom: 6px;
     }
     .scorecard-value {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       color: var(--text-main);
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
     }
-    .heatmap-cta-banner {
-      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-      border: 1px solid #bfdbfe;
-      border-radius: var(--radius-lg);
-      padding: 22px 26px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-    .recommendation-card {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--warning);
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      box-shadow: var(--shadow-sm);
-    }
-    .recommendation-card.safety {
-      border-left-color: var(--danger);
-      background: #fffafa;
-    }
-    .level-dot {
+    .red-dot-indicator {
       display: inline-block;
-      width: 11px;
-      height: 11px;
+      width: 10px;
+      height: 10px;
+      background-color: #ef4444;
       border-radius: 50%;
-      margin-right: 3px;
+      box-shadow: 0 0 6px rgba(239,68,68,0.8);
+      animation: pulse-red 1.5s infinite;
+      margin-right: 6px;
+      vertical-align: middle;
     }
-    .level-dot.filled { background: var(--primary); }
-    .level-dot.empty { background: #e2e8f0; }
-    .level-dot.gap-target { background: #ea580c; border: 2px dashed #9a3412; }
-    .admin-toggle-bar {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      border-radius: var(--radius-md);
-      padding: 10px 16px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
+    @keyframes pulse-red {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239,68,68,0.7); }
+      70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239,68,68,0); }
     }
   </style>
 </head>
 <body>
 
-<!-- Top Navigation Header -->
+<!-- Global Top Navigation Header -->
 <header class="top-nav">
   <a th:href="@{/}" class="top-nav-brand">
     <div class="brand-icon">M</div>
     <div>
       <div class="brand-title">MAHA METRO</div>
-      <div class="brand-subtitle">Candidate Learning &amp; Assessment Hub</div>
+      <div class="brand-subtitle">Competency Assessment Platform</div>
     </div>
   </a>
 
-  <!-- Navigation Links tailored for regular employees -->
   <nav class="top-nav-links">
     <a th:href="@{/}" class="top-nav-link active">Home</a>
-    <a href="#practice-tests" class="top-nav-link">Practice Tests</a>
-    <a href="#attempt-tests" class="top-nav-link">Attempt Tests</a>
+    <a th:href="@{/practice}" class="top-nav-link">Practice Drills</a>
+    <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
     <a th:href="@{/me}" class="top-nav-link">My Heat Map</a>
     <a th:href="@{/plans}" class="top-nav-link">My IDP</a>
     <a th:href="@{/profile}" class="top-nav-link">My Profile</a>
-    <!-- Executive Links visible only to users with administrative roles -->
     <th:block th:if="${isExecutive}">
       <a th:href="@{/dashboards/org}" class="top-nav-link" style="color:var(--primary); font-weight:700;">Org Scorecard</a>
       <a th:href="@{/questions}" class="top-nav-link" style="color:var(--ai-purple); font-weight:700;">Question Bank</a>
@@ -312,9 +280,31 @@
     </div>
   </div>
 
-  <!-- CANDIDATE HERO & IDENTITY BANNER -->
+  <!-- NOTIFICATION RED ALERT BANNER (If official assessment is not yet given) -->
+  <div th:if="${pendingOfficialCount != null and pendingOfficialCount > 0}"
+       style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color:#ffffff; padding:18px 24px; border-radius:var(--radius-lg); margin-bottom:24px; box-shadow:0 4px 16px rgba(220,38,38,0.3); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <span style="font-size:32px;">🔴</span>
+      <div>
+        <div style="font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#fee2e2;">
+          Mandatory Certification Alert &middot; Action Required
+        </div>
+        <h2 style="color:#ffffff; margin:2px 0 4px; font-size:18px;">
+          Official Assessment Pending: You have <span th:text="${pendingOfficialCount}">1</span> scheduled competency assessment(s) waiting to be completed!
+        </h2>
+        <div style="font-size:13px; color:#fecaca;">
+          Official tests evaluate operational licensing standards. Please attempt your pending assessments before certification deadlines.
+        </div>
+      </div>
+    </div>
+    <a href="#attempt-tests" class="btn" style="background:#ffffff; color:#b91c1c; font-weight:800; padding:10px 22px; box-shadow:0 2px 6px rgba(0,0,0,0.15); border:none; text-decoration:none;">
+      📝 Attempt Official Assessment Now &rarr;
+    </a>
+  </div>
+
+  <!-- CANDIDATE HERO & IDENTITY BANNER (Clean Dashboard Focus) -->
   <div class="portal-hero">
-    <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:18px; flex-wrap:wrap;">
       <div class="portal-avatar">
         <span th:text="${employee != null ? #strings.substring(employee.nameEn, 0, 1) : 'M'}">R</span>
       </div>
@@ -330,7 +320,6 @@
           <span class="hero-badge" th:text="${employee.designation}">Train Operator</span>
           <span class="hero-badge" th:text="${employee.department}">Operations</span>
           <span class="hero-badge" th:text="'Grade: ' + ${employee.gradeCode}">Grade G2</span>
-          <span th:if="${employee.age != null}" class="hero-badge" th:text="'Age: ' + ${employee.age} + ' yrs'">Age: 31 yrs</span>
           <span th:if="${!#strings.isEmpty(employee.sector)}" class="hero-sector-badge" th:text="${employee.sector}">Pune Metro - Line 1</span>
           <span th:if="${summary != null}" class="hero-badge"
                 th:style="${summary.readiness == 'Green' ? 'background:#059669; color:#fff;' : (summary.readiness == 'Amber' ? 'background:#d97706; color:#fff;' : 'background:#dc2626; color:#fff;')}"
@@ -349,78 +338,146 @@
         <a href="#attempt-tests" class="quicknav-pill">📝 Active Tests</a>
         <a th:href="@{/me}" class="quicknav-pill">📊 Result Heat Map</a>
         <a href="#weak-points" class="quicknav-pill">🎯 Recommendations</a>
-        <a th:href="@{/profile}" class="quicknav-pill">✏️ Edit Profile</a>
+        <a th:href="@{/profile}" class="quicknav-pill">👤 My Profile</a>
       </div>
     </div>
   </div>
 
-  <!-- SECTION 1: PRACTICE TEST SECTION (Self-Paced Learning & Mock Drills) -->
+  <!-- SCORECARD METRICS GRID -->
+  <div class="scorecard-grid">
+    <!-- Card 1: Readiness Status -->
+    <div class="scorecard-item" style="border-left:4px solid var(--primary);">
+      <div class="scorecard-label">Readiness Status</div>
+      <div style="margin-top:4px;">
+        <span th:if="${summary != null and summary.readiness == 'Green'}" class="badge green" style="font-size:15px; padding:5px 12px;">
+          🟢 Ready (Meets Role)
+        </span>
+        <span th:if="${summary != null and summary.readiness == 'Amber'}" class="badge amber" style="font-size:15px; padding:5px 12px;">
+          🟡 Action Required
+        </span>
+        <span th:if="${summary != null and summary.readiness == 'Red'}" class="badge red" style="font-size:15px; padding:5px 12px;">
+          🔴 Safety Gate Active
+        </span>
+        <span th:if="${summary == null}" class="badge" style="font-size:15px; padding:5px 12px; background:#f1f5f9; color:#475569;">
+          ⚪ In Evaluation
+        </span>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">
+        Operational readiness compliance
+      </div>
+    </div>
+
+    <!-- Card 2: Competency Met Index % -->
+    <div class="scorecard-item" style="border-left:4px solid #0284c7;">
+      <div class="scorecard-label">Competency Met Index</div>
+      <div class="scorecard-value" style="color:#0284c7;">
+        <span th:text="${summary != null and summary.indexPct != null ? summary.indexPct + '%' : (profile != null ? profile.indexPct + '%' : '100.0%')}">78.5%</span>
+      </div>
+      <div style="width:100%; height:5px; background:#e2e8f0; border-radius:3px; margin-top:8px; overflow:hidden;">
+        <div style="height:100%; background:#0284c7; border-radius:3px;"
+             th:style="'width: ' + ${summary != null and summary.indexPct != null ? summary.indexPct : (profile != null ? profile.indexPct : 100)} + '%;'"></div>
+      </div>
+    </div>
+
+    <!-- Card 3: Evaluated Competencies -->
+    <div class="scorecard-item" style="border-left:4px solid #10b981;">
+      <div class="scorecard-label">Evaluated Competencies</div>
+      <div class="scorecard-value" style="color:#059669;">
+        <span th:text="${summary != null ? summary.assessedCount : (profile != null ? profile.rows.size() : 21)}">21</span>
+        <span style="font-size:13px; font-weight:500; color:var(--text-muted);">Competencies</span>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">
+        Covering Core, Behavioural &amp; Domain
+      </div>
+    </div>
+
+    <!-- Card 4: Active Gaps & Safety Gates -->
+    <div class="scorecard-item" style="border-left:4px solid var(--danger);">
+      <div class="scorecard-label">Active Gaps &amp; Safety Gates</div>
+      <div class="scorecard-value" style="color:var(--danger);">
+        <span th:text="${summary != null ? summary.gapsCount : (profile != null ? profile.gapsCount : 0)}">0</span>
+        <span style="font-size:13px; font-weight:600; color:var(--danger);" th:if="${summary != null and summary.safetyGates > 0}">
+          (<span th:text="${summary.safetyGates}">1</span> Safety Gate)
+        </span>
+        <span style="font-size:13px; font-weight:500; color:var(--text-muted);" th:if="${summary == null or summary.safetyGates == 0}">
+          Active Gaps
+        </span>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">
+        Identified for training intervention
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: PRACTICE TEST SECTION (Topic Dropdown Menu & Formative Drills) -->
   <section id="practice-tests">
     <div class="section-header">
       <div>
         <h2 class="section-title">
-          <span>💡</span> Practice Tests &amp; Self-Paced Mock Drills (सराव चाचणी)
+          <span>💡</span> Practice Tests &amp; Formative Mock Drills (सराव चाचणी)
         </h2>
         <p class="section-subtitle">
-          Untimed, low-stakes practice questions with instant pedagogical explanations and bilingual feedback. Practicing here helps you master concepts without affecting your official competency baseline score.
+          Untimed, low-stakes practice questions with instant solutions and CoE SOP manual links. Submit at any point with zero risk.
         </p>
       </div>
-      <span class="badge green" style="font-size:12px; padding:6px 12px;">Zero Risk &middot; Formative Learning</span>
+      <a th:href="@{/practice}" class="btn btn-success btn-sm">💡 Open Practice Hub</a>
     </div>
 
-    <div class="card-grid">
-      <!-- Practice Test Cards -->
-      <div th:each="t : ${practiceTests}" class="practice-card">
-        <div>
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-            <span class="badge green">PRACTICE DRILL</span>
-            <span class="badge" style="background:#f1f5f9; color:#475569;" th:text="${t.code}">PRAC-01</span>
-          </div>
-
-          <h3 style="margin:0 0 6px; font-size:17px; color:#065f46; font-weight:700;" th:text="${t.titleEn}">
-            Train Operations &amp; Cab Safety Practice Mock
-          </h3>
-          <p th:if="${!#strings.isEmpty(t.titleMr)}" th:text="${t.titleMr}" style="font-size:13px; color:#047857; margin:0 0 10px; font-weight:500;"></p>
-          <p th:if="${!#strings.isEmpty(t.instructionsEn)}" th:text="${t.instructionsEn}" style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px; line-height:1.4;"></p>
-
-          <div style="display:flex; gap:12px; padding:10px 12px; background:#f0fdf4; border-radius:var(--radius-md); border:1px solid #bbf7d0; margin-bottom:16px;">
-            <div style="flex:1;">
-              <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#166534;">Duration</div>
-              <div style="font-size:15px; font-weight:700; color:#14532d;" th:text="${t.durationMinutes} + ' mins'">45 mins</div>
-            </div>
-            <div style="flex:1; border-left:1px solid #bbf7d0; padding-left:12px;">
-              <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#166534;">Questions</div>
-              <div style="font-size:15px; font-weight:700; color:#14532d;" th:text="'Up to ' + ${t.maxItems}">Up to 20</div>
-            </div>
-            <div style="flex:1; border-left:1px solid #bbf7d0; padding-left:12px;">
-              <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#166534;">Attempts</div>
-              <div style="font-size:15px; font-weight:700; color:#14532d;">Unlimited</div>
-            </div>
-          </div>
-
-          <div style="font-size:12px; color:#059669; display:flex; align-items:center; gap:6px; margin-bottom:14px;">
-            <span>✓</span> <b>Instant Solutions &amp; Pedagogical Feedback Enabled</b>
-          </div>
-        </div>
-
-        <form th:action="@{/delivery/tests/{id}/start(id=${t.id})}" method="post">
-          <button type="submit" class="btn btn-success" style="width:100%; font-size:14.5px; padding:10px;">
-            🎯 Launch Practice Mock
-          </button>
-        </form>
+    <!-- TOPIC-WISE PRACTICE DROPDOWN SELECTOR MENU -->
+    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:var(--radius-md); padding:16px 20px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+      <div>
+        <b style="font-size:15px; color:#166534;">🎯 Select Practice Topic:</b>
+        <div style="font-size:12.5px; color:#15803d;">Choose any operational area to launch an untimed 50-question formative drill</div>
       </div>
 
-      <!-- Fallback if practiceTests list is empty -->
-      <div th:if="${#lists.isEmpty(practiceTests)}" style="grid-column:1/-1; text-align:center; padding:32px; background:#f0fdf4; border:1px dashed #86efac; border-radius:var(--radius-lg);">
-        <div style="font-size:32px; margin-bottom:8px;">💡</div>
-        <h3 style="margin:0 0 6px; color:#166534;">Self-Paced Practice Questions</h3>
-        <p style="color:#15803d; max-width:440px; margin:0 auto 16px;">Practice modules are available for your role family. You can attempt self-paced question sets at any time.</p>
-        <a th:href="@{/delivery}" class="btn btn-success">Browse All Question Sets &rarr;</a>
+      <form th:action="@{/practice/start}" method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:0;">
+        <select name="topic" class="form-control" style="min-width:300px; padding:8px 12px; font-weight:600; border:1px solid #86efac; border-radius:6px; background:#fff;">
+          <option th:each="sec : ${practiceSections}" th:value="${sec.key}"
+                  th:text="${sec.icon} + ' ' + ${sec.titleEn} + ' (' + ${sec.availableQuestions} + ' Available)'">
+            Train Operations
+          </option>
+        </select>
+        <input type="hidden" name="limit" value="50">
+        <button type="submit" class="btn btn-success" style="padding:8px 20px; font-weight:700;">
+          🚀 Start Practice Drill
+        </button>
+      </form>
+    </div>
+
+    <!-- Practice Section Cards Grid -->
+    <div class="card-grid">
+      <div th:each="sec : ${practiceSections}" class="practice-card">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+            <span style="font-size:26px;" th:text="${sec.icon}">🚆</span>
+            <span class="badge green" th:text="${sec.availableQuestions} + ' Questions'">12 Questions</span>
+          </div>
+
+          <h3 style="margin:0 0 4px; font-size:16.5px; color:#065f46; font-weight:700;" th:text="${sec.titleEn}">
+            Train Operations &amp; Cab Safety
+          </h3>
+          <p th:if="${!#strings.isEmpty(sec.titleMr)}" th:text="${sec.titleMr}" style="font-size:13px; color:#047857; margin:0 0 8px; font-weight:500;"></p>
+          <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 14px; line-height:1.45;" th:text="${sec.descriptionEn}"></p>
+        </div>
+
+        <div>
+          <div style="font-size:12px; color:#059669; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+            <span>✓</span> <span>Untimed &middot; Submit at any point &middot; Detailed solutions</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <a th:href="@{/practice/start(topic=${sec.key}, limit=50)}" class="btn btn-success" style="flex:1; text-align:center; padding:9px;">
+              🎯 Start Drill (Up to 50 Qs)
+            </a>
+            <a th:if="${!#strings.isEmpty(sec.coeResourceUrl)}" th:href="${sec.coeResourceUrl}" target="_blank" class="btn btn-outline" title="Open CoE Reference SOP Manual" style="padding:6px 12px;">
+              📖 SOP
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- SECTION 2: ATTEMPT TEST SECTION (Scheduled Formal Assessments) -->
+  <!-- SECTION 2: SCHEDULED OFFICIAL ASSESSMENTS (With Test Dropdown & Red Dot Indicators) -->
   <section id="attempt-tests">
     <div class="section-header">
       <div>
@@ -428,18 +485,49 @@
           <span>📝</span> Scheduled Official Assessments (अधिकृत मूल्यांकन परीक्षा)
         </h2>
         <p class="section-subtitle">
-          Official competency tests, annual recertifications, and formal baseline evaluations assigned to your designation.
+          Mandatory competency evaluations and annual recertifications. Tests with a red dot (🔴) require your completion.
         </p>
       </div>
       <span class="badge blue" style="font-size:12px; padding:6px 12px;">Official Recertification Window</span>
     </div>
 
+    <!-- SCHEDULED OFFICIAL TESTS DROPDOWN SELECTOR MENU -->
+    <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:var(--radius-md); padding:16px 20px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+      <div>
+        <b style="font-size:15px; color:#9a3412;">📝 Scheduled Assessments Dropdown:</b>
+        <div style="font-size:12.5px; color:#c2410c;">Status shows whether each evaluation has been completed or is pending</div>
+      </div>
+
+      <form id="official-test-dropdown-form" method="post" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:0;"
+            onsubmit="event.preventDefault(); const sel = document.getElementById('officialSelect'); if(sel.value) { this.action='/delivery/tests/' + sel.value + '/start'; this.submit(); }">
+        <select id="officialSelect" class="form-control" style="min-width:320px; padding:8px 12px; font-weight:600; border:1px solid #f97316; border-radius:6px; background:#fff;">
+          <option th:each="t : ${attemptTests}" th:value="${t.id}"
+                  th:text="${(testStatusMap[t.id] != null ? testStatusMap[t.id].displayBadge : '🔴 Not Attempted') + ' - ' + t.titleEn}">
+            🔴 Not Attempted - Operations Baseline Assessment
+          </option>
+        </select>
+        <button type="submit" class="btn btn-accent" style="padding:8px 20px; font-weight:700;">
+          🚀 Start / Resume Selected
+        </button>
+      </form>
+    </div>
+
+    <!-- Official Test Cards Grid -->
     <div class="card-grid">
-      <!-- Attempt Test Cards -->
-      <div th:each="t : ${attemptTests}" class="attempt-card">
+      <div th:each="t : ${attemptTests}" class="attempt-card"
+           th:classappend="${testStatusMap[t.id] != null and testStatusMap[t.id].notAttempted ? 'unattempted' : (testStatusMap[t.id] != null and testStatusMap[t.id].statusType == 'COMPLETED' ? 'completed' : '')}">
+
         <div>
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-            <span class="badge blue" th:text="${t.kind}">OFFICIAL EVAL</span>
+          <!-- Header with status badge & red dot indicator -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="display:flex; align-items:center;">
+              <!-- Prominent Red Dot if test is not yet attempted -->
+              <span th:if="${testStatusMap[t.id] != null and testStatusMap[t.id].notAttempted}" class="red-dot-indicator" title="Action Required: Assessment Not Attempted"></span>
+              <span class="badge" th:classappend="${testStatusMap[t.id] != null and testStatusMap[t.id].notAttempted ? 'red' : (testStatusMap[t.id] != null and testStatusMap[t.id].statusType == 'COMPLETED' ? 'green' : 'amber')}"
+                    th:text="${testStatusMap[t.id] != null ? testStatusMap[t.id].displayBadge : '🔴 Not Attempted'}">
+                🔴 Not Attempted
+              </span>
+            </div>
             <span class="badge" style="background:#f1f5f9; color:#475569;" th:text="${t.code}">CODE</span>
           </div>
 
@@ -459,24 +547,25 @@
               <div style="font-size:15px; font-weight:700; color:#7c2d12;" th:text="'Up to ' + ${t.maxItems}">Up to 30</div>
             </div>
             <div style="flex:1; border-left:1px solid #fed7aa; padding-left:12px;">
-              <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#9a3412;">Type</div>
-              <div style="font-size:15px; font-weight:700; color:#7c2d12;">Formal Exam</div>
+              <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#9a3412;">Status</div>
+              <div style="font-size:13.5px; font-weight:800;"
+                   th:style="${testStatusMap[t.id] != null and testStatusMap[t.id].notAttempted ? 'color:#dc2626;' : (testStatusMap[t.id] != null and testStatusMap[t.id].statusType == 'COMPLETED' ? 'color:#059669;' : 'color:#d97706;')}"
+                   th:text="${testStatusMap[t.id] != null ? testStatusMap[t.id].statusType : 'PENDING'}">
+                PENDING
+              </div>
             </div>
-          </div>
-
-          <div style="font-size:12px; color:#c2410c; display:flex; align-items:center; gap:6px; margin-bottom:14px;">
-            <span>⏱️</span> <span>Official Timer Active &middot; Scored to Competency Master</span>
           </div>
         </div>
 
         <form th:action="@{/delivery/tests/{id}/start(id=${t.id})}" method="post">
-          <button type="submit" class="btn btn-accent btn-lg" style="width:100%; font-size:14.5px; padding:10px;">
+          <button type="submit" class="btn btn-accent btn-lg" style="width:100%; font-size:14.5px; padding:10px;"
+                  th:text="${testStatusMap[t.id] != null and testStatusMap[t.id].statusType == 'COMPLETED' ? '🔄 Retake Assessment' : '🚀 Start / Resume Assessment'}">
             🚀 Start / Resume Assessment
           </button>
         </form>
       </div>
 
-      <!-- Clean state if no tests currently pending -->
+      <!-- Clean state if no tests currently scheduled -->
       <div th:if="${#lists.isEmpty(attemptTests)}" style="grid-column:1/-1; text-align:center; padding:36px; background:#f8fafc; border:1px dashed var(--border); border-radius:var(--radius-lg);">
         <div style="font-size:32px; margin-bottom:8px;">📋</div>
         <h3 style="margin:0 0 6px; color:var(--text-main);">No Formal Assessments Pending</h3>
@@ -486,262 +575,98 @@
     </div>
   </section>
 
-  <!-- SECTION 3: PERSONAL PERFORMANCE SCORECARD & RESULT HEAT MAP -->
-  <section id="personal-performance">
-    <div class="section-header">
-      <div>
-        <h2 class="section-title">
-          <span>📈</span> Personal Performance &amp; Competency Scorecard (वैयक्तिक कार्यक्षमता)
-        </h2>
-        <p class="section-subtitle">
-          Your current evaluated readiness, competency met index, active gaps, and one-click access to the Result Heat Map.
-        </p>
-      </div>
-      <a th:href="@{/me}" class="btn btn-outline btn-sm">📊 Open Full Heat Map</a>
-    </div>
-
-    <!-- 4-Card Scorecard Grid -->
-    <div class="scorecard-grid">
-      <!-- Card 1: Readiness Status -->
-      <div class="scorecard-item" style="border-left:4px solid var(--primary);">
-        <div class="scorecard-label">Readiness Status</div>
-        <div style="margin-top:4px;">
-          <span th:if="${summary != null and summary.readiness == 'Green'}" class="badge green" style="font-size:16px; padding:6px 14px;">
-            🟢 Ready (Meets Role)
-          </span>
-          <span th:if="${summary != null and summary.readiness == 'Amber'}" class="badge amber" style="font-size:16px; padding:6px 14px;">
-            🟡 Action Required
-          </span>
-          <span th:if="${summary != null and summary.readiness == 'Red'}" class="badge red" style="font-size:16px; padding:6px 14px;">
-            🔴 Safety Gate Active
-          </span>
-          <span th:if="${summary == null}" class="badge" style="font-size:16px; padding:6px 14px; background:#f1f5f9; color:#475569;">
-            ⚪ In Evaluation
-          </span>
-        </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">
-          Operational readiness compliance
-        </div>
-      </div>
-
-      <!-- Card 2: Competency Met Index % -->
-      <div class="scorecard-item" style="border-left:4px solid #0284c7;">
-        <div class="scorecard-label">Competency Met Index</div>
-        <div class="scorecard-value" style="color:#0284c7;">
-          <span th:text="${summary != null and summary.indexPct != null ? summary.indexPct + '%' : (profile != null ? profile.indexPct + '%' : '100.0%')}">78.5%</span>
-        </div>
-        <div style="width:100%; height:6px; background:#e2e8f0; border-radius:3px; margin-top:10px; overflow:hidden;">
-          <div style="height:100%; background:#0284c7; border-radius:3px;"
-               th:style="'width: ' + ${summary != null and summary.indexPct != null ? summary.indexPct : (profile != null ? profile.indexPct : 100)} + '%;'"></div>
-        </div>
-      </div>
-
-      <!-- Card 3: Evaluated Competencies -->
-      <div class="scorecard-item" style="border-left:4px solid #10b981;">
-        <div class="scorecard-label">Evaluated Competencies</div>
-        <div class="scorecard-value" style="color:#059669;">
-          <span th:text="${summary != null ? summary.assessedCount : (profile != null ? profile.rows.size() : 21)}">21</span>
-          <span style="font-size:14px; font-weight:500; color:var(--text-muted);">Competencies</span>
-        </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">
-          Covering Core, Behavioural &amp; Domain
-        </div>
-      </div>
-
-      <!-- Card 4: Active Gaps & Safety Gates -->
-      <div class="scorecard-item" style="border-left:4px solid var(--danger);">
-        <div class="scorecard-label">Active Gaps &amp; Safety Gates</div>
-        <div class="scorecard-value" style="color:var(--danger);">
-          <span th:text="${summary != null ? summary.gapsCount : (profile != null ? profile.gapsCount : 0)}">0</span>
-          <span style="font-size:14px; font-weight:600; color:var(--danger);" th:if="${summary != null and summary.safetyGates > 0}">
-            (<span th:text="${summary.safetyGates}">1</span> Safety Gate)
-          </span>
-          <span style="font-size:14px; font-weight:500; color:var(--text-muted);" th:if="${summary == null or summary.safetyGates == 0}">
-            Active Gaps
-          </span>
-        </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">
-          Identified for training intervention
-        </div>
-      </div>
-    </div>
-
-    <!-- Prominent Interactive Result Heat Map CTA Banner -->
-    <div class="heatmap-cta-banner">
-      <div>
-        <div style="font-size:11px; text-transform:uppercase; font-weight:800; color:#1e40af; letter-spacing:0.5px; margin-bottom:4px;">
-          Detailed Competency Analytics
-        </div>
-        <h3 style="margin:0 0 4px; font-size:18px; color:#1e3a8a;">
-          Interactive Result Heat Map &amp; Gap Matrix
-        </h3>
-        <p style="margin:0; font-size:13.5px; color:#3b82f6;">
-          Inspect individual competency level dots (<span style="color:#1e40af;">● ●</span> <span style="color:#ea580c;">○</span> ○ ○), safety gate flags, category filters (Core / Behavioural / Domain), and cut score targets.
-        </p>
-      </div>
-      <a th:href="@{/me}" class="btn btn-primary btn-lg" style="box-shadow: 0 4px 12px rgba(30,64,175,0.3); white-space:nowrap;">
-        📊 Open Result Heat Map &rarr;
-      </a>
-    </div>
-  </section>
-
-  <!-- SECTION 4: WEAK POINT RECOMMENDATIONS (Personalized Learning Roadmap) -->
+  <!-- SECTION 3: SIMPLIFIED WEAK POINT RECOMMENDATIONS -->
   <section id="weak-points">
     <div class="section-header">
       <div>
         <h2 class="section-title">
-          <span>🎯</span> Weak Point Recommendations &amp; Learning Roadmap (सुधारणा शिफारसी)
+          <span>🎯</span> Weak Point Recommendations &amp; Targeted Training (सुधारणा शिफारसी)
         </h2>
         <p class="section-subtitle">
-          Prescribed skill development modules from Maha Metro CoE targeting your specific competency gaps. Safety-critical gates must be cleared first.
+          Compact summary of active competency gaps with prescribed training modules from Maha Metro CoE.
         </p>
       </div>
-      <a th:href="@{/plans}" class="btn btn-accent btn-sm">🎯 View Full IDP</a>
+      <a th:href="@{/plans}" class="btn btn-accent btn-sm">🎯 View Full Action IDP &rarr;</a>
     </div>
 
     <!-- If there are plan items / gaps -->
     <div th:if="${planItems != null and !#lists.isEmpty(planItems)}">
-      <div th:each="it : ${planItems}" class="recommendation-card" th:classappend="${it.gapType == 'safety' ? 'safety' : ''}">
-        <div style="flex:2; min-width:280px;">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-            <span th:if="${it.gapType == 'safety'}" class="badge red" style="font-weight:700;">⚠️ SAFETY GATE</span>
-            <span th:if="${it.gapType == 'major'}" class="badge amber" style="font-weight:700;">PRIORITY GAP (-2 Levels)</span>
-            <span th:if="${it.gapType == 'minor'}" class="badge blue">MINOR GAP (-1 Level)</span>
-            <span th:if="${it.gapType == 'behavioural'}" class="badge purple">BEHAVIOURAL GAP</span>
-            <b style="font-size:15px; color:var(--text-main);" th:text="${it.competencyCode}">D01</b>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">
+        <div th:each="it : ${planItems}" style="background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; box-shadow:var(--shadow-sm);"
+             th:style="${it.gapType == 'safety' ? 'border-left:5px solid #dc2626; background:#fffbfb;' : 'border-left:5px solid #ea580c;'}">
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span th:if="${it.gapType == 'safety'}" class="badge red">⚠️ SAFETY GATE</span>
+              <span th:if="${it.gapType == 'major'}" class="badge amber">PRIORITY GAP</span>
+              <span th:if="${it.gapType == 'minor'}" class="badge blue">MINOR GAP</span>
+              <b style="font-size:14px; color:var(--text-main);" th:text="${it.competencyCode}">D01</b>
+            </div>
+            <span class="badge" style="background:#f1f5f9; font-size:11px;" th:text="${it.priority == 1 ? '30 Days' : (it.priority == 2 ? '60 Days' : '90 Days')}">30 Days</span>
           </div>
 
-          <div style="font-size:14px; font-weight:600; color:var(--text-main); margin-bottom:4px;">
+          <div style="font-size:13.5px; font-weight:700; color:var(--text-main); margin-bottom:4px;">
             <span th:if="${interventions != null and it.interventionId != null and interventions[it.interventionId] != null}" th:text="${interventions[it.interventionId].titleEn}">
-              Simulator Emergency Drills &amp; Signal Handling
+              Simulator Emergency Drills
             </span>
             <span th:if="${interventions == null or it.interventionId == null or interventions[it.interventionId] == null}">
-              Specialized Competency Intervention
+              Competency Training Module
             </span>
           </div>
 
-          <div style="font-size:12.5px; color:var(--text-muted);">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
             <span th:if="${interventions != null and it.interventionId != null and interventions[it.interventionId] != null}" th:text="${interventions[it.interventionId].provider} + ' &middot; ' + ${interventions[it.interventionId].mode}">
               Maha Metro CoE &middot; Simulator Workshop
             </span>
           </div>
-        </div>
 
-        <!-- Level Gap Display -->
-        <div style="flex:1; min-width:160px;">
-          <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted); margin-bottom:4px;">
-            Attained vs Required Level
-          </div>
-          <div style="font-size:13px; font-weight:700;">
-            Attained: <b style="color:var(--danger);" th:text="'Level ' + ${it.attainedLevel}">Level 1</b>
-            &rarr; Required: <b style="color:#059669;" th:text="'Level ' + ${it.requiredLevel}">Level 3</b>
-          </div>
-          <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
-            Gap: <b th:text="'-' + ${it.gap}">-2</b> levels
+          <div style="font-size:12px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:8px;">
+            <span>Attained: <b style="color:var(--danger);" th:text="'L' + ${it.attainedLevel}">L1</b> &rarr; Required: <b style="color:#059669;" th:text="'L' + ${it.requiredLevel}">L3</b></span>
+            <a th:href="@{/plans}" style="color:var(--primary); font-weight:600; text-decoration:none;">View Module &rarr;</a>
           </div>
         </div>
-
-        <!-- Target Window & Action -->
-        <div style="text-align:right; min-width:140px;">
-          <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted); margin-bottom:4px;">
-            Target Window
-          </div>
-          <div style="font-size:14px; font-weight:700; color:var(--text-main);" th:text="${it.priority == 1 ? '30 Days (Safety)' : (it.priority == 2 ? '60 Days' : '90 Days')}">
-            30 Days
-          </div>
-          <span class="badge" style="background:#f1f5f9; text-transform:uppercase; margin-top:4px;" th:text="${it.status}">
-            PROPOSED
-          </span>
-        </div>
-      </div>
-
-      <div style="text-align:center; margin-top:16px;">
-        <a th:href="@{/plans}" class="btn btn-outline" style="font-size:13.5px;">
-          🎯 View Full Individual Development Plan &amp; Learning Schedule &rarr;
-        </a>
       </div>
     </div>
 
     <!-- If all competencies are met -->
-    <div th:if="${planItems == null or #lists.isEmpty(planItems)}" style="text-align:center; padding:36px 20px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:var(--radius-lg);">
-      <div style="font-size:36px; margin-bottom:8px;">🎉</div>
-      <h3 style="margin:0 0 6px; color:#065f46; font-size:18px;">All Evaluated Competencies Meet Role Standards</h3>
-      <p style="color:#047857; max-width:480px; margin:0 auto 14px; font-size:13.5px;">
-        Your evaluated performance currently satisfies all requirements for your designation. Continue engaging with practice tests and continuous learning drills.
+    <div th:if="${planItems == null or #lists.isEmpty(planItems)}" style="text-align:center; padding:28px 20px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:var(--radius-lg);">
+      <div style="font-size:32px; margin-bottom:6px;">🎉</div>
+      <h3 style="margin:0 0 4px; color:#065f46; font-size:17px;">All Evaluated Competencies Meet Standards</h3>
+      <p style="color:#047857; max-width:440px; margin:0 auto 12px; font-size:13px;">
+        Your evaluated scores satisfy all operational requirements for your designation.
       </p>
       <a th:href="@{/me}" class="btn btn-success btn-sm">Inspect Complete Competency Score Matrix</a>
     </div>
   </section>
 
-  <!-- SECTION 5: PERSONAL PROFILE QUICK CARD & METADATA -->
-  <section id="my-profile">
-    <div class="section-header">
-      <div>
-        <h2 class="section-title">
-          <span>👤</span> Personal Profile &amp; General Information (माझी माहिती)
-        </h2>
-        <p class="section-subtitle">
-          Your official SAP HRMS personnel profile details. You can update your contact numbers, age, operational sector, and language preferences.
-        </p>
+  <!-- SECTION 4: RESULT HEAT MAP CTA BANNER -->
+  <div class="heatmap-cta-banner" style="margin-top:28px;">
+    <div>
+      <div style="font-size:11px; text-transform:uppercase; font-weight:800; color:#1e40af; letter-spacing:0.5px; margin-bottom:4px;">
+        Detailed Performance Analytics
       </div>
-      <a th:href="@{/profile}" class="btn btn-primary btn-sm">✏️ Modify Information</a>
+      <h3 style="margin:0 0 4px; font-size:18px; color:#1e3a8a;">
+        Interactive Result Heat Map &amp; Expandable Performance Ledger
+      </h3>
+      <p style="margin:0; font-size:13.5px; color:#3b82f6;">
+        Inspect individual competency level dots (<span style="color:#1e40af;">● ●</span> <span style="color:#ea580c;">○</span> ○ ○), safety gate criteria, and click any item to expand its full detailed ledger.
+      </p>
     </div>
+    <a th:href="@{/me}" class="btn btn-primary btn-lg" style="box-shadow: 0 4px 12px rgba(30,64,175,0.3); white-space:nowrap;">
+      📊 Open Result Heat Map &rarr;
+    </a>
+  </div>
 
-    <div style="background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-sm);">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:20px;">
-        <div>
-          <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px;">Full Name</div>
-          <div style="font-size:15px; font-weight:700; color:var(--text-main);">
-            <span th:text="${employee.nameEn}">Rohan Patil</span>
-            <span th:if="${!#strings.isEmpty(employee.nameMr)}" style="font-size:13px; font-weight:500; color:var(--text-muted);" th:text="'(' + ${employee.nameMr} + ')'"></span>
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px;">Age &amp; Personnel ID</div>
-          <div style="font-size:15px; font-weight:700; color:var(--text-main);">
-            <span th:text="${employee.age != null ? employee.age + ' years' : 'Not recorded'}">31 years</span>
-            <span style="font-size:12px; font-weight:600; color:var(--text-muted); margin-left:6px;" th:text="'(SAP ID: ' + ${employee.empId} + ')'">ID</span>
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px;">Operational Sector / Line</div>
-          <div style="font-size:14.5px; font-weight:700; color:var(--primary);" th:text="${!#strings.isEmpty(employee.sector) ? employee.sector : 'Pune Metro Operations'}">
-            Pune Metro - Line 1 (Purple Line)
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px;">Designation &amp; Department</div>
-          <div style="font-size:15px; font-weight:600; color:var(--text-main);" th:text="${employee.designation} + ' &middot; ' + ${employee.department}">
-            Train Operator &middot; Operations
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px;">Base Station / Depot Location</div>
-          <div style="font-size:14.5px; font-weight:600; color:var(--text-main);" th:text="${!#strings.isEmpty(employee.location) ? employee.location : 'Range Hill Depot'}">
-            Pune Metro - Range Hill Depot
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px;">Contact Details</div>
-          <div style="font-size:14px; font-weight:600; color:var(--text-main);">
-            <span th:text="${employee.email}">rohan.patil@mahametro.org</span>
-            <div style="font-size:12.5px; color:var(--text-muted);" th:text="${!#strings.isEmpty(employee.mobile) ? employee.mobile : 'No mobile registered'}"></div>
-          </div>
-        </div>
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; padding-top:16px; border-top:1px solid #f1f5f9;">
-        <a th:href="@{/profile}" class="btn btn-outline" style="font-size:13.5px;">
-          ✏️ Edit Full Personal Profile &rarr;
-        </a>
+  <!-- Profile Reference Notice (Personal Info moved strictly to /profile) -->
+  <div style="margin-top:24px; padding:14px 20px; background:#f8fafc; border:1px solid var(--border); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+    <div>
+      <b style="color:var(--text-main); font-size:13.5px;">👤 Personal Profile &amp; General Information</b>
+      <div style="font-size:12.5px; color:var(--text-muted);">
+        Update your mobile number, operational sector, base depot, or language preferences on your personal profile page.
       </div>
     </div>
-  </section>
+    <a th:href="@{/profile}" class="btn btn-outline btn-sm">✏️ View &amp; Modify My Profile &rarr;</a>
+  </div>
 
 </main>
 
