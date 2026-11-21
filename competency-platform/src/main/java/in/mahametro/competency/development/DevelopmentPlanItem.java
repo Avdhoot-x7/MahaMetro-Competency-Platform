@@ -62,6 +62,8 @@ public class DevelopmentPlanItem {
     public void setInterventionId(Long interventionId) { this.interventionId = interventionId; }
     public LocalDateTime getTargetDate() { return targetDate; }
     public void setTargetDate(LocalDateTime targetDate) { this.targetDate = targetDate; }
+    public int getCurrentLevel() { return attainedLevel; }
+    public int getTargetLevel() { return requiredLevel; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 }

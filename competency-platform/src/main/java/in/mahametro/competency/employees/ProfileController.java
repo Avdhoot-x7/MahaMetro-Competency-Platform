@@ -61,20 +61,44 @@ public class ProfileController {
 
     @PostMapping("/profile/update")
     public String updateMetadata(
-            @RequestParam("nameMr") String nameMr,
-            @RequestParam("mobile") String mobile,
-            @RequestParam("email") String email,
-            @RequestParam("location") String location,
-            @RequestParam("preferredLang") String preferredLang,
+            @RequestParam(name = "nameEn", required = false) String nameEn,
+            @RequestParam(name = "nameMr", required = false) String nameMr,
+            @RequestParam(name = "age", required = false) Integer age,
+            @RequestParam(name = "sector", required = false) String sector,
+            @RequestParam(name = "department", required = false) String department,
+            @RequestParam(name = "mobile", required = false) String mobile,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "location", required = false) String location,
+            @RequestParam(name = "preferredLang", required = false, defaultValue = "en") String preferredLang,
             Principal principal) {
         Employee me = currentUser.get(principal);
-        me.setNameMr(nameMr != null ? nameMr.trim() : "");
-        me.setMobile(mobile != null ? mobile.trim() : "");
-        me.setEmail(email != null ? email.trim() : "");
-        me.setLocation(location != null ? location.trim() : "");
+        if (nameEn != null && !nameEn.isBlank()) {
+            me.setNameEn(nameEn.trim());
+        }
+        if (nameMr != null) {
+            me.setNameMr(nameMr.trim());
+        }
+        if (age != null && age >= 18 && age <= 70) {
+            me.setAge(age);
+        }
+        if (sector != null) {
+            me.setSector(sector.trim());
+        }
+        if (department != null && !department.isBlank()) {
+            me.setDepartment(department.trim());
+        }
+        if (mobile != null) {
+            me.setMobile(mobile.trim());
+        }
+        if (email != null && !email.isBlank()) {
+            me.setEmail(email.trim());
+        }
+        if (location != null) {
+            me.setLocation(location.trim());
+        }
         me.setPreferredLang("mr".equalsIgnoreCase(preferredLang) ? "mr" : "en");
         employees.save(me);
-        audit.record(me.getEmpId(), "profile_updated", "employee", me.getEmpId(), "Updated personal metadata");
+        audit.record(me.getEmpId(), "profile_updated", "employee", me.getEmpId(), "Updated personal metadata: name, age, sector, contact");
         return "redirect:/profile?updated=true";
     }
 

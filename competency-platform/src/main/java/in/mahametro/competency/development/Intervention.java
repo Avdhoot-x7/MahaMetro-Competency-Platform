@@ -61,6 +61,7 @@ public class Intervention {
     public String getGapType() { return gapType; }
     public void setGapType(String gapType) { this.gapType = gapType; }
     public String getTitleEn() { return titleEn; }
+    public String getTitle() { return titleEn; }
     public void setTitleEn(String titleEn) { this.titleEn = titleEn; }
     public String getTitleMr() { return titleMr; }
     public void setTitleMr(String titleMr) { this.titleMr = titleMr; }

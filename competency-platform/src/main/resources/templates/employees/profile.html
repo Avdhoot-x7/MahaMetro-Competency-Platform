@@ -130,6 +130,8 @@
         <span class="badge" style="background:rgba(255,255,255,0.2); color:#fff;" th:text="${employee.designation}">Designation</span>
         <span class="badge" style="background:rgba(255,255,255,0.2); color:#fff;" th:text="${employee.department}">Department</span>
         <span class="badge" style="background:rgba(255,255,255,0.2); color:#fff;" th:text="'Grade: ' + ${employee.gradeCode}">Grade</span>
+        <span th:if="${employee.age != null}" class="badge" style="background:rgba(255,255,255,0.2); color:#fff;" th:text="'Age: ' + ${employee.age} + ' yrs'">Age</span>
+        <span th:if="${!#strings.isEmpty(employee.sector)}" class="badge" style="background:#fde047; color:#1e3a8a; font-weight:700;" th:text="${employee.sector}">Sector</span>
         <span th:if="${summary != null}" class="badge"
               th:classappend="${summary.readiness == 'Green' ? 'green' : (summary.readiness == 'Amber' ? 'amber' : 'red')}"
               th:text="'Readiness: ' + ${summary.readiness}">Readiness</span>
@@ -164,14 +166,47 @@
           <input type="text" th:value="${employee.empId}" disabled style="background:#f1f5f9; cursor:not-allowed; font-weight:bold;">
         </div>
 
-        <div class="meta-field">
-          <div class="meta-label">Full Name (English)</div>
-          <input type="text" th:value="${employee.nameEn}" disabled style="background:#f1f5f9; cursor:not-allowed;">
+        <div class="row" style="gap:12px;">
+          <div class="meta-field" style="flex:1;">
+            <label for="nameEn" class="meta-label" style="margin:0 0 4px;">Full Name (English) *</label>
+            <input id="nameEn" name="nameEn" type="text" th:value="${employee.nameEn}" placeholder="e.g. Rohan Patil" required>
+          </div>
+          <div class="meta-field" style="flex:1;">
+            <label for="nameMr" class="meta-label" style="margin:0 0 4px;">Full Name in Marathi (मराठीत संपूर्ण नाव)</label>
+            <input id="nameMr" name="nameMr" type="text" th:value="${employee.nameMr}" placeholder="उदा. रोहन पाटील">
+          </div>
         </div>
 
-        <div class="meta-field">
-          <label for="nameMr" class="meta-label" style="margin:0 0 4px;">Full Name in Marathi (मराठीत संपूर्ण नाव)</label>
-          <input id="nameMr" name="nameMr" type="text" th:value="${employee.nameMr}" placeholder="उदा. आशा कुलकर्णी">
+        <div class="row" style="gap:12px;">
+          <div class="meta-field" style="flex:1;">
+            <label for="age" class="meta-label" style="margin:0 0 4px;">Age (वर्षे / वय) *</label>
+            <input id="age" name="age" type="number" min="18" max="70" th:value="${employee.age}" placeholder="उदा. 31" required>
+          </div>
+          <div class="meta-field" style="flex:2;">
+            <label for="sector" class="meta-label" style="margin:0 0 4px;">Operational Sector / Metro Line / Zone *</label>
+            <input id="sector" name="sector" list="sector-list" type="text" th:value="${employee.sector}" placeholder="उदा. Pune Metro - Line 1 (Purple Line)" required>
+            <datalist id="sector-list">
+              <option value="Pune Metro - Line 1 (Purple Line)">
+              <option value="Pune Metro - Line 2 (Aqua Line)">
+              <option value="Pune Metro - Line 1 &amp; Line 2 Interchange">
+              <option value="Nagpur Metro - Reach 1 (Orange Line)">
+              <option value="Nagpur Metro - Reach 2 (Aqua Line)">
+              <option value="Nagpur Metro - Central Interchange (Reach 1 &amp; 2)">
+              <option value="Pune &amp; Nagpur Network Operations">
+              <option value="Corporate HQ &amp; Executive Board">
+            </datalist>
+          </div>
+        </div>
+
+        <div class="row" style="gap:12px;">
+          <div class="meta-field" style="flex:1;">
+            <label for="department" class="meta-label" style="margin:0 0 4px;">Department / Branch</label>
+            <input id="department" name="department" type="text" th:value="${employee.department}" placeholder="Operations / Rolling Stock">
+          </div>
+          <div class="meta-field" style="flex:1;">
+            <label for="location" class="meta-label" style="margin:0 0 4px;">Base Station / Depot Location</label>
+            <input id="location" name="location" type="text" th:value="${employee.location}" placeholder="उदा. Pune Metro - Range Hill Depot">
+          </div>
         </div>
 
         <div class="row" style="gap:12px;">
@@ -186,11 +221,6 @@
         </div>
 
         <div class="meta-field">
-          <label for="location" class="meta-label" style="margin:0 0 4px;">Primary Base Location / Station / Depot</label>
-          <input id="location" name="location" type="text" th:value="${employee.location}" placeholder="उदा. Nagpur Metro - Sitabuldi Interchange">
-        </div>
-
-        <div class="meta-field">
           <label for="preferredLang" class="meta-label" style="margin:0 0 4px;">Preferred Assessment &amp; Portal Language</label>
           <select id="preferredLang" name="preferredLang">
             <option value="en" th:selected="${employee.preferredLang == 'en'}">English (EN)</option>
@@ -198,8 +228,8 @@
           </select>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="margin-top:10px; width:100%;">
-          💾 Save &amp; Update Personal Metadata
+        <button type="submit" class="btn btn-primary" style="margin-top:10px; width:100%; font-size:15px; padding:12px;">
+          💾 Save &amp; Update Personal Information
         </button>
       </form>
 
@@ -212,6 +242,16 @@
         <div class="meta-field">
           <div class="meta-label">Full Name</div>
           <div class="meta-value" th:text="${employee.nameEn} + (${!#strings.isEmpty(employee.nameMr)} ? ' (' + ${employee.nameMr} + ')' : '')">Name</div>
+        </div>
+        <div class="row" style="gap:12px;">
+          <div class="meta-field" style="flex:1;">
+            <div class="meta-label">Age</div>
+            <div class="meta-value" th:text="${employee.age != null ? employee.age + ' years' : 'Not recorded'}">Age</div>
+          </div>
+          <div class="meta-field" style="flex:2;">
+            <div class="meta-label">Sector / Line</div>
+            <div class="meta-value" th:text="${!#strings.isEmpty(employee.sector) ? employee.sector : 'General'}">Sector</div>
+          </div>
         </div>
         <div class="meta-field">
           <div class="meta-label">Official Email</div>

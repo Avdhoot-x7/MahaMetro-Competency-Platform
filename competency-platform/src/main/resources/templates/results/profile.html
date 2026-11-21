@@ -26,13 +26,11 @@
 
   <nav class="top-nav-links">
     <a th:href="@{/}" class="top-nav-link">Home</a>
-    <a th:href="@{/profile}" class="top-nav-link">My Profile</a>
     <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
-    <a th:href="@{/me}" class="top-nav-link" th:classappend="${own ? 'active' : ''}">My Competencies</a>
-    <a th:href="@{/results}" class="top-nav-link" th:classappend="${!own ? 'active' : ''}">Staff Results</a>
-    <a th:href="@{/plans}" class="top-nav-link">IDPs</a>
-    <a th:href="@{/dashboards/department}" class="top-nav-link">Department</a>
-    <a th:href="@{/dashboards/org}" class="top-nav-link">Org Scorecard</a>
+    <a th:href="@{/me}" class="top-nav-link" th:classappend="${own ? 'active' : ''}">My Heat Map</a>
+    <a th:href="@{/plans}" class="top-nav-link">My IDP</a>
+    <a th:href="@{/profile}" class="top-nav-link">My Profile</a>
+    <a th:if="${!own}" th:href="@{/results}" class="top-nav-link active">Staff Results</a>
   </nav>
 
   <div class="top-nav-user" th:if="${employee != null}">
@@ -56,6 +54,8 @@
       <p style="margin: 4px 0 0 0; color: #555;">
         <span th:text="${employee.designation}"></span> &middot; <span th:text="${employee.department}"></span> &middot;
         Role family <b th:text="${employee.roleFamilyCode}"></b> &middot; Grade <b th:text="${employee.gradeCode}"></b> &middot;
+        <span th:if="${employee.age != null}" th:text="'Age: ' + ${employee.age} + ' yrs &middot; '"></span>
+        <span th:if="${!#strings.isEmpty(employee.sector)}" th:text="'Sector: ' + ${employee.sector} + ' &middot; '"></span>
         Location: <span th:text="${employee.location}">Nagpur</span>
       </p>
     </div>

@@ -25,6 +25,8 @@ public class Employee {
     private String designation = "";
     private String department = "";
     private String location = "";
+    private Integer age;
+    private String sector = "";
     private String roleFamilyCode;
     private String gradeCode;
     private String reportingOfficer = "";
@@ -75,6 +77,10 @@ public class Employee {
     public void setDepartment(String department) { this.department = department; }
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+    public Integer getAge() { return age; }
+    public void setAge(Integer age) { this.age = age; }
+    public String getSector() { return sector; }
+    public void setSector(String sector) { this.sector = sector != null ? sector : ""; }
     public String getRoleFamilyCode() { return roleFamilyCode; }
     public void setRoleFamilyCode(String roleFamilyCode) { this.roleFamilyCode = roleFamilyCode; }
     public String getGradeCode() { return gradeCode; }

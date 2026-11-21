@@ -93,6 +93,14 @@ public class PaperAssemblyService {
             }
         }
 
+        // Fallback: If no role-specific questions were found, draw from general approved bank
+        if (chosenQuestions.isEmpty()) {
+            List<Question> fallback = questions.findByStatus(Question.APPROVED);
+            if (!fallback.isEmpty()) {
+                chosenQuestions.addAll(fallback);
+            }
+        }
+
         // Overall test question shuffling and max items cap
         if (test.isShuffleQuestions()) {
             Collections.shuffle(chosenQuestions, rng);
