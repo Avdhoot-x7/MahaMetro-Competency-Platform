@@ -64,7 +64,7 @@ public class PlanController {
     public String listPlans(@RequestParam(value = "status", required = false) String statusFilter,
                             Principal principal,
                             Model model) {
-        Employee me = currentUser.requireAny(principal, "team.view", "department.view", "org.view", "test.manage");
+        Employee me = currentUser.get(principal);
 
         List<DevelopmentPlan> allPlans;
         if (statusFilter != null && !statusFilter.isBlank() && !"all".equalsIgnoreCase(statusFilter)) {

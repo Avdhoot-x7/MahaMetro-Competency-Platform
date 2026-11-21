@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Module Under Development - Maha Metro Competency Assessment Platform</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .error-card {
+      max-width: 820px;
+      margin: 40px auto;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .error-hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 55%, #ea580c 130%);
+      color: #ffffff;
+      padding: 36px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .error-hero-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      flex-shrink: 0;
+    }
+    .error-body {
+      padding: 32px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+    .status-badge.under-dev {
+      background: #fff7ed;
+      color: #ea580c;
+      border: 1px solid #fed7aa;
+    }
+    .status-badge.role-scoped {
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+    .status-badge.maintenance {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+    .quick-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .quick-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #f8fafc;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .quick-nav-item:hover {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+    .quick-nav-icon {
+      font-size: 20px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Global Top Navigation Header -->
+<header class="top-nav">
+  <a th:href="@{/}" class="top-nav-brand">
+    <div class="brand-icon">M</div>
+    <div>
+      <div class="brand-title">MAHA METRO</div>
+      <div class="brand-subtitle">Competency Assessment Platform</div>
+    </div>
+  </a>
+
+  <nav class="top-nav-links">
+    <a th:href="@{/}" class="top-nav-link">Home</a>
+    <a th:href="@{/profile}" class="top-nav-link">My Profile</a>
+    <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
+    <a th:href="@{/me}" class="top-nav-link">My Results</a>
+    <a th:href="@{/plans}" class="top-nav-link">IDPs</a>
+  </nav>
+
+  <div class="top-nav-user" th:if="${employee != null}">
+    <a th:href="@{/profile}" class="user-pill" style="text-decoration:none; color:inherit; cursor:pointer;" title="View Profile">
+      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+      <b th:text="${employee.nameEn}">User Name</b>
+      <span style="color:#64748b;" th:text="'(' + ${employee.empId} + ')'">ID</span>
+    </a>
+    <form th:action="@{/logout}" method="post" style="margin: 0;">
+      <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
+    </form>
+  </div>
+</header>
+
+<main>
+  <div class="error-card">
+
+    <!-- Hero Header -->
+    <div class="error-hero">
+      <div class="error-hero-icon">
+        <span th:if="${status == 403}">🛡️</span>
+        <span th:if="${status == 404}">🚧</span>
+        <span th:if="${status != 403 and status != 404}">⚙️</span>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fde047; margin-bottom: 4px;">
+          Maharashtra Metro Rail Corporation Limited
+        </div>
+        <h1 style="margin: 0 0 6px; font-size: 26px; color:#ffffff;" th:if="${status == 403}">Module Under Role Governance</h1>
+        <h1 style="margin: 0 0 6px; font-size: 26px; color:#ffffff;" th:if="${status == 404}">Feature Under Active Development</h1>
+        <h1 style="margin: 0 0 6px; font-size: 26px; color:#ffffff;" th:if="${status != 403 and status != 404}">Platform Module In Progress</h1>
+        <p style="margin: 0; font-size: 15px; opacity: 0.95;">
+          सदर विभाग सक्रिय विकासाधीन असून पुढील टप्प्यात उपलब्ध केला जाईल.
+        </p>
+      </div>
+    </div>
+
+    <!-- Body Information -->
+    <div class="error-body">
+
+      <!-- Status indicator -->
+      <div>
+        <span th:if="${status == 403}" class="status-badge role-scoped">
+          <span>🔒</span> Role-Scoped Clearance &middot; Status 403
+        </span>
+        <span th:if="${status == 404}" class="status-badge under-dev">
+          <span>🛠️</span> Engineering In Progress &middot; Status 404
+        </span>
+        <span th:if="${status != 403 and status != 404}" class="status-badge maintenance">
+          <span>⚡</span> Active System Refinement &middot; Status <span th:text="${status != null ? status : 500}">500</span>
+        </span>
+      </div>
+
+      <h2 style="font-size: 18px; color: var(--text-main); margin: 0 0 10px;">
+        <span th:if="${status == 403}">Access Scoped to Designated Roles</span>
+        <span th:if="${status == 404}">This Feature is Under Active Engineering</span>
+        <span th:if="${status != 403 and status != 404}">Feature Temporarily Being Updated</span>
+      </h2>
+
+      <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.6; margin: 0 0 16px;">
+        <span th:if="${status == 403}">
+          This administrative module is designated for specific operational roles (e.g. Assessment Cell, Question Reviewers, or Senior Proctors).
+          Your current account is authenticated, but this specific administrative screen is restricted under framework access rules.
+        </span>
+        <span th:if="${status == 404}">
+          The requested page route (<code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-weight:600;" th:text="${path != null ? path : '/'}">/path</code>)
+          is currently undergoing active development as part of the continuous rollout of the Maha Metro Competency Assessment Platform.
+        </span>
+        <span th:if="${status != 403 and status != 404}">
+          This section is currently undergoing real-time tuning and synchronization. All active assessment, profile, and scorecard workflows remain operational.
+        </span>
+      </p>
+
+      <div th:if="${employee != null}" style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 24px; font-size: 13.5px; color: var(--text-muted); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div>
+          Logged in as: <b style="color:var(--text-main);" th:text="${employee.nameEn}">Employee Name</b>
+          <span style="margin: 0 6px;">&middot;</span>
+          <span th:text="${employee.designation}">Designation</span>
+          <span style="margin: 0 6px;">&middot;</span>
+          <span class="badge" th:text="${employee.department}">Department</span>
+        </div>
+        <span class="badge green">Session Active</span>
+      </div>
+
+      <!-- Quick Nav Hub -->
+      <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin: 0 0 12px;">
+        Active Operational Workflows:
+      </h3>
+
+      <div class="quick-nav-grid">
+        <a th:href="@{/}" class="quick-nav-item">
+          <div class="quick-nav-icon">🏠</div>
+          <div>
+            <div>Main Dashboard</div>
+            <div style="font-size:12px; font-weight:normal; color:var(--text-muted);">Overview &amp; Launchpad</div>
+          </div>
+        </a>
+
+        <a th:href="@{/profile}" class="quick-nav-item">
+          <div class="quick-nav-icon">👤</div>
+          <div>
+            <div>My Profile</div>
+            <div style="font-size:12px; font-weight:normal; color:var(--text-muted);">Personnel Master &amp; Info</div>
+          </div>
+        </a>
+
+        <a th:href="@{/delivery}" class="quick-nav-item">
+          <div class="quick-nav-icon">📝</div>
+          <div>
+            <div>My Assessments</div>
+            <div style="font-size:12px; font-weight:normal; color:var(--text-muted);">Active Tests &amp; Timer</div>
+          </div>
+        </a>
+
+        <a th:href="@{/me}" class="quick-nav-item">
+          <div class="quick-nav-icon">📊</div>
+          <div>
+            <div>Competency Results</div>
+            <div style="font-size:12px; font-weight:normal; color:var(--text-muted);">Readiness &amp; Scores</div>
+          </div>
+        </a>
+
+        <a th:href="@{/plans}" class="quick-nav-item">
+          <div class="quick-nav-icon">🎯</div>
+          <div>
+            <div>Individual Plans</div>
+            <div style="font-size:12px; font-weight:normal; color:var(--text-muted);">Training &amp; Growth</div>
+          </div>
+        </a>
+
+        <a href="javascript:history.back()" class="quick-nav-item">
+          <div class="quick-nav-icon">🔙</div>
+          <div>
+            <div>Go Back</div>
+            <div style="font-size:12px; font-weight:normal; color:var(--text-muted);">Return to previous page</div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

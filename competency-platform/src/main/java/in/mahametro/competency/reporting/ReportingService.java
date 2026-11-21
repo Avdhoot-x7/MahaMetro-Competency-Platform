@@ -374,7 +374,7 @@ public class ReportingService {
         return rows;
     }
 
-    private DashboardSummary buildDashboardForEmployees(List<Employee> emps) {
+    public DashboardSummary buildDashboardForEmployees(List<Employee> emps) {
         DashboardSummary sum = new DashboardSummary();
         sum.setTotalPeople(emps.size());
 

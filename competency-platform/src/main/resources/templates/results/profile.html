@@ -3,82 +3,272 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Competency results - Maha Metro Competency Assessment</title>
+  <title>Competency Results &amp; Heat Map - Maha Metro</title>
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .heatmap-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
+    }
+  </style>
 </head>
 <body>
+
+<!-- Global Top Navigation Header -->
+<header class="top-nav">
+  <a th:href="@{/}" class="top-nav-brand">
+    <div class="brand-icon">M</div>
+    <div>
+      <div class="brand-title">MAHA METRO</div>
+      <div class="brand-subtitle">Competency Assessment Platform</div>
+    </div>
+  </a>
+
+  <nav class="top-nav-links">
+    <a th:href="@{/}" class="top-nav-link">Home</a>
+    <a th:href="@{/profile}" class="top-nav-link">My Profile</a>
+    <a th:href="@{/delivery}" class="top-nav-link">Assessments</a>
+    <a th:href="@{/me}" class="top-nav-link" th:classappend="${own ? 'active' : ''}">My Competencies</a>
+    <a th:href="@{/results}" class="top-nav-link" th:classappend="${!own ? 'active' : ''}">Staff Results</a>
+    <a th:href="@{/plans}" class="top-nav-link">IDPs</a>
+    <a th:href="@{/dashboards/department}" class="top-nav-link">Department</a>
+    <a th:href="@{/dashboards/org}" class="top-nav-link">Org Scorecard</a>
+  </nav>
+
+  <div class="top-nav-user" th:if="${employee != null}">
+    <a th:href="@{/profile}" class="user-pill" style="text-decoration:none; color:inherit; cursor:pointer;" title="Click to view &amp; edit profile">
+      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+      <b th:text="${employee.nameEn}">User Name</b>
+      <span style="color:#64748b;" th:text="'(' + ${employee.empId} + ')'">ID</span>
+    </a>
+    <form th:action="@{/logout}" method="post" style="margin: 0;">
+      <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
+    </form>
+  </div>
+</header>
+
 <main class="card wide">
   <p><a th:href="@{/}">Home</a> <span th:if="${!own}">&middot; <a th:href="@{/results}">Back to staff results</a></span></p>
-  <h1>Competency results: <span th:text="${employee.nameEn}">Name</span> (<span th:text="${employee.empId}">ID</span>)</h1>
-  <p>
-    <span th:text="${employee.designation}"></span> &middot; <span th:text="${employee.department}"></span> &middot;
-    Role family <b th:text="${employee.roleFamilyCode}"></b> &middot; Grade <b th:text="${employee.gradeCode}"></b>
-  </p>
-  <p class="row">
-    <span>Readiness: <b class="badge" th:classappend="${#strings.toLowerCase(profile.readiness)}" th:text="${profile.readiness}">Green</b></span>
-    <span>Competencies met: <b th:text="${profile.index != null} ? ${profile.index} + '%' : '-'">0%</b></span>
-    <span>Gaps: <b th:text="${profile.gaps}">0</b></span>
-    <span>Safety gates: <b th:text="${profile.safetyGates}">0</b></span>
-  </p>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+    <div>
+      <h1 style="margin: 0;">Competency Results: <span th:text="${employee.nameEn}">Name</span> (<span th:text="${employee.empId}">ID</span>)</h1>
+      <p style="margin: 4px 0 0 0; color: #555;">
+        <span th:text="${employee.designation}"></span> &middot; <span th:text="${employee.department}"></span> &middot;
+        Role family <b th:text="${employee.roleFamilyCode}"></b> &middot; Grade <b th:text="${employee.gradeCode}"></b> &middot;
+        Location: <span th:text="${employee.location}">Nagpur</span>
+      </p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a th:href="@{/results/export(q=${employee.empId})}" class="btn btn-outline btn-sm">
+        Export Excel Report (.xlsx)
+      </a>
+      <a th:href="@{/plans}" class="btn btn-accent btn-sm">
+        View Action IDP
+      </a>
+    </div>
+  </div>
+
+  <!-- Headline Metric Ribbon -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 20px 0;">
+    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #64748b;">Overall Readiness</div>
+      <div style="margin-top: 4px;">
+        <span class="badge" th:classappend="${#strings.toLowerCase(profile.readiness)}" th:text="${profile.readiness}" style="font-size: 16px; padding: 4px 12px;">Green</span>
+      </div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #64748b;">Competencies Met</div>
+      <div style="font-size: 24px; font-weight: 800; color: #059669;" th:text="${profile.index != null} ? ${profile.index} + '%' : '-'">0%</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #64748b;">Competency Gaps</div>
+      <div style="font-size: 24px; font-weight: 800; color: #ea580c;" th:text="${profile.gaps}">0</div>
+    </div>
+    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; text-align: center;">
+      <div style="font-size: 13px; color: #64748b;">Safety Gate Alerts</div>
+      <div style="font-size: 24px; font-weight: 800; color: #dc2626;" th:text="${profile.safetyGates}">0</div>
+    </div>
+  </div>
+
   <p th:if="${#lists.isEmpty(profile.rows)}">No role family is set for this person, so there is nothing to assess.</p>
+
+  <!-- Interactive Visual Competency Result Heat Map Section -->
+  <div th:if="${!#lists.isEmpty(profile.rows)}" class="heatmap-container" style="margin: 28px 0; background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow-sm);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 14px;">
+      <div>
+        <h2 style="margin: 0; font-size: 19px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+          <span>🔥</span> Competency Result Heat Map &amp; Gap Matrix
+        </h2>
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted);">
+          Visual multidimensional heat matrix showing attained proficiency versus role required standards.
+        </p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="heatmap-filters">
+        <button type="button" class="btn btn-primary btn-sm" onclick="filterHeatmap('ALL', this)" style="border-radius: 20px;">All Competencies</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="filterHeatmap('SAFETY', this)" style="border-radius: 20px;">⚠️ Safety Gates (<span th:text="${profile.safetyGates}">0</span>)</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="filterHeatmap('GAPS', this)" style="border-radius: 20px;">⚡ Active Gaps (<span th:text="${profile.gaps}">0</span>)</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="filterHeatmap('MEETS', this)" style="border-radius: 20px;">✅ Meets Requirements</button>
+      </div>
+    </div>
+
+    <!-- Heat Map Grid Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px;" id="heatmap-grid">
+      <div th:each="r : ${profile.rows}"
+           class="heatmap-card"
+           th:attr="data-category=${r.category}, data-safety=${r.safetyCritical}, data-gap=${r.gap}, data-status=${r.status}"
+           th:style="${r.safetyCritical && r.gap > 0 ? 'border: 2px solid #ef4444; background: linear-gradient(145deg, #fff5f5 0%, #fee2e2 100%);' : (r.gap >= 2 ? 'border: 2px solid #f97316; background: linear-gradient(145deg, #fffaf0 0%, #ffedd5 100%);' : (r.gap == 1 ? 'border: 1px solid #f59e0b; background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%);' : 'border: 1px solid #10b981; background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%);'))}"
+           style="border-radius: 10px; padding: 14px; position: relative; transition: all 0.2s ease-in-out; box-shadow: var(--shadow-sm);">
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <div>
+            <span style="font-weight: 800; font-size: 15px; color: #0f172a;" th:text="${r.code}">TO-01</span>
+            <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.06); color: #475569; margin-left: 4px;" th:text="${r.category}">Technical</span>
+          </div>
+          <span class="badge" th:classappend="${#strings.replace(#strings.toLowerCase(r.status), ' ', '-')}" th:text="${r.status}" style="font-size: 11px;">Meets</span>
+        </div>
+
+        <div style="font-weight: 600; font-size: 13.5px; color: #1e293b; margin-bottom: 8px; line-height: 1.35; min-height: 36px;">
+          <span th:text="${r.name}">Competency Name</span>
+          <span th:if="${r.safetyCritical}" style="color: #dc2626; font-size: 11px; display: block; font-weight: 700;">⚠️ Safety-Critical Gate</span>
+        </div>
+
+        <!-- Heat Bar Level Visualizer -->
+        <div style="background: rgba(255,255,255,0.7); padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.06); font-size: 12.5px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span>Required Level: <b th:text="'L' + ${r.required}">L3</b></span>
+            <span>Attained: <b th:text="${r.assessed ? 'L' + r.level : 'Not Assessed'}">L2</b></span>
+          </div>
+
+          <!-- Visual Dot Indicators for 5 Levels -->
+          <div style="display: flex; gap: 4px; margin-top: 6px;">
+            <div th:each="lvl : ${#numbers.sequence(1, 5)}"
+                 th:style="${lvl <= r.level ? (r.gap > 0 ? 'background:#ef4444;' : 'background:#10b981;') : (lvl <= r.required ? 'background:#cbd5e1; border: 1px dashed #94a3b8;' : 'background:#f1f5f9;')}"
+                 style="flex: 1; height: 8px; border-radius: 3px;"
+                 th:title="'Level ' + ${lvl}">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: #475569;">
+          <span>Score: <b th:text="${r.score != null ? r.score + '%' : '-'}">78%</b></span>
+          <span th:if="${r.gap > 0}" style="color: #dc2626; font-weight: 700;" th:text="'-' + ${r.gap} + ' Level Gap'">-1 Level Gap</span>
+          <span th:if="${r.gap == 0}" style="color: #059669; font-weight: 700;">✓ Meets Target</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Tabular Breakdown -->
+  <h2 style="margin-top: 32px;">Competency Performance Ledger</h2>
   <table th:if="${!#lists.isEmpty(profile.rows)}">
-    <thead><tr><th>Code</th><th>Competency</th><th>Category</th><th>Required level</th><th>Score</th><th>Level reached</th><th>Gap</th><th>Status</th></tr></thead>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Competency</th>
+        <th>Category</th>
+        <th>Required Level</th>
+        <th>Assessment Score</th>
+        <th>Level Reached</th>
+        <th>Gap</th>
+        <th>Readiness Status</th>
+      </tr>
+    </thead>
     <tbody>
-    <tr th:each="r : ${profile.rows}">
-      <td th:text="${r.code}"></td>
-      <td><span th:text="${r.name}"></span> <small th:if="${r.safetyCritical}">(safety-critical)</small></td>
-      <td th:text="${r.category}"></td>
-      <td th:text="${r.required}"></td>
-      <td th:text="${r.score != null} ? ${r.score} : '-'"></td>
-      <td th:text="${r.assessed} ? ${r.level} : '-'"></td>
-      <td th:text="${r.gap}"></td>
-      <td><span class="badge" th:classappend="${#strings.replace(#strings.toLowerCase(r.status), ' ', '-')}" th:text="${r.status}">Meets</span></td>
-    </tr>
+      <tr th:each="r : ${profile.rows}">
+        <td th:text="${r.code}"></td>
+        <td><span th:text="${r.name}"></span> <small th:if="${r.safetyCritical}" style="color: #dc2626; font-weight:bold;">(safety-critical)</small></td>
+        <td th:text="${r.category}"></td>
+        <td th:text="${r.required}"></td>
+        <td th:text="${r.score != null} ? ${r.score} + '%' : '-'"></td>
+        <td th:text="${r.assessed} ? ${r.level} : '-'"></td>
+        <td th:text="${r.gap}"></td>
+        <td><span class="badge" th:classappend="${#strings.replace(#strings.toLowerCase(r.status), ' ', '-')}" th:text="${r.status}">Meets</span></td>
+      </tr>
     </tbody>
   </table>
 
-  <div th:if="${plan != null}" style="margin-top: 2rem;">
-    <h2>Prescription: Individual Development Plan &middot; Cycle <span th:text="${plan.cycle}">baseline</span>
+  <!-- Individual Development Plan (IDP) Section -->
+  <div th:if="${plan != null}" style="margin-top: 36px; padding: 22px; background: #fffaf0; border: 1px solid #fed7aa; border-radius: var(--radius-lg);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <h2 style="margin: 0; color: #9a3412;">
+        🎯 Prescription: Individual Development Plan (IDP) &middot; Cycle <span th:text="${plan.cycle}">baseline</span>
+      </h2>
       <span class="badge" th:classappend="${plan.status == 'confirmed' ? 'green' : 'amber'}" th:text="${#strings.toUpperCase(plan.status)}">PROPOSED</span>
-    </h2>
-    <p th:if="${plan.status == 'confirmed'}">
+    </div>
+
+    <p th:if="${plan.status == 'confirmed'}" style="margin-top: 6px; color: #475569;">
       Confirmed by <b th:text="${plan.confirmedBy}"></b> on <span th:text="${#temporals.format(plan.confirmedAt, 'yyyy-MM-dd HH:mm')}"></span>
     </p>
-    <p th:if="${#lists.isEmpty(planItems)}">No gaps found. Competencies meet requirements.</p>
+    <p th:if="${#lists.isEmpty(planItems)}" style="margin-top: 6px; color: #059669;">No gaps found. All competencies meet requirements.</p>
 
-    <div th:each="it : ${planItems}" class="plan-item" th:classappend="${#strings.toLowerCase(it.gapType)}">
-      <div>
-        <b th:text="${it.competencyCode}"></b>
-        <span class="badge" th:classappend="${it.gapType == 'safety' ? 'safety-gate' : (it.gapType == 'major' ? 'priority' : (it.gapType == 'minor' ? 'developing' : (it.gapType == 'strength' ? 'green' : '')))}"
-              th:text="${it.gapType == 'safety' ? 'Safety gate (30-day target)' : (it.gapType == 'major' ? 'Major gap 2+ levels (60-day target)' : (it.gapType == 'minor' ? 'Minor gap 1 level (90-day target)' : (it.gapType == 'behavioural' ? 'Behavioural gap (90-day target)' : 'Strength (Mentorship / SME Author)')))}">
-        </span>
+    <div th:each="it : ${planItems}" class="plan-item" th:classappend="${#strings.toLowerCase(it.gapType)}" style="margin-top: 12px; background: #ffffff; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <b th:text="${it.competencyCode}" style="font-size: 15px;"></b>
+          <span class="badge" th:classappend="${it.gapType == 'safety' ? 'safety-gate' : (it.gapType == 'major' ? 'priority' : (it.gapType == 'minor' ? 'developing' : (it.gapType == 'strength' ? 'green' : '')))}"
+                th:text="${it.gapType == 'safety' ? 'Safety gate (30-day target)' : (it.gapType == 'major' ? 'Major gap 2+ levels (60-day target)' : (it.gapType == 'minor' ? 'Minor gap 1 level (90-day target)' : (it.gapType == 'behavioural' ? 'Behavioural gap (90-day target)' : 'Strength (Mentorship / SME Author)')))}">
+          </span>
+        </div>
         <span class="badge" th:text="${'Item: ' + it.status}">Item: open</span>
       </div>
-      <div class="meta" style="font-size: 13px; color: #555; margin: 4px 0;">
+
+      <div class="meta" style="font-size: 13px; color: #555; margin: 6px 0;">
         Required: <span th:text="${it.requiredLevel}"></span> &middot;
         Attained: <span th:text="${it.attainedLevel}"></span> &middot;
         Score: <span th:text="${it.score}"></span>
         <span th:if="${it.targetDate != null}"> &middot; Target date: <b th:text="${#temporals.format(it.targetDate, 'yyyy-MM-dd')}"></b></span>
       </div>
-      <div th:if="${interventions != null and interventions.containsKey(it.interventionId)}">
-        <b th:text="${interventions.get(it.interventionId).titleEn}">Training Course</b>
+
+      <div th:if="${interventions != null and interventions.containsKey(it.interventionId)}" style="margin-top: 4px;">
+        <b th:text="${interventions.get(it.interventionId).titleEn}" style="color: var(--primary);">Training Course</b>
         <span style="font-size: 13px; color: #666;">
           (<span th:text="${interventions.get(it.interventionId).provider}">CoE</span>,
            <span th:text="${interventions.get(it.interventionId).mode}">Classroom</span>,
            <span th:text="${interventions.get(it.interventionId).durationHours}">4</span> hours)
         </span>
       </div>
-      <div th:if="${it.gapType != 'strength'}" style="font-size: 12px; color: #777; margin-top: 3px;">
+      <div th:if="${it.gapType != 'strength'}" style="font-size: 12px; color: #777; margin-top: 4px;">
         Re-test (T1) within 2 weeks after training; on-the-job check (T2) after approx 3 months.
       </div>
     </div>
 
-    <div th:if="${canConfirmPlan}" style="margin-top: 14px;">
+    <div th:if="${canConfirmPlan}" style="margin-top: 18px;">
       <form th:action="@{/plans/{id}/confirm(id=${plan.id})}" method="post">
-        <button type="submit">Confirm Development Plan</button>
+        <button type="submit" class="btn btn-primary">Confirm Development Plan</button>
       </form>
     </div>
   </div>
 </main>
+
+<script>
+  function filterHeatmap(type, btn) {
+    document.querySelectorAll('#heatmap-filters button').forEach(b => {
+      b.className = 'btn btn-outline btn-sm';
+      b.style.borderRadius = '20px';
+    });
+    btn.className = 'btn btn-primary btn-sm';
+    btn.style.borderRadius = '20px';
+
+    const cards = document.querySelectorAll('.heatmap-card');
+    cards.forEach(card => {
+      const isSafety = card.getAttribute('data-safety') === 'true';
+      const gap = parseInt(card.getAttribute('data-gap') || '0');
+      if (type === 'ALL') {
+        card.style.display = 'block';
+      } else if (type === 'SAFETY') {
+        card.style.display = (isSafety && gap > 0) ? 'block' : 'none';
+      } else if (type === 'GAPS') {
+        card.style.display = (gap > 0) ? 'block' : 'none';
+      } else if (type === 'MEETS') {
+        card.style.display = (gap === 0) ? 'block' : 'none';
+      }
+    });
+  }
+</script>
+
 </body>
 </html>

@@ -69,7 +69,10 @@ public class ResultsController {
                        @org.springframework.web.bind.annotation.RequestParam(name = "page", defaultValue = "0") int page,
                        @org.springframework.web.bind.annotation.RequestParam(name = "size", defaultValue = "50") int size,
                        Principal principal, Model model) {
-        Employee me = currentUser.requireAny(principal, "team.view", "department.view", "org.view", "test.manage");
+        Employee me = currentUser.get(principal);
+        if (!access.hasAny(me.getId(), "team.view", "department.view", "org.view", "test.manage")) {
+            return "redirect:/me";
+        }
         org.springframework.data.domain.Pageable pageable = PageRequest.of(Math.max(page, 0), Math.max(1, size));
         org.springframework.data.domain.Page<in.mahametro.competency.reporting.StaffSummaryRow> result =
                 reportingService.getPagedStaffResults(me, filter, pageable);

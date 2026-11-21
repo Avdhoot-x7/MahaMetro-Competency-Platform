@@ -36,6 +36,17 @@ public class AccessService {
         return false;
     }
 
+    /** True if the employee holds any one of the specified permissions in at least one scope. */
+    @Transactional(readOnly = true)
+    public boolean hasAny(Long employeeId, String... permissions) {
+        for (String p : permissions) {
+            if (hasAny(employeeId, p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * True if the employee holds the permission for the given scope, for example
      * can(id, "question.review", "COMPETENCY", "D07"). A role granted with scope ALL covers every scope.

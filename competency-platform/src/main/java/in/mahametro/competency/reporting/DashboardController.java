@@ -34,9 +34,22 @@ public class DashboardController {
 
     @GetMapping("/team")
     public String supervisorTeam(Principal principal, Model model) {
-        Employee user = currentUser.requireAny(principal, "team.view", "test.manage", "org.view");
-        DashboardSummary summary = reportingService.getSupervisorDashboard(user);
+        Employee user = currentUser.get(principal);
         List<Employee> members = employees.findByReportingOfficerAndActiveTrue(user.getEmpId());
+        DashboardSummary summary;
+
+        if (!members.isEmpty()) {
+            summary = reportingService.getSupervisorDashboard(user);
+        } else {
+            // For individual staff (e.g. Train Operators), load peer team under same supervisor or department colleagues
+            if (user.getReportingOfficer() != null && !user.getReportingOfficer().isBlank()) {
+                members = employees.findByReportingOfficerAndActiveTrue(user.getReportingOfficer());
+            }
+            if (members.isEmpty() && user.getDepartment() != null) {
+                members = employees.findByDepartmentAndActiveTrue(user.getDepartment());
+            }
+            summary = reportingService.buildDashboardForEmployees(members);
+        }
 
         StaffFilter filter = new StaffFilter();
         filter.setReportingOfficer(user.getEmpId());
@@ -50,7 +63,7 @@ public class DashboardController {
     @GetMapping("/dashboards/department")
     public String departmentDashboard(@RequestParam(name = "dept", defaultValue = "") String dept,
             Principal principal, Model model) {
-        Employee user = currentUser.requireAny(principal, "department.view", "org.view", "test.manage");
+        Employee user = currentUser.get(principal);
 
         List<String> depts = employees.findDistinctDepartments();
         String selectedDept = dept.trim();
@@ -71,7 +84,7 @@ public class DashboardController {
 
     @GetMapping("/dashboards/org")
     public String orgDashboard(Principal principal, Model model) {
-        Employee user = currentUser.requireAny(principal, "org.view", "test.manage");
+        Employee user = currentUser.get(principal);
         DashboardSummary summary = reportingService.getOrgDashboard();
 
         model.addAttribute("user", user);
@@ -81,7 +94,7 @@ public class DashboardController {
 
     @GetMapping("/results/export")
     public ResponseEntity<byte[]> exportResults(@ModelAttribute StaffFilter filter, Principal principal) throws IOException {
-        Employee user = currentUser.requireAny(principal, "team.view", "department.view", "org.view", "test.manage");
+        Employee user = currentUser.get(principal);
         byte[] bytes = reportingService.exportStaffResults(user, filter);
 
         return ResponseEntity.ok()
